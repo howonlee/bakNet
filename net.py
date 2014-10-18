@@ -11,39 +11,15 @@ class BakNet:
         self.h_weights = npr.random((self.n_hidden, self.n_in))
         self.o_weights = npr.random((self.n_out, self.n_hidden))
 
-        #self.h_activation = np.zeros((self.n_hidden, 1), dtype=np.float)
-        #self.o_activation = np.zeros((self.n_out, 1), dtype=np.float)
-        #self.i_output = np.zeros((self.n_in, 1), dtype=np.float)
+        self.h_activation = np.zeros((self.n_hidden, 1), dtype=np.float)
+        self.o_activation = np.zeros((self.n_out, 1), dtype=np.float)
+        self.i_output = np.zeros((self.n_in, 1), dtype=np.float)
 
         self.h_output = np.zeros((self.n_hidden, 1), dtype=np.float)
         self.o_output = np.zeros((self.n_out), dtype=np.float)
 
     def train(self, input_vals, train_vals):
-        self.i_output = np.array(input_vals)
-        for train_idx, train_val in enumerate(train_vals):
-            for input_idx, input_val in enumerate(self.i_output):
-                hidden_idx = np.argmax(self.h_weights[:, input_idx])
-                output_idx = np.argmax(self.o_weights[:, hidden_idx])
-                self.o_output[output_idx] = self.i_output[input_idx] * self.h_weights[hidden_idx, input_idx] * self.o_weights[output_idx, hidden_idx]
-                if self.o_output[output_idx] == train_val:
-                    pass
-                else:
-                    self.h_weights[hidden_idx, input_idx] -= self.delta
-                    self.o_weights[output_idx, hidden_idx] -= self.delta
-                    self.h_weights[hidden_idx] += self.delta / self.n_hidden
-                    self.o_weights[output_idx] += self.delta / self.n_out
-
-    def test(self, input_vals):
         pass
-    """
-        for idx, val in enumerate(input_vals):
-            self.i_output[idx] = val
-            for the weights to the hidden layer:
-                pick the max one
-                for the weights to the output layer:
-                    pick the max one
-                    set the output value
-                    """
 
     def get_output(self):
         return self.o_output
@@ -63,9 +39,15 @@ if __name__ == '__main__':
 
         # output for verification
         print count, xorSet[rnd], bak_n.get_output()[0],
-        if bak_n.get_output()[0] > 0.8:
-            print 'TRUE',
-        elif bak_n.get_output()[0] < 0.2:
-            print 'FALSE',
+        if bak_n.get_output()[0] > 0.80 and xorTeach[rnd][0] == 1:
+            print 'GOOD',
+        elif bak_n.get_output()[0] > 0.80 and xorTeach[rnd][0] == 0:
+            print 'BAD',
+        elif bak_n.get_output()[0] < 0.20 and xorTeach[rnd][0] == 0:
+            print 'GOOD',
+        elif bak_n.get_output()[0] < 0.20 and xorTeach[rnd][0] == 1:
+            print 'BAD',
+        elif bak_n.get_output()[0] > 0.20 and bak_n.get_output()[0] < 0.8:
+            print "FUCK",
         print
         count += 1

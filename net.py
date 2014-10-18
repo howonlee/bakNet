@@ -13,8 +13,8 @@ class BakNet:
 
         #self.h_activation = np.zeros((self.n_hidden, 1), dtype=np.float)
         #self.o_activation = np.zeros((self.n_out, 1), dtype=np.float)
-
         #self.i_output = np.zeros((self.n_in, 1), dtype=np.float)
+
         self.h_output = np.zeros((self.n_hidden, 1), dtype=np.float)
         self.o_output = np.zeros((self.n_out), dtype=np.float)
 
@@ -28,10 +28,10 @@ class BakNet:
                 if self.o_output[output_idx] == train_val:
                     pass
                 else:
-                    self.o_weights[output_idx, hidden_idx] -= self.delta
                     self.h_weights[hidden_idx, input_idx] -= self.delta
-                    self.o_weights[output_idx] += self.delta / self.n_out
+                    self.o_weights[output_idx, hidden_idx] -= self.delta
                     self.h_weights[hidden_idx] += self.delta / self.n_hidden
+                    self.o_weights[output_idx] += self.delta / self.n_out
 
     def test(self, input_vals):
         pass
@@ -53,12 +53,12 @@ if __name__ == '__main__':
     xorTeach = [[0], [1], [1], [0]]
 
     # create network
-    bak_n = BakNet(2, 1, 1)
+    bak_n = BakNet(2, 2, 1)
 
     count = 0
     while(True):
         # choose one training sample at random
-        rnd = npr.randint(0,3)
+        rnd = npr.randint(0,4)
         bak_n.train(xorSet[rnd], xorTeach[rnd])
 
         # output for verification

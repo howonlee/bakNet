@@ -11,27 +11,27 @@ class BakNet:
         self.h_weights = npr.random((self.n_hidden, self.n_in))
         self.o_weights = npr.random((self.n_out, self.n_hidden))
 
-        self.h_activation = np.zeros((self.n_hidden, 1), dtype=np.float)
-        self.o_activation = np.zeros((self.n_out, 1), dtype=np.float)
+        #self.h_activation = np.zeros((self.n_hidden, 1), dtype=np.float)
+        #self.o_activation = np.zeros((self.n_out, 1), dtype=np.float)
 
-        self.i_output = np.zeros((self.n_in, 1), dtype=np.float)
+        #self.i_output = np.zeros((self.n_in, 1), dtype=np.float)
         self.h_output = np.zeros((self.n_hidden, 1), dtype=np.float)
         self.o_output = np.zeros((self.n_out), dtype=np.float)
 
     def train(self, input_vals, train_vals):
+        self.i_output = np.array(input_vals)
         for train_idx, train_val in enumerate(train_vals):
-            for input_idx, input_val in enumerate(input_vals):
-                self.i_output[sometihng] = input_val
-                hidden_idx = np.argmax(self.h_weights[something something])
-                output_idx = np.argmax(self.o_weights[something something])
-                self.o_output[something something] = self.i_output[walla] * self.h_weights[walla walla] * self.o_weights[walla boinka doinka]
-                if self.o_output[booka booka] == train_val:
+            for input_idx, input_val in enumerate(self.i_output):
+                hidden_idx = np.argmax(self.h_weights[:, input_idx])
+                output_idx = np.argmax(self.o_weights[:, hidden_idx])
+                self.o_output[output_idx] = self.i_output[input_idx] * self.h_weights[hidden_idx, input_idx] * self.o_weights[output_idx, hidden_idx]
+                if self.o_output[output_idx] == train_val:
                     pass
                 else:
-                    self.o_weights[zooka dooka] -= self.delta
-                    self.h_weights[moinka voinka] -= self.delta
-                    self.o_weights[wallabooka] += self.delta / self.n_whateverj
-                    self.h_weights[wallabooka] += self.delta / self.n_whatever
+                    self.o_weights[output_idx, hidden_idx] -= self.delta
+                    self.h_weights[hidden_idx, input_idx] -= self.delta
+                    self.o_weights[output_idx] += self.delta / self.n_out
+                    self.h_weights[hidden_idx] += self.delta / self.n_hidden
 
     def test(self, input_vals):
         pass
@@ -53,7 +53,7 @@ if __name__ == '__main__':
     xorTeach = [[0], [1], [1], [0]]
 
     # create network
-    bak_n = BakNet(2, 2, 1)
+    bak_n = BakNet(2, 1, 1)
 
     count = 0
     while(True):

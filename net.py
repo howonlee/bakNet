@@ -11,5 +11,15 @@ class BakNet(object):
         self.h_weights = npr.random((n_hidden, n_in), dtype=np.float)
         self.o_weights = npr.random((n_out, n_hidden), dtype=np.float)
 
+    def fire(self):
+        """
+        pick a random input
+        go to the right output
+        next step: figure out some statistics
+        step after that: solve xor
+        step after that: make more layers
+        step after that: make mnist
+        """
+
 if __name__ == "__main__":
     bnet = BakNet()

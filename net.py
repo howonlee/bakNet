@@ -20,28 +20,18 @@ class BakNet:
 
     def train(self, input_vals, train_vals):
         for train_idx, train_val in enumerate(train_vals):
-            print "train_idx: %d, train_val: %d" % (train_idx, train_val)
             for input_idx, input_val in enumerate(input_vals):
-                print "input_idx: %d, input_val: %d" % (input_idx, input_val)
-                self.i_output[input_idx] = input_val
-                hidden_idx = np.argmax(self.h_weights[input_idx])
-                print "hidden_idx: %d" % hidden_idx
-                """
-                print "o_output: ", self.o_output
-                print "i_output: ", self.i_output
-                print "h_weights: ", self.h_weights
-                print "o_weights: ", self.o_weights
-                """
-                output_idx = np.argmax(self.o_weights)
-                print "output_idx: %d" % output_idx
-                self.o_output[output_idx] = self.i_output[input_idx] * self.h_weights[hidden_idx, input_idx] * self.o_weights[output_idx, hidden_idx]
-                if self.o_output[output_idx] == train_val:
+                self.i_output[sometihng] = input_val
+                hidden_idx = np.argmax(self.h_weights[something something])
+                output_idx = np.argmax(self.o_weights[something something])
+                self.o_output[something something] = self.i_output[walla] * self.h_weights[walla walla] * self.o_weights[walla boinka doinka]
+                if self.o_output[booka booka] == train_val:
                     pass
                 else:
-                    self.o_weights[hidden_idx, output_idx] -= self.delta
-                    self.h_weights[input_idx, hidden_idx] -= self.delta
-                    self.o_weights[hidden_idx] += self.delta / self.n_out
-                    self.h_weights[input_idx] += self.delta / self.n_hidden
+                    self.o_weights[zooka dooka] -= self.delta
+                    self.h_weights[moinka voinka] -= self.delta
+                    self.o_weights[wallabooka] += self.delta / self.n_whateverj
+                    self.h_weights[wallabooka] += self.delta / self.n_whatever
 
     def test(self, input_vals):
         pass

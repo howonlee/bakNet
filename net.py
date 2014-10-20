@@ -1,6 +1,7 @@
 import numpy as np
 import numpy.random as npr
 import random
+import matplotlib.pyplot as plt
 
 class BakNet(object):
     def __init__(self, n_in, n_hid, n_out, pats, delta=0.05):
@@ -35,6 +36,12 @@ class BakNet(object):
             self.out_wgt[curr_output_idx, curr_hidden] -= self.delta
             self.hid_wgt[curr_hidden, curr_input] -= self.delta
 
+    def show(self):
+        plt.imshow(self.out_wgt, interpolation="none")
+        plt.imshow(self.hid_wgt, interpolation="none")
+        plt.set_cmap("gray")
+        plt.show()
+
     def __str__(self):
         fmt_str = "delta: %s\nin layer: %s\nhidden layer: %s\nout layer: %s\nhidden weights: %s\nout weights: %s\n"
         return fmt_str % (str(self.delta), str(self.in_l), str(self.hid_l), str(self.out_l), str(self.hid_wgt), str(self.out_wgt))
@@ -47,4 +54,4 @@ if __name__ == "__main__":
     for i in xrange(100):
         bnet.train()
         #print bnet, "\n"
-    print bnet
+    bnet.show()

@@ -36,11 +36,25 @@ class BakNet(object):
             self.out_wgt[curr_output_idx, curr_hidden] -= self.delta
             self.hid_wgt[curr_hidden, curr_input] -= self.delta
 
-    def show(self):
-        plt.imshow(self.out_wgt, interpolation="none")
-        plt.imshow(self.hid_wgt, interpolation="none")
+    def show_before(self):
         plt.set_cmap("gray")
-        plt.show()
+        plt.imshow(self.out_wgt, interpolation="none")
+        plt.title("out weight before")
+        plt.add_subplot(111)
+        plt.set_cmap("gray")
+        plt.imshow(self.hid_wgt, interpolation="none")
+        plt.title("hidden weight before")
+        plt.add_subplot(212)
+
+    def show_after(self):
+        plt.set_cmap("gray")
+        plt.imshow(self.out_wgt, interpolation="none")
+        plt.title("out weight after")
+        plt.add_subplot(111)
+        plt.set_cmap("gray")
+        plt.imshow(self.hid_wgt, interpolation="none")
+        plt.title("hidden weight after")
+        plt.add_subplot(212)
 
     def __str__(self):
         fmt_str = "delta: %s\nin layer: %s\nhidden layer: %s\nout layer: %s\nhidden weights: %s\nout weights: %s\n"
@@ -50,8 +64,10 @@ if __name__ == "__main__":
     #xor problem
     pats = [([0,0], [0]), ([0,1],[1]), ([1,0],[1]), ([1,1],[1])]
     bnet = BakNet(2, 5, 1, pats)
-    print bnet
+    plt.figure(1)
+    bnet.show()
     for i in xrange(100):
         bnet.train()
         #print bnet, "\n"
     bnet.show()
+    plt.show()

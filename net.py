@@ -25,36 +25,21 @@ class BakNet(object):
         self.in_l = curr_pat[0]
         self.out_l = curr_pat[1]
         curr_input = random.randint(0,len(self.in_l)-1) #current input _index_
+        """
+        replace all this rigamarole with for loops, unfortunately.
+        lesson learned: vectorization is an optimization
+        sometimes it is premature
         self.hid_l = np.sum(self.hid_wgt, axis=1)
         #old: curr_hidden = np.argmax(self.hid_wgt[:,curr_input])
         curr_hidden = np.argmax(self.hid_l)
         curr_output_idx = np.argmax(self.out_wgt[:, curr_hidden])
+        """
         curr_output = self.out_l[curr_output_idx]
         if curr_output == curr_input:
             pass
         else:
             self.out_wgt[curr_output_idx, curr_hidden] -= self.delta
             self.hid_wgt[curr_hidden, curr_input] -= self.delta
-
-    def show_before(self):
-        plt.set_cmap("gray")
-        plt.imshow(self.out_wgt, interpolation="none")
-        plt.title("out weight before")
-        plt.add_subplot(111)
-        plt.set_cmap("gray")
-        plt.imshow(self.hid_wgt, interpolation="none")
-        plt.title("hidden weight before")
-        plt.add_subplot(212)
-
-    def show_after(self):
-        plt.set_cmap("gray")
-        plt.imshow(self.out_wgt, interpolation="none")
-        plt.title("out weight after")
-        plt.add_subplot(111)
-        plt.set_cmap("gray")
-        plt.imshow(self.hid_wgt, interpolation="none")
-        plt.title("hidden weight after")
-        plt.add_subplot(212)
 
     def __str__(self):
         fmt_str = "delta: %s\nin layer: %s\nhidden layer: %s\nout layer: %s\nhidden weights: %s\nout weights: %s\n"

@@ -4,7 +4,7 @@ import random
 
 class BakNet(object):
     def __init__(self):
-        self.delta = 0.01
+        self.delta = 0.05
         self.n_in = 2
         self.n_hid = 3
         self.n_out = 2
@@ -17,8 +17,8 @@ class BakNet(object):
 
     def fire(self):
         curr_input = random.randint(0,self.in_l.shape[0]-1) #current input _index_
-        curr_hidden = np.argmax(self.hid_wgt, axis=0)[curr_input]
-        curr_output_idx = np.argmax(self.out_wgt, axis=0)[curr_hidden]
+        curr_hidden = np.argmax(self.hid_wgt[:,curr_input])
+        curr_output_idx = np.argmax(self.out_wgt[:, curr_hidden])
         curr_output = self.out_l[curr_output_idx]
         if curr_output == curr_input:
             pass
@@ -33,5 +33,6 @@ class BakNet(object):
 if __name__ == "__main__":
     bnet = BakNet()
     print bnet
-    bnet.fire()
+    for i in xrange(100):
+        bnet.fire()
     print bnet

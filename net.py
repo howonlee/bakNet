@@ -3,15 +3,14 @@ import numpy.random as npr
 import random
 
 class BakNet(object):
-    def __init__(self):
-        self.delta = 0.05
-        self.n_in = 2
-        self.n_hid = 3
-        self.n_out = 2
-        self.in_l = np.zeros(self.n_in)
+    def __init__(self, n_in, n_hid, n_out, clamp_input, clamp_output, delta=0.05):
+        self.delta = delta
+        self.n_in = n_in
+        self.n_hid = n_hid
+        self.n_out = n_out
+        self.in_l = clamp_input
         self.hid_l = np.zeros(self.n_hid)
-        self.out_l = np.ones(self.n_out)
-        self.out_l[1] = 0
+        self.out_l = clamp_output
         self.hid_wgt = npr.random((self.n_hid, self.n_in)) #3 rows 2 cols
         self.out_wgt = npr.random((self.n_out, self.n_hid)) #2 rows 3 cols
 
@@ -31,7 +30,9 @@ class BakNet(object):
         return fmt_str % (str(self.delta), str(self.in_l), str(self.hid_l), str(self.out_l), str(self.hid_wgt), str(self.out_wgt))
 
 if __name__ == "__main__":
-    bnet = BakNet()
+    clamp_input = np.array([0,1])
+    clamp_output = np.array([1,0])
+    bnet = BakNet(2, 3, 2, clamp_input, clamp_output)
     print bnet
     for i in xrange(100):
         bnet.fire()

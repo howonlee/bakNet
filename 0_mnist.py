@@ -12,22 +12,20 @@ def munge_pats(dataset):
     data, labels = dataset
     munged = []
     for i in xrange(data.shape[0]):
-        munged.append(i,
-    pass
+        munged.append((data[i], labels[i]))
+    return munged
 
 if __name__ == "__main__":
     f = gzip.open("mnist.pkl.gz", "rb")
     train_set, valid_set, test_set = cPickle.load(f)
     #squish the training set and test set into the pattern formation
     f.close()
-    print train_set[0][4].shape, train_set[1][4].shape
-    """
     train_pats = munge_pats(train_set)
     test_pats = munge_pats(test_set)
     bnet = BakNet(784, 10000, 10, train_pats=train_pats, test_pats=test_pats)
-    for i in xrange(500000):
+    for i in xrange(50000):
         bnet.train()
+        print "i: ", i
     for i in xrange(5000):
         bnet.test()
     bnet.report()
-    """

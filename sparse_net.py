@@ -49,9 +49,9 @@ class BakNet(object):
             for hid_idx, _ in enumerate(self.hid_l):
                 self.hid_l[hid_idx] += self.hid_wgt[hid_idx, in_idx] * in_val
         curr_hid_idx, _ = argmax(self.hid_l)
-        for hid_idx, _ in enumerate(self.hid_l):
-            for out_idx, _ in enumerate(self.out_l):
-                self.out_l[out_idx] += self.out_wgt[out_idx, hid_idx] # times 1, not hid_val
+        ########
+        for out_idx, _ in enumerate(self.out_l):
+            self.out_l[out_idx] += self.out_wgt[out_idx, curr_hid_idx] # times 1, not hid_val
         curr_out_idx, curr_out_val = argmax(self.out_l)
         if self.out_teach[curr_out_idx] == 1:
             pass
@@ -66,9 +66,8 @@ class BakNet(object):
             for hid_idx, _ in enumerate(self.hid_l):
                 self.hid_l[hid_idx] += self.hid_wgt[hid_idx, in_idx] * in_val
         curr_hid_idx, _ = argmax(self.hid_l)
-        for hid_idx, _ in enumerate(self.hid_l):
-            for out_idx, _ in enumerate(self.out_l):
-                self.out_l[out_idx] += self.out_wgt[out_idx, hid_idx] # times 1, not hid_val
+        for out_idx, _ in enumerate(self.out_l):
+            self.out_l[out_idx] += self.out_wgt[out_idx, curr_hid_idx] # times 1, not hid_val
         curr_out_idx, curr_out_val = argmax(self.out_l)
         if self.out_teach[curr_out_idx] == 1:
             self.correct += 1
@@ -85,9 +84,9 @@ class BakNet(object):
 
 if __name__ == "__main__":
     #xor problem
-    pats = [([0,0], 0), ([0,1],1), ([1,0],1), ([1,1],1)]
-    bnet = BakNet(2, 3, 2, pats)
-    for i in xrange(100000):
+    pats = [([0,0], 0), ([0,1],1), ([1,0],1), ([1,1],0)]
+    bnet = BakNet(2, 10, 2, pats)
+    for i in xrange(50000):
         bnet.train()
     bnet.print_net()
     for i in xrange(500):

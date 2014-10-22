@@ -9,6 +9,7 @@ class BakNet(object):
         @param n_in number of input units, not including bias
         @param n_hid number of hidden units
         @param n_out number of possible output _states_
+        This is important! If you have 100 possible output states, n_out will be 100!
         @param pats patterns to store in the net
         """
         self.delta = delta
@@ -43,7 +44,6 @@ class BakNet(object):
     def train(self):
         curr_pat = random.choice(self.pats)
         self.init_pattern(curr_pat)
-        ###########################
         for in_idx in xrange(self.adjusted_nin):
             for hid_idx in xrange(self.n_hid):
                 self.hid_l[hid_idx] += self.hid_wgt[hid_idx, in_idx] * self.in_l[in_idx]

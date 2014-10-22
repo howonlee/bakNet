@@ -4,7 +4,7 @@ import operator
 import random
 
 class BakNet(object):
-    def __init__(self, n_in, n_hid, n_out, train_pats, test_pats=None, delta=0.001):
+    def __init__(self, n_in, n_hid, n_out, train_pats, test_pats=None, delta=0.1):
         """
         @param n_in number of input units, not including bias
         @param n_hid number of hidden units

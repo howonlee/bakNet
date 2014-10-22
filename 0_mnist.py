@@ -17,23 +17,24 @@ def munge_pats(dataset):
     return munged
 
 if __name__ == "__main__":
-    f = gzip.open("mnist.pkl.gz", "rb")
-    train_set, valid_set, test_set = cPickle.load(f)
-    #squish the training set and test set into the pattern formation
-    f.close()
+    """
+    Simple current benchmark as of 10/22/14: 1 layer of 10000 hidden units, 10001 training spikes, 5000 tests, get ~750 right answers in about 50sec - 0.85 error, pretty dismal
+    The theory is that there might be a critical state (a la critical states for ising models) for these problems. the model will stop at such a critical state and hopefully work really well
+    """
+    with gzip.open("mnist.pkl.gz", "rb") as f:
+        train_set, valid_set, test_set = cPickle.load(f)
     train_pats = munge_pats(train_set)
     test_pats = munge_pats(test_set)
-    layers = 10000
+    layers = (50000,50000,50000,50000,50000)
     bnet = BakNet(784, layers, 10, train_pats=train_pats, test_pats=test_pats)
-    num_trains = 100001
+    num_trains = 5000001
     for i in xrange(num_trains):
         bnet.train()
-        if i % 10000 == 0:
+        if i % 1000 == 0:
+            #bnet.delta = bnet.delta / 2
             d = datetime.now()
             print "i: %d / %d : %s" % (i, num_trains, str(d))
     num_tests = 5001
     for j in xrange(num_tests):
         bnet.test()
-        if j % 1000 == 0:
-            print "j: %d / %d" % (j, num_tests)
     bnet.report()

@@ -67,7 +67,7 @@ class BakNet(object):
         max_hid_idxs = []
         if self.isDeep:
             for layer in xrange(1,self.n_hid_layers):
-                self.hid_ls[layer] = np.dot(self.hid_ls[layer-1], self.hid_wgts[layer-1])
+                self.hid_ls[layer] = np.dot(self.hid_wgts[layer-1], self.hid_ls[layer-1])
                 max_hid_idxs.append(np.argmax(self.hid_ls[layer]))
         else:
             max_hid_idxs = [np.argmax(self.hid_ls[0])]
@@ -88,7 +88,7 @@ class BakNet(object):
         max_hid_idxs = []
         if self.isDeep:
             for layer in xrange(1,self.n_hid_layers):
-                self.hid_ls[layer] = np.dot(self.hid_ls[layer-1], self.hid_wgts[layer-1])
+                self.hid_ls[layer] = np.dot(self.hid_wgts[layer-1], self.hid_ls[layer-1])
                 max_hid_idxs.append(np.argmax(self.hid_ls[layer]))
         else:
             max_hid_idxs = [np.argmax(self.hid_ls[0])]

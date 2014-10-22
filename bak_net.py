@@ -61,13 +61,13 @@ class BakNet(object):
         max_hid_idx = np.argmax(self.hid_l)
         for out_idx in xrange(self.n_out):
             self.out_l[out_idx] += self.out_wgt[out_idx, max_hid_idx]
-        #################################################
         max_out_idx = np.argmax(self.out_l)
         if self.out_teach[max_out_idx] == 1:
             pass
         else:
             self.hid_wgt[max_hid_idx, :] -= self.delta
             self.out_wgt[max_out_idx, max_hid_idx] -= self.delta
+        #################################################
 
     def test(self):
         curr_pat = random.choice(self.test_pats)

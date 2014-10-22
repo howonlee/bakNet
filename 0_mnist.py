@@ -22,11 +22,15 @@ if __name__ == "__main__":
     f.close()
     train_pats = munge_pats(train_set)
     test_pats = munge_pats(test_set)
-    bnet = BakNet(784, (1000,1000,1000), 10, train_pats=train_pats, test_pats=test_pats)
-    for i in xrange(50000):
+    bnet = BakNet(784, 10000, 10, train_pats=train_pats, test_pats=test_pats)
+    num_trains = 100001
+    for i in xrange(num_trains):
         bnet.train()
         if i % 1000 == 0:
-            print "i: ", i
-    for i in xrange(5000):
+            print "i: %d / %d" % (i, num_trains)
+    num_tests = 5001
+    for j in xrange(num_tests):
         bnet.test()
+        if j % 1000 == 0:
+            print "j: %d / %d" % (j, num_tests)
     bnet.report()

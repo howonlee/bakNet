@@ -7,7 +7,7 @@ def argmax(ls):
     return max(enumerate(ls), key=operator.itemgetter(1))
 
 class BakNet(object):
-    def __init__(self, n_in, n_hid, n_out, pats, delta=0.1):
+    def __init__(self, n_in, n_hid, n_out, pats, delta=0.001):
         """
         @param n_in number of input units, not including bias
         @param n_hid number of hidden units
@@ -34,6 +34,13 @@ class BakNet(object):
         self.out_l = [0] * self.n_out
         self.out_teach = [0] * self.n_out
         self.out_teach[pat[1]] = 1
+
+    def print_net(self):
+        print "hidden weight: ", self.hid_wgt
+        print "out weight: ", self.out_wgt
+        print "hidden layer: ", self.hid_l
+        print "out layer: ", self.out_l
+        print "==========================================="
 
     def train(self):
         curr_pat = random.choice(self.pats)
@@ -79,9 +86,10 @@ class BakNet(object):
 if __name__ == "__main__":
     #xor problem
     pats = [([0,0], 0), ([0,1],1), ([1,0],1), ([1,1],1)]
-    bnet = BakNet(2, 300, 2, pats)
-    for i in xrange(4000):
+    bnet = BakNet(2, 3, 2, pats)
+    for i in xrange(100000):
         bnet.train()
-    for i in xrange(150):
+    bnet.print_net()
+    for i in xrange(500):
         bnet.test()
     bnet.report()

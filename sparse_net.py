@@ -49,7 +49,6 @@ class BakNet(object):
             for hid_idx, _ in enumerate(self.hid_l):
                 self.hid_l[hid_idx] += self.hid_wgt[hid_idx, in_idx] * in_val
         curr_hid_idx, _ = argmax(self.hid_l)
-        ########
         for out_idx, _ in enumerate(self.out_l):
             self.out_l[out_idx] += self.out_wgt[out_idx, curr_hid_idx] # times 1, not hid_val
         curr_out_idx, curr_out_val = argmax(self.out_l)

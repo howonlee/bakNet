@@ -11,6 +11,8 @@ if __name__ == "__main__":
     train_set, valid_set, test_set = cPickle.load()
     #squish the training set and test set into the pattern formation
     f.close()
+    print train_set
+    """
     train_pats = munge_pats(train_set)
     test_pats = munge_pats(test_set)
     bnet = BakNet(784, 10000, 10, train_pats=train_pats, test_pats=test_pats)
@@ -19,3 +21,4 @@ if __name__ == "__main__":
     for i in xrange(5000):
         bnet.test()
     bnet.report()
+    """

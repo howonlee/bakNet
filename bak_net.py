@@ -17,11 +17,12 @@ class BakNet(object):
         self.delta = delta
         self.n_in = n_in
         self.adjusted_nin = n_in + 1 #bias
-        self.n_hid = n_hid
         if isinstance(n_hid, tuple):
+            self.n_hid = n_hid
             self.isDeep = True
             self.n_hid_layers = len(n_hid)
         else:
+            self.n_hid = [n_hid]
             self.isDeep = False #then only one layer
             self.n_hid_layers = 1
         self.n_out = n_out
@@ -34,9 +35,10 @@ class BakNet(object):
         self.hid_l = None #lazily assigned
         self.out_l = None #lazily assigned
         self.hid_wgts = []
+        ### this is wrong
         for layer in xrange(self.n_hid_layers):
-            self.hid_wgts.append(npr.random((self.n_hid, self.adjusted_nin)))
-        self.out_wgt = npr.random((self.n_out, self.n_hid))
+            self.hid_wgts.append(npr.random((self.n_hid[layer], self.adjusted_nin)))
+        self.out_wgt = npr.random((self.n_out, self.n_hid[-1]))
         self.correct = 0
         self.total = 0
         self.error = 0.0
@@ -65,8 +67,8 @@ class BakNet(object):
         max_hid_idxs = []
         if self.isDeep:
             for layer in xrange(1,self.n_hid_layers):
-                self.hid_ls[layer] = np.dot(self.hid_wgts[layer-1], self.hid_ls[layer-1])
-                max_hid_idxs.append(np.argmax(self.hid_l[layer]))
+                self.hid_ls[layer] = np.dot(self.hid_ls[layer-1], self.hid_wgts[layer-1])
+                max_hid_idxs.append(np.argmax(self.hid_ls[layer]))
         else:
             max_hid_idxs = [np.argmax(self.hid_ls[0])]
         for out_idx in xrange(self.n_out):
@@ -86,8 +88,8 @@ class BakNet(object):
         max_hid_idxs = []
         if self.isDeep:
             for layer in xrange(1,self.n_hid_layers):
-                self.hid_ls[layer] = np.dot(self.hid_wgts[layer-1], self.hid_ls[layer-1])
-                max_hid_idxs.append(np.argmax(self.hid_l[layer]))
+                self.hid_ls[layer] = np.dot(self.hid_ls[layer-1], self.hid_wgts[layer-1])
+                max_hid_idxs.append(np.argmax(self.hid_ls[layer]))
         else:
             max_hid_idxs = [np.argmax(self.hid_ls[0])]
         for out_idx in xrange(self.n_out):
@@ -109,7 +111,7 @@ class BakNet(object):
 if __name__ == "__main__":
     #xor problem
     pats = [(np.array([0,0]), 0), (np.array([0,1]),1), (np.array([1,0]),1), (np.array([1,1]),0)]
-    bnet = BakNet(2, 10, 2, train_pats=pats)
+    bnet = BakNet(2, (10,10), 2, train_pats=pats)
     for i in xrange(50000):
         bnet.train()
     bnet.print_net()

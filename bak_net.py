@@ -33,7 +33,9 @@ class BakNet(object):
         self.in_l = None #lazily assigned
         self.hid_l = None #lazily assigned
         self.out_l = None #lazily assigned
-        self.hid_wgt = npr.random((self.n_hid_layers, self.n_hid, self.adjusted_nin))
+        self.hid_wgts = []
+        for layer in xrange(self.n_hid_layers):
+            self.hid_wgts.append(npr.random((self.n_hid, self.adjusted_nin)))
         self.out_wgt = npr.random((self.n_out, self.n_hid))
         self.correct = 0
         self.total = 0
@@ -41,43 +43,55 @@ class BakNet(object):
 
     def init_pattern(self, pat):
         self.in_l = np.hstack((pat[0], np.array([1]))) #bias
-        self.hid_l = np.zeros(self, n_hid_layers, self.n_hid)
+        self.hid_ls = []
+        for x in xrange(self.n_hid_layers):
+            self.hid_ls.append(np.zeros(self.n_hid))
         self.out_l = np.zeros(self.n_out)
         self.out_teach = np.zeros(self.n_out)
         self.out_teach[pat[1]] = 1
 
     def print_net(self):
-        print "hidden weight: ", self.hid_wgt
+        print "hidden weight: ", self.hid_wgts
         print "out weight: ", self.out_wgt
-        print "hidden layer: ", self.hid_l
+        print "hidden layer: ", self.hid_ls
         print "out layer: ", self.out_l
         print "==========================================="
 
     def train(self):
         curr_pat = random.choice(self.train_pats)
         self.init_pattern(curr_pat)
-        #################################################
-        self.hid_l = np.dot(self.hid_wgt, self.in_l)
-        max_hid_idx = np.argmax(self.hid_l)
+        #input to first hidden. this is the only one needed in shallow net
+        self.hid_ls[0] = np.dot(self.hid_wgts[0], self.in_l)
+        max_hid_idxs = []
+        if self.isDeep:
+            for layer in xrange(1,self.n_hid_layers):
+                self.hid_ls[layer] = np.dot(self.hid_wgts[layer-1], self.hid_ls[layer-1])
+                max_hid_idxs.append(np.argmax(self.hid_l[layer]))
+        else:
+            max_hid_idxs = [np.argmax(self.hid_ls[0])]
         for out_idx in xrange(self.n_out):
-            self.out_l[out_idx] += self.out_wgt[out_idx, max_hid_idx]
+            self.out_l[out_idx] += self.out_wgt[out_idx, max_hid_idxs[-1]]
         max_out_idx = np.argmax(self.out_l)
         if self.out_teach[max_out_idx] == 1:
             pass
         else:
-            self.hid_wgt[max_hid_idx, :] -= self.delta
-            self.out_wgt[max_out_idx, max_hid_idx] -= self.delta
-        #################################################
+            for layer_idx, hid_idx in enumerate(max_hid_idxs):
+                self.hid_wgts[layer_idx][hid_idx, :] -= self.delta
+            self.out_wgt[max_out_idx, max_hid_idxs[-1]] -= self.delta
 
     def test(self):
         curr_pat = random.choice(self.test_pats)
         self.init_pattern(curr_pat)
-        #################################################
-        self.hid_l = np.dot(self.hid_wgt, self.in_l)
-        max_hid_idx = np.argmax(self.hid_l)
+        self.hid_ls[0] = np.dot(self.hid_wgts[0], self.in_l)
+        max_hid_idxs = []
+        if self.isDeep:
+            for layer in xrange(1,self.n_hid_layers):
+                self.hid_ls[layer] = np.dot(self.hid_wgts[layer-1], self.hid_ls[layer-1])
+                max_hid_idxs.append(np.argmax(self.hid_l[layer]))
+        else:
+            max_hid_idxs = [np.argmax(self.hid_ls[0])]
         for out_idx in xrange(self.n_out):
-            self.out_l[out_idx] += self.out_wgt[out_idx, max_hid_idx]
-        #################################################
+            self.out_l[out_idx] += self.out_wgt[out_idx, max_hid_idxs[-1]]
         max_out_idx = np.argmax(self.out_l)
         if self.out_teach[max_out_idx] == 1:
             self.correct += 1

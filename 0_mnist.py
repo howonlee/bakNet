@@ -22,7 +22,7 @@ if __name__ == "__main__":
     f.close()
     train_pats = munge_pats(train_set)
     test_pats = munge_pats(test_set)
-    bnet = BakNet(784, 10000, 10, train_pats=train_pats, test_pats=test_pats)
+    bnet = BakNet(784, 100000, 10, train_pats=train_pats, test_pats=test_pats)
     for i in xrange(50000):
         bnet.train()
         if i % 1000 == 0:

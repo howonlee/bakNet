@@ -8,6 +8,7 @@ class BakNet(object):
         """
         @param n_in number of input units, not including bias
         @param n_hid number of hidden units
+        This can be a tuple in a deep net, a single number for a normal ff mlp
         @param n_out number of possible output _states_
         This is important! If you have 100 possible output states, n_out will be 100!
         @param train_pats patterns to store in the net and use to train it
@@ -17,6 +18,12 @@ class BakNet(object):
         self.n_in = n_in
         self.adjusted_nin = n_in + 1 #bias
         self.n_hid = n_hid
+        if isinstance(n_hid, tuple):
+            self.isDeep = True
+            self.n_hid_layers = len(n_hid)
+        else:
+            self.isDeep = False #then only one layer
+            self.n_hid_layers = 1
         self.n_out = n_out
         self.train_pats = train_pats
         if test_pats == None:
@@ -26,13 +33,14 @@ class BakNet(object):
         self.in_l = None #lazily assigned
         self.hid_l = None #lazily assigned
         self.out_l = None #lazily assigned
-        self.hid_wgt = npr.random((self.n_hid, self.adjusted_nin))
+        self.hid_wgt = npr.random((self.n_hid_layers, self.n_hid, self.adjusted_nin))
         self.out_wgt = npr.random((self.n_out, self.n_hid))
         self.correct = 0
         self.total = 0
         self.error = 0.0
 
     def init_pattern(self, pat):
+        #################################################
         self.in_l = np.hstack((pat[0], np.array([1]))) #bias
         self.hid_l = np.zeros(self.n_hid)
         self.out_l = np.zeros(self.n_out)

@@ -23,9 +23,9 @@ if __name__ == "__main__":
     f.close()
     train_pats = munge_pats(train_set)
     test_pats = munge_pats(test_set)
-    layers = (10000,10000,10000,10000,10000)
+    layers = 10000
     bnet = BakNet(784, layers, 10, train_pats=train_pats, test_pats=test_pats)
-    num_trains = 50000001
+    num_trains = 100001
     for i in xrange(num_trains):
         bnet.train()
         if i % 10000 == 0:

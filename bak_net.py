@@ -19,11 +19,11 @@ class BakNet(object):
         self.adjusted_nin = n_in + 1 #bias
         if isinstance(n_hid, tuple):
             self.n_hid = n_hid
-            self.isDeep = True
+            self.is_deep = True
             self.n_hid_layers = len(n_hid)
         else:
             self.n_hid = [n_hid]
-            self.isDeep = False #then only one layer
+            self.is_deep = False #then only one layer
             self.n_hid_layers = 1
         self.n_out = n_out
         self.train_pats = train_pats
@@ -32,12 +32,13 @@ class BakNet(object):
         else:
             self.test_pats = test_pats
         self.in_l = None #lazily assigned
-        self.hid_l = None #lazily assigned
+        self.hid_ls = None #lazily assigned
         self.out_l = None #lazily assigned
-        self.hid_wgts = []
+        self.hid_wgts = [npr.random((self.n_hid[0], self.adjusted_nin))]
         ### this is wrong
-        for layer in xrange(self.n_hid_layers):
-            self.hid_wgts.append(npr.random((self.n_hid[layer], self.adjusted_nin)))
+        if self.is_deep:
+            for layer in xrange(self.n_hid_layers-1):
+                self.hid_wgts.append(npr.random((self.n_hid[layer], self.n_hid[layer-1])))
         self.out_wgt = npr.random((self.n_out, self.n_hid[-1]))
         self.correct = 0
         self.total = 0
@@ -65,9 +66,9 @@ class BakNet(object):
         #input to first hidden. this is the only one needed in shallow net
         self.hid_ls[0] = np.dot(self.hid_wgts[0], self.in_l)
         max_hid_idxs = []
-        if self.isDeep:
+        if self.is_deep:
             for layer in xrange(1,self.n_hid_layers):
-                self.hid_ls[layer] = np.dot(self.hid_wgts[layer-1], self.hid_ls[layer-1])
+                self.hid_ls[layer] = np.dot(self.hid_wgts[layer], self.hid_ls[layer-1])
                 max_hid_idxs.append(np.argmax(self.hid_ls[layer]))
         else:
             max_hid_idxs = [np.argmax(self.hid_ls[0])]
@@ -86,9 +87,9 @@ class BakNet(object):
         self.init_pattern(curr_pat)
         self.hid_ls[0] = np.dot(self.hid_wgts[0], self.in_l)
         max_hid_idxs = []
-        if self.isDeep:
+        if self.is_deep:
             for layer in xrange(1,self.n_hid_layers):
-                self.hid_ls[layer] = np.dot(self.hid_wgts[layer-1], self.hid_ls[layer-1])
+                self.hid_ls[layer] = np.dot(self.hid_wgts[layer], self.hid_ls[layer-1])
                 max_hid_idxs.append(np.argmax(self.hid_ls[layer]))
         else:
             max_hid_idxs = [np.argmax(self.hid_ls[0])]

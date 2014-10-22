@@ -3,9 +3,6 @@ import numpy.random as npr
 import operator
 import random
 
-def argmax(ls):
-    return max(enumerate(ls), key=operator.itemgetter(1))
-
 class BakNet(object):
     def __init__(self, n_in, n_hid, n_out, pats, delta=0.001):
         """
@@ -16,20 +13,21 @@ class BakNet(object):
         """
         self.delta = delta
         self.n_in = n_in
+        self.adjusted_nin = n_in + 1 #bias
         self.n_hid = n_hid
         self.n_out = n_out
         self.pats = pats
         self.in_l = None #lazily assigned
         self.hid_l = None #lazily assigned
         self.out_l = None #lazily assigned
-        self.hid_wgt = npr.random((self.n_hid, self.n_in+1)) #bias
+        self.hid_wgt = npr.random((self.n_hid, self.adjusted_nin))
         self.out_wgt = npr.random((self.n_out, self.n_hid))
         self.correct = 0
         self.total = 0
         self.error = 0.0
 
     def init_pattern(self, pat):
-        self.in_l = np.hstack((pat[0], np.array([1])))
+        self.in_l = np.hstack((pat[0], np.array([1]))) #bias
         self.hid_l = np.zeros(self.n_hid)
         self.out_l = np.zeros(self.n_out)
         self.out_teach = np.zeros(self.n_out)
@@ -46,30 +44,30 @@ class BakNet(object):
         curr_pat = random.choice(self.pats)
         self.init_pattern(curr_pat)
         ###########################
-        for in_idx, in_val in enumerate(self.in_l):
-            for hid_idx, _ in enumerate(self.hid_l):
-                self.hid_l[hid_idx] += self.hid_wgt[hid_idx, in_idx] * in_val
-        curr_hid_idx, _ = argmax(self.hid_l)
-        for out_idx, _ in enumerate(self.out_l):
-            self.out_l[out_idx] += self.out_wgt[out_idx, curr_hid_idx] # times 1, not hid_val
-        curr_out_idx, curr_out_val = argmax(self.out_l)
-        if self.out_teach[curr_out_idx] == 1:
+        for in_idx in xrange(self.adjusted_nin):
+            for hid_idx in xrange(self.n_hid):
+                self.hid_l[hid_idx] += self.hid_wgt[hid_idx, in_idx] * self.in_l[in_idx]
+        max_hid_idx = np.argmax(self.hid_l)
+        for out_idx in xrange(self.n_out):
+            self.out_l[out_idx] += self.out_wgt[out_idx, max_hid_idx]
+        max_out_idx = np.argmax(self.out_l)
+        if self.out_teach[max_out_idx] == 1:
             pass
         else:
-            self.hid_wgt[curr_hid_idx, :] -= self.delta
-            self.out_wgt[curr_out_idx, curr_hid_idx] -= self.delta
+            self.hid_wgt[max_hid_idx, :] -= self.delta
+            self.out_wgt[max_out_idx, max_hid_idx] -= self.delta
 
     def test(self):
         curr_pat = random.choice(self.pats)
         self.init_pattern(curr_pat)
-        for in_idx, in_val in enumerate(self.in_l):
-            for hid_idx, _ in enumerate(self.hid_l):
-                self.hid_l[hid_idx] += self.hid_wgt[hid_idx, in_idx] * in_val
-        curr_hid_idx, _ = argmax(self.hid_l)
-        for out_idx, _ in enumerate(self.out_l):
-            self.out_l[out_idx] += self.out_wgt[out_idx, curr_hid_idx] # times 1, not hid_val
-        curr_out_idx, curr_out_val = argmax(self.out_l)
-        if self.out_teach[curr_out_idx] == 1:
+        for in_idx in xrange(self.adjusted_nin):
+            for hid_idx in xrange(self.n_hid):
+                self.hid_l[hid_idx] += self.hid_wgt[hid_idx, in_idx] * self.in_l[in_idx]
+        max_hid_idx = np.argmax(self.hid_l)
+        for out_idx in xrange(self.n_out):
+            self.out_l[out_idx] += self.out_wgt[out_idx, max_hid_idx]
+        max_out_idx = np.argmax(self.out_l)
+        if self.out_teach[max_out_idx] == 1:
             self.correct += 1
         self.total += 1
 

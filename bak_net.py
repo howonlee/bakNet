@@ -29,10 +29,10 @@ class BakNet(object):
         self.error = 0.0
 
     def init_pattern(self, pat):
-        self.in_l = pat[0] + [1]
-        self.hid_l = [0] * self.n_hid
-        self.out_l = [0] * self.n_out
-        self.out_teach = [0] * self.n_out
+        self.in_l = np.hstack((pat[0], np.array([1])))
+        self.hid_l = np.zeros(self.n_hid)
+        self.out_l = np.zeros(self.n_out)
+        self.out_teach = np.zeros(self.n_out)
         self.out_teach[pat[1]] = 1
 
     def print_net(self):
@@ -45,6 +45,7 @@ class BakNet(object):
     def train(self):
         curr_pat = random.choice(self.pats)
         self.init_pattern(curr_pat)
+        ###########################
         for in_idx, in_val in enumerate(self.in_l):
             for hid_idx, _ in enumerate(self.hid_l):
                 self.hid_l[hid_idx] += self.hid_wgt[hid_idx, in_idx] * in_val
@@ -83,7 +84,7 @@ class BakNet(object):
 
 if __name__ == "__main__":
     #xor problem
-    pats = [([0,0], 0), ([0,1],1), ([1,0],1), ([1,1],0)]
+    pats = [(np.array([0,0]), 0), (np.array([0,1]),1), (np.array([1,0]),1), (np.array([1,1]),0)]
     bnet = BakNet(2, 10, 2, pats)
     for i in xrange(50000):
         bnet.train()

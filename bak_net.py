@@ -49,11 +49,7 @@ class BakNet(object):
     def train(self):
         curr_pat = random.choice(self.train_pats)
         self.init_pattern(curr_pat)
-        ### this is the inner loop!
-        ### it's really a dot product, we should make it so
-        for in_idx in xrange(self.adjusted_nin):
-            for hid_idx in xrange(self.n_hid):
-                self.hid_l[hid_idx] += self.hid_wgt[hid_idx, in_idx] * self.in_l[in_idx]
+        self.hid_l = np.dot(self.hid_wgt, self.in_l)
         max_hid_idx = np.argmax(self.hid_l)
         for out_idx in xrange(self.n_out):
             self.out_l[out_idx] += self.out_wgt[out_idx, max_hid_idx]
@@ -67,9 +63,7 @@ class BakNet(object):
     def test(self):
         curr_pat = random.choice(self.test_pats)
         self.init_pattern(curr_pat)
-        for in_idx in xrange(self.adjusted_nin):
-            for hid_idx in xrange(self.n_hid):
-                self.hid_l[hid_idx] += self.hid_wgt[hid_idx, in_idx] * self.in_l[in_idx]
+        self.hid_l = np.dot(self.hid_wgt, self.in_l)
         max_hid_idx = np.argmax(self.hid_l)
         for out_idx in xrange(self.n_out):
             self.out_l[out_idx] += self.out_wgt[out_idx, max_hid_idx]

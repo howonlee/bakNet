@@ -8,7 +8,7 @@ class BakNet(object):
         """
         @param n_in number of input units, not including bias
         @param n_hid number of hidden units
-        This can be a tuple in a deep net, a single number for a normal ff mlp
+        This can be a tuple in a deep net, a single number for a normal ff bak net
         @param n_out number of possible output _states_
         This is important! If you have 100 possible output states, n_out will be 100!
         @param train_pats patterns to store in the net and use to train it
@@ -40,9 +40,8 @@ class BakNet(object):
         self.error = 0.0
 
     def init_pattern(self, pat):
-        #################################################
         self.in_l = np.hstack((pat[0], np.array([1]))) #bias
-        self.hid_l = np.zeros(self.n_hid)
+        self.hid_l = np.zeros(self, n_hid_layers, self.n_hid)
         self.out_l = np.zeros(self.n_out)
         self.out_teach = np.zeros(self.n_out)
         self.out_teach[pat[1]] = 1
@@ -57,10 +56,12 @@ class BakNet(object):
     def train(self):
         curr_pat = random.choice(self.train_pats)
         self.init_pattern(curr_pat)
+        #################################################
         self.hid_l = np.dot(self.hid_wgt, self.in_l)
         max_hid_idx = np.argmax(self.hid_l)
         for out_idx in xrange(self.n_out):
             self.out_l[out_idx] += self.out_wgt[out_idx, max_hid_idx]
+        #################################################
         max_out_idx = np.argmax(self.out_l)
         if self.out_teach[max_out_idx] == 1:
             pass
@@ -71,10 +72,12 @@ class BakNet(object):
     def test(self):
         curr_pat = random.choice(self.test_pats)
         self.init_pattern(curr_pat)
+        #################################################
         self.hid_l = np.dot(self.hid_wgt, self.in_l)
         max_hid_idx = np.argmax(self.hid_l)
         for out_idx in xrange(self.n_out):
             self.out_l[out_idx] += self.out_wgt[out_idx, max_hid_idx]
+        #################################################
         max_out_idx = np.argmax(self.out_l)
         if self.out_teach[max_out_idx] == 1:
             self.correct += 1

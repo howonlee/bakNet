@@ -49,6 +49,8 @@ class BakNet(object):
     def train(self):
         curr_pat = random.choice(self.train_pats)
         self.init_pattern(curr_pat)
+        ### this is the inner loop!
+        ### it's really a dot product, we should make it so
         for in_idx in xrange(self.adjusted_nin):
             for hid_idx in xrange(self.n_hid):
                 self.hid_l[hid_idx] += self.hid_wgt[hid_idx, in_idx] * self.in_l[in_idx]

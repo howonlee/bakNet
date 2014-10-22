@@ -25,7 +25,8 @@ if __name__ == "__main__":
     bnet = BakNet(784, 10000, 10, train_pats=train_pats, test_pats=test_pats)
     for i in xrange(50000):
         bnet.train()
-        print "i: ", i
+        if i % 1000 == 0:
+            print "i: ", i
     for i in xrange(5000):
         bnet.test()
     bnet.report()

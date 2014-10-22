@@ -39,13 +39,12 @@ class BakNet(object):
         curr_pat = random.choice(self.pats)
         self.init_pattern(curr_pat)
         for in_idx, in_val in enumerate(self.in_l):
-            #this includes the bias
             for hid_idx, _ in enumerate(self.hid_l):
-                self.hid_l += self.hid_wgt[hid_idx, in_idx] * in_val
+                self.hid_l[hid_idx] += self.hid_wgt[hid_idx, in_idx] * in_val
         curr_hid_idx, _ = argmax(self.hid_l)
         for hid_idx, _ in enumerate(self.hid_l):
             for out_idx, _ in enumerate(self.out_l):
-                self.out_l += self.out_wgt[out_idx, hid_idx] # times 1, not hid_val
+                self.out_l[out_idx] += self.out_wgt[out_idx, hid_idx] # times 1, not hid_val
         curr_out_idx, curr_out_val = argmax(self.out_l)
         if self.out_teach[curr_out_idx] == 1:
             pass
@@ -57,13 +56,12 @@ class BakNet(object):
         curr_pat = random.choice(self.pats)
         self.init_pattern(curr_pat)
         for in_idx, in_val in enumerate(self.in_l):
-            #this includes the bias
             for hid_idx, _ in enumerate(self.hid_l):
-                self.hid_l += self.hid_wgt[hid_idx, in_idx] * in_val
+                self.hid_l[hid_idx] += self.hid_wgt[hid_idx, in_idx] * in_val
         curr_hid_idx, _ = argmax(self.hid_l)
         for hid_idx, _ in enumerate(self.hid_l):
             for out_idx, _ in enumerate(self.out_l):
-                self.out_l += self.out_wgt[out_idx, hid_idx] # times 1, not hid_val
+                self.out_l[out_idx] += self.out_wgt[out_idx, hid_idx] # times 1, not hid_val
         curr_out_idx, curr_out_val = argmax(self.out_l)
         if self.out_teach[curr_out_idx] == 1:
             self.correct += 1
@@ -75,16 +73,15 @@ class BakNet(object):
         """
         print "correct is: ", self.correct
         print "total is: ", self.total
-        self.error = float(self.correct) / float(self.total)
+        self.error = 1 - float(self.correct) / float(self.total)
         print "error is: ", self.error
 
 if __name__ == "__main__":
     #xor problem
     pats = [([0,0], 0), ([0,1],1), ([1,0],1), ([1,1],1)]
-    bnet = BakNet(2, 30, 2, pats)
-    for i in xrange(10000):
+    bnet = BakNet(2, 300, 2, pats)
+    for i in xrange(4000):
         bnet.train()
-        #print bnet, "\n"
-    for i in xrange(1000):
+    for i in xrange(150):
         bnet.test()
     bnet.report()

@@ -4,20 +4,25 @@ import operator
 import random
 
 class BakNet(object):
-    def __init__(self, n_in, n_hid, n_out, pats, delta=0.001):
+    def __init__(self, n_in, n_hid, n_out, train_pats, test_pats=None, delta=0.001):
         """
         @param n_in number of input units, not including bias
         @param n_hid number of hidden units
         @param n_out number of possible output _states_
         This is important! If you have 100 possible output states, n_out will be 100!
-        @param pats patterns to store in the net
+        @param train_pats patterns to store in the net and use to train it
+        @param test_pats patterns to store in the net and use to test it. if null, test_pats == train_pats. you know why this is bad, right?
         """
         self.delta = delta
         self.n_in = n_in
         self.adjusted_nin = n_in + 1 #bias
         self.n_hid = n_hid
         self.n_out = n_out
-        self.pats = pats
+        self.train_pats = train_pats
+        if test_pats == None:
+            self.test_pats = train_pats
+        else:
+            self.test_pats = test_pats
         self.in_l = None #lazily assigned
         self.hid_l = None #lazily assigned
         self.out_l = None #lazily assigned
@@ -42,7 +47,7 @@ class BakNet(object):
         print "==========================================="
 
     def train(self):
-        curr_pat = random.choice(self.pats)
+        curr_pat = random.choice(self.train_pats)
         self.init_pattern(curr_pat)
         for in_idx in xrange(self.adjusted_nin):
             for hid_idx in xrange(self.n_hid):
@@ -58,7 +63,7 @@ class BakNet(object):
             self.out_wgt[max_out_idx, max_hid_idx] -= self.delta
 
     def test(self):
-        curr_pat = random.choice(self.pats)
+        curr_pat = random.choice(self.test_pats)
         self.init_pattern(curr_pat)
         for in_idx in xrange(self.adjusted_nin):
             for hid_idx in xrange(self.n_hid):
@@ -83,7 +88,7 @@ class BakNet(object):
 if __name__ == "__main__":
     #xor problem
     pats = [(np.array([0,0]), 0), (np.array([0,1]),1), (np.array([1,0]),1), (np.array([1,1]),0)]
-    bnet = BakNet(2, 10, 2, pats)
+    bnet = BakNet(2, 10, 2, train_pats=pats)
     for i in xrange(50000):
         bnet.train()
     bnet.print_net()

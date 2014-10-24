@@ -3,3 +3,5 @@ Autoencoder, stack em, denoising. BC paper already says that it does well at den
 Theano
 
 Try working the parity problem in higher order, see what happens
+
+The learning rate is of principle importance, there should be some annealing schedule that works for this...

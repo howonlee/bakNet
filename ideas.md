@@ -1,4 +1,4 @@
-Autoencoder, stack em, denoising. BC paper already says that it does well at denoising, and then works through a specific example instead of giving statistics
+DEEP NETS DO NOTHING
 
 Theano
 

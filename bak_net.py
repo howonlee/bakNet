@@ -62,10 +62,17 @@ class BakNet(object):
         self.out_teach[pat[1]] = 1
 
     def print_net(self):
-        print "hidden weight: ", self.hid_wgts
-        print "out weight: ", self.out_wgt
-        print "hidden layer: ", self.hid_ls
-        print "out layer: ", self.out_l
+        """
+        Prints network
+        """
+        if self.n_hid < 50:
+            print "hidden weight: ", self.hid_wgts
+            print "out weight: ", self.out_wgt
+            print "hidden layer: ", self.hid_ls
+        if self.n_out < 50:
+            print "out layer: ", self.out_l
+        if self.n_hid >= 50 and self.n_out >= 50:
+            print "net is too big to print"
         print "==========================================="
 
     def train(self):

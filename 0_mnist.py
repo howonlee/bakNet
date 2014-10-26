@@ -27,13 +27,8 @@ if __name__ == "__main__":
     test_pats = munge_pats(test_set)
     layers = 10000
     bnet = BakNet(784, layers, 10, train_pats=train_pats, test_pats=test_pats)
-    num_trains = 50001
-    for i in xrange(num_trains):
-        bnet.train()
-        if i % 1000 == 0:
-            d = datetime.now()
-            print "i: %d / %d : %s" % (i, num_trains, str(d))
-    num_tests = 501
+    bnet.train_until()
+    num_tests = 500
     for j in xrange(num_tests):
         bnet.test()
     bnet.report()

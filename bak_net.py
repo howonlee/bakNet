@@ -3,6 +3,7 @@ import numpy.random as npr
 import operator
 import itertools
 import random
+import datetime
 import sys
 
 class BakNet(object):
@@ -18,7 +19,7 @@ class BakNet(object):
         @param test_pats patterns to store in the net and use to test it. if null, test_pats == train_pats. you know why this is bad, right?
         """
         if delta is None:
-            self.delta = lambda: npr.random() * 0.01
+            self.delta = lambda: 0.001
             #some sort of annealing procedure
         else:
             self.delta = delta
@@ -106,6 +107,28 @@ class BakNet(object):
             self.correct += 1
         self.total += 1
 
+    def train_until(self, train_steps=2000, test_steps=500):
+        """
+        Trains until correct on the test set for 100 iters
+        """
+        still_training = True
+        i = 0
+        while still_training:
+            for st in xrange(train_steps):
+               self.train()
+            for st in xrange(test_steps):
+               self.test()
+            if self.correct == self.total:
+                still_training = False
+                self.correct = 0
+                self.total = 0
+            else:
+                i += 1
+                print "i: %d, time: %s" % (i, str(datetime.datetime.now()))
+                self.report()
+                self.correct = 0
+                self.total = 0
+
     def report(self):
         """
         Eventually we will add cross-validation and stuff like that
@@ -121,8 +144,7 @@ def xor_problem():
     """
     pats = [(np.array([0,0]), 0), (np.array([0,1]),1), (np.array([1,0]),1), (np.array([1,1]),0)]
     bnet = BakNet(2, (10,10), 2, train_pats=pats)
-    for i in xrange(50000):
-        bnet.train()
+    bnet.train_until(train_steps=1000)
     bnet.print_net()
     for i in xrange(500):
         bnet.test()
@@ -134,9 +156,8 @@ def parity_problem(bits=2):
     """
     bits_ls = [map(int, seq) for seq in itertools.product("01", repeat=bits)]
     pats = map(lambda x: (np.array(x), sum(x) % 2), bits_ls)
-    bnet = BakNet(bits, (100,100,100,100), 2 ** (bits-1), train_pats=pats)
-    for i in xrange(50000):
-        bnet.train()
+    bnet = BakNet(bits, 3000, 2, train_pats=pats)
+    bnet.train_until(train_steps=10000)
     bnet.print_net()
     for i in xrange(500):
         bnet.test()
@@ -146,6 +167,6 @@ def parity_problem(bits=2):
 if __name__ == "__main__":
     if len(sys.argv) > 1:
         if sys.argv[1] == "parity":
-            parity_problem(bits=7)
+            parity_problem(bits=10)
     else:
         xor_problem()

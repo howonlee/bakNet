@@ -107,7 +107,7 @@ class BakNet(object):
             self.correct += 1
         self.total += 1
 
-    def train_until(self, train_steps=2000, test_steps=500, stop=0.02):
+    def train_until(self, train_steps=10000, test_steps=500, stop=0.02):
         """
         Trains until correct on the test set for 100 iters
         """
@@ -157,8 +157,8 @@ def parity_problem(bits=2):
     """
     bits_ls = [map(int, seq) for seq in itertools.product("01", repeat=bits)]
     pats = map(lambda x: (np.array(x), sum(x) % 2), bits_ls)
-    bnet = BakNet(bits, 3000, 2, train_pats=pats)
-    bnet.train_until(train_steps=10000)
+    bnet = BakNet(bits, (200,200), 2, train_pats=pats)
+    bnet.train_until()
     bnet.print_net()
     for i in xrange(500):
         bnet.test()
@@ -170,4 +170,10 @@ if __name__ == "__main__":
         if sys.argv[1] == "xor":
             xor_problem()
     else:
-        parity_problem(bits=15)
+        for x in xrange(2,10):
+            print "WE PARITYING OVER HERE ALL THE TIME"
+            print "WITH BITS = ", x
+            print "================="
+            print "================="
+            print "================="
+            parity_problem(bits=x)

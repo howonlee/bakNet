@@ -107,7 +107,7 @@ class BakNet(object):
             self.correct += 1
         self.total += 1
 
-    def train_until(self, train_steps=2000, test_steps=500):
+    def train_until(self, train_steps=2000, test_steps=500, stop=0.02):
         """
         Trains until correct on the test set for 100 iters
         """
@@ -118,7 +118,8 @@ class BakNet(object):
                self.train()
             for st in xrange(test_steps):
                self.test()
-            if self.correct == self.total:
+            self.error = 1 - float(self.correct) / float(self.total)
+            if self.error < stop:
                 still_training = False
                 self.correct = 0
                 self.total = 0
@@ -166,7 +167,7 @@ def parity_problem(bits=2):
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
-        if sys.argv[1] == "parity":
-            parity_problem(bits=10)
+        if sys.argv[1] == "xor":
+            xor_problem()
     else:
-        xor_problem()
+        parity_problem(bits=15)

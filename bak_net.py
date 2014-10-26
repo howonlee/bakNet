@@ -1,11 +1,14 @@
 import numpy as np
 import numpy.random as npr
 import operator
+import itertools
 import random
+import sys
 
 class BakNet(object):
-    def __init__(self, n_in, n_hid, n_out, train_pats, test_pats=None, delta=0.00001):
+    def __init__(self, n_in, n_hid, n_out, train_pats, test_pats=None, delta=None):
         """
+        @param delta a _function_ that acts as delta
         @param n_in number of input units, not including bias
         @param n_hid number of hidden units
         This can be a tuple in a deep net, a single number for a normal ff bak net
@@ -14,7 +17,11 @@ class BakNet(object):
         @param train_pats patterns to store in the net and use to train it
         @param test_pats patterns to store in the net and use to test it. if null, test_pats == train_pats. you know why this is bad, right?
         """
-        self.delta = delta
+        if delta is None:
+            self.delta = lambda: npr.random() * 0.01
+            #some sort of annealing procedure
+        else:
+            self.delta = delta
         self.n_in = n_in
         self.adjusted_nin = n_in + 1 #bias
         if isinstance(n_hid, tuple):
@@ -76,9 +83,10 @@ class BakNet(object):
         if self.out_teach[max_out_idx] == 1:
             pass
         else:
+            curr_delta = self.delta()
             for layer_idx, hid_idx in enumerate(max_hid_idxs):
-                self.hid_wgts[layer_idx][hid_idx, :] -= self.delta
-            self.out_wgt[max_out_idx, max_hid_idxs[-1]] -= self.delta
+                self.hid_wgts[layer_idx][hid_idx, :] -= curr_delta
+            self.out_wgt[max_out_idx, max_hid_idxs[-1]] -= curr_delta
 
     def test(self):
         curr_pat = random.choice(self.test_pats)
@@ -107,8 +115,10 @@ class BakNet(object):
         self.error = 1 - float(self.correct) / float(self.total)
         print "error is: ", self.error
 
-if __name__ == "__main__":
-    #xor problem
+def xor_problem():
+    """
+    xor problem, 10 by 10 deepish net. just as fast, as promised.
+    """
     pats = [(np.array([0,0]), 0), (np.array([0,1]),1), (np.array([1,0]),1), (np.array([1,1]),0)]
     bnet = BakNet(2, (10,10), 2, train_pats=pats)
     for i in xrange(50000):
@@ -117,3 +127,25 @@ if __name__ == "__main__":
     for i in xrange(500):
         bnet.test()
     bnet.report()
+
+def parity_problem(bits=2):
+    """
+    parity bit problem
+    """
+    bits_ls = [map(int, seq) for seq in itertools.product("01", repeat=bits)]
+    pats = map(lambda x: (np.array(x), sum(x) % 2), bits_ls)
+    bnet = BakNet(bits, (100,100,100,100), 2 ** (bits-1), train_pats=pats)
+    for i in xrange(50000):
+        bnet.train()
+    bnet.print_net()
+    for i in xrange(500):
+        bnet.test()
+    bnet.report()
+
+
+if __name__ == "__main__":
+    if len(sys.argv) > 1:
+        if sys.argv[1] == "parity":
+            parity_problem(bits=7)
+    else:
+        xor_problem()

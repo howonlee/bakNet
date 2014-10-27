@@ -28,7 +28,7 @@ if __name__ == "__main__":
     test_pats = munge_pats(test_set)
     layers = 10000
     bnet = BakNet(784, layers, 10, train_pats=train_pats, test_pats=test_pats, denoising=True)
-    bnet.train_until()
+    bnet.train_until(train_steps=2000,test_steps=100)
     num_tests = 500
     for j in xrange(num_tests):
         bnet.test()

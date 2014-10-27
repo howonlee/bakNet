@@ -90,7 +90,9 @@ class BakNet(object):
         max_hid_idxs = [np.argmax(self.hid_ls[0])]
         if self.is_deep:
             for layer in xrange(1, self.n_hid_layers):
-                max_hid_idxs.append(np.argmax(self.hid_wgts[layer][:, max_hid_idxs[layer-1]]))
+                self.hid_ls[layer] = np.dot(self.hid_wgts[layer], self.hid_ls[layer-1])
+                max_hid_idxs.append(np.argmax(self.hid_ls[layer]))
+                #max_hid_idxs.append(np.argmax(self.hid_wgts[layer][:, max_hid_idxs[layer-1]]))
         max_out_idx = np.argmax(self.out_wgt[:,max_hid_idxs[-1]])
         #print curr_pat[1], max_out_idx
         if self.out_teach[max_out_idx] == 1:
@@ -116,7 +118,8 @@ class BakNet(object):
         max_hid_idxs = [np.argmax(self.hid_ls[0])]
         if self.is_deep:
             for layer in xrange(1, self.n_hid_layers):
-                max_hid_idxs.append(np.argmax(self.hid_wgts[layer][:, max_hid_idxs[layer-1]]))
+                self.hid_ls[layer] = np.dot(self.hid_wgts[layer], self.hid_ls[layer-1])
+                max_hid_idxs.append(np.argmax(self.hid_ls[layer]))
         max_out_idx = np.argmax(self.out_wgt[:,max_hid_idxs[-1]])
         #print curr_pat[1], max_out_idx
         if self.out_teach[max_out_idx] == 1:
@@ -138,13 +141,12 @@ class BakNet(object):
         i = 0
         while still_training:
             for st in xrange(train_steps):
-               self.train()
+                self.train()
             for st in xrange(test_steps):
-               self.test()
+                self.test()
             error = 1 - float(self.test_correct) / float(self.test_total)
             if error < stop:
                 still_training = False
-                self.reset_totals()
             else:
                 i += 1
                 print "i: %d, time: %s" % (i, str(datetime.datetime.now()))
@@ -183,7 +185,7 @@ def parity_problem(bits=2, report=True):
     """
     bits_ls = [map(int, seq) for seq in itertools.product("01", repeat=bits)]
     pats = collections.deque(map(lambda x: (np.array(x), sum(x) % 2), bits_ls))
-    bnet = BakNet(bits, (3000,3000), 2, train_pats=pats)
+    bnet = BakNet(bits, 3000, 2, train_pats=pats)
     bnet.train_until()
     for i in xrange(500):
         bnet.test()
@@ -197,5 +199,5 @@ if __name__ == "__main__":
         if sys.argv[1] == "xor":
             xor_problem()
     else:
-        for x in xrange(9,10):
+        for x in xrange(2,6):
             parity_problem(bits=x)

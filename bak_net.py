@@ -7,9 +7,9 @@ import datetime
 import sys
 
 class BakNet(object):
-    def __init__(self, n_in, n_hid, n_out, train_pats, test_pats=None, delta=None):
+    def __init__(self, n_in, n_hid, n_out, train_pats, test_pats=None, delta=0.01):
         """
-        @param delta a _function_ that acts as delta
+        @param delta
         @param n_in number of input units, not including bias
         @param n_hid number of hidden units
         This can be a tuple in a deep net, a single number for a normal ff bak net
@@ -18,11 +18,8 @@ class BakNet(object):
         @param train_pats patterns to store in the net and use to train it
         @param test_pats patterns to store in the net and use to test it. if null, test_pats == train_pats. you know why this is bad, right?
         """
-        if delta is None:
-            self.delta = lambda: 0.001
-            #some sort of annealing procedure
-        else:
-            self.delta = delta
+        self.delta = delta
+        self.revtabu_delta = delta / 100 #delta for reversed tabu people
         self.n_in = n_in
         self.adjusted_nin = n_in + 1 #bias
         if not isinstance(n_hid, tuple):
@@ -44,6 +41,12 @@ class BakNet(object):
             for layer in xrange(self.n_hid_layers-1): #is the semantics correct here?
                 self.hid_wgts.append(npr.random((self.n_hid[layer], self.n_hid[layer-1])))
         self.out_wgt = npr.random((self.n_out, self.n_hid[-1]))
+        """
+        Reverse Tabu
+        The neurons which have given a valid value should be penalized less
+        This is like a reverse version of tabu search, therefore the name
+        """
+        self.rev_tabu = {}
         self.correct = 0
         self.total = 0
         self.error = 0.0
@@ -76,12 +79,16 @@ class BakNet(object):
         self.hid_ls[0] = np.dot(self.hid_wgts[0], self.in_l)
         max_hid_idxs = [np.argmax(self.hid_ls[0])]
         if self.is_deep:
-            max_hid_idxs += [np.argmax(self.hid_wgts[layer][:, max_hid_idxs[layer-1]]) for layer in xrange(1,self.n_hid_layers)]
+            for layer in xrange(1, self.n_hid_layers):
+                max_hid_idxs.append(np.argmax(self.hid_wgts[layer][:, max_hid_idxs[layer-1]]))
         max_out_idx = np.argmax(self.out_wgt[:,max_hid_idxs[-1]])
         if self.out_teach[max_out_idx] == 1:
             pass
         else:
-            curr_delta = self.delta()
+            if (max_out_idx, max_hid_idxs[-1]) in self.rev_tabu:
+                curr_delta = self.revtabu_delta
+            else:
+                curr_delta = self.delta
             self.hid_wgts[0][max_hid_idxs[0], :] -= curr_delta
             if self.is_deep:
                 for layer_idx in xrange(1, self.n_hid_layers):
@@ -94,10 +101,12 @@ class BakNet(object):
         self.hid_ls[0] = np.dot(self.hid_wgts[0], self.in_l)
         max_hid_idxs = [np.argmax(self.hid_ls[0])]
         if self.is_deep:
-            max_hid_idxs += [np.argmax(self.hid_wgts[layer][:, max_hid_idxs[layer-1]]) for layer in xrange(1,self.n_hid_layers)]
+            for layer in xrange(1, self.n_hid_layers):
+                max_hid_idxs.append(np.argmax(self.hid_wgts[layer][:, max_hid_idxs[layer-1]]))
         max_out_idx = np.argmax(self.out_wgt[:,max_hid_idxs[-1]])
         corr_out_idx = np.argmax(self.out_teach)
         if self.out_teach[max_out_idx] == 1:
+            self.rev_tabu[(max_out_idx, max_hid_idxs[-1])] = True
             self.correct += 1
         self.total += 1
 

@@ -17,20 +17,24 @@ class RandomNet(object):
         self.in_idxs = [x for x in xrange(784)]
         self.out_idxs = [random.randint(785,2**self.exponent)]
         self.nodes = npr.random(2**self.exponent)
-        print self.nodes
-
-
-        #pick a random set of 784 nodes with indegree 0, outdegree 1 to be in nodes
-        #pick a random set of 1 node with indegree the most, outdegree 0 to be out node
-        #if you fail, generate again
-
+        self.tst_correct = 0
+        self.tst_total = 0
         #there should be a convolution option and a non-convolution option
-        #weights are random
-        #there should be no training
 
     def test(self):
-        #feed forward, mon ami
+        """
+        Feedforward
+        """
         pass
+        self.report()
+
+def xor_problem():
+    """
+    xor problem, 10 by 10 deepish net. just as fast, as promised.
+    """
+    pats = [(np.array([0,0]), 0), (np.array([0,1]),1), (np.array([1,0]),1), (np.array([1,1]),0)]
+    net = RandomNet(train_pats=pats)
+    net.test(steps=500)
 
 if __name__ == "__main__":
     net = RandomNet()

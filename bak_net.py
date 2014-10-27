@@ -3,11 +3,12 @@ import numpy.random as npr
 import operator
 import itertools
 import random
+import collections
 import datetime
 import sys
 
 class BakNet(object):
-    def __init__(self, n_in, n_hid, n_out, train_pats, test_pats=None, delta=0.01, denoising=False):
+    def __init__(self, n_in, n_hid, n_out, train_pats, test_pats=None, delta=0.1, denoising=False):
         """
         @param n_in number of input units, not including bias
         @param n_hid number of hidden units
@@ -31,10 +32,12 @@ class BakNet(object):
         self.is_deep = self.n_hid_layers > 1
         self.n_out = n_out
         self.train_pats = train_pats
+        random.shuffle(self.train_pats)
         if test_pats == None:
             self.test_pats = train_pats
         else:
             self.test_pats = test_pats
+        random.shuffle(self.test_pats)
         self.in_l = None #lazily assigned
         self.hid_ls = None #lazily assigned
         self.out_l = None #lazily assigned
@@ -79,7 +82,8 @@ class BakNet(object):
         print "==========================================="
 
     def train(self):
-        curr_pat = random.choice(self.train_pats)
+        curr_pat = self.train_pats.popleft()
+        self.train_pats.append(curr_pat)
         self.init_pattern(curr_pat)
         #input to first hidden. this is the only one needed in shallow net
         self.hid_ls[0] = np.dot(self.hid_wgts[0], self.in_l)
@@ -105,7 +109,8 @@ class BakNet(object):
         self.train_total += 1
 
     def test(self):
-        curr_pat = random.choice(self.test_pats)
+        curr_pat = self.test_pats.popleft()
+        self.test_pats.append(curr_pat)
         self.init_pattern(curr_pat)
         self.hid_ls[0] = np.dot(self.hid_wgts[0], self.in_l)
         max_hid_idxs = [np.argmax(self.hid_ls[0])]
@@ -177,7 +182,7 @@ def parity_problem(bits=2, report=True):
     parity bit problem
     """
     bits_ls = [map(int, seq) for seq in itertools.product("01", repeat=bits)]
-    pats = map(lambda x: (np.array(x), sum(x) % 2), bits_ls)
+    pats = collections.deque(map(lambda x: (np.array(x), sum(x) % 2), bits_ls))
     bnet = BakNet(bits, (3000,3000), 2, train_pats=pats)
     bnet.train_until()
     for i in xrange(500):
@@ -193,4 +198,4 @@ if __name__ == "__main__":
             xor_problem()
     else:
         for x in xrange(9,10):
-            parity_problem(bits=x, report=False)
+            parity_problem(bits=x)

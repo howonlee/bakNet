@@ -19,20 +19,17 @@ class BakNet(object):
         @param test_pats patterns to store in the net and use to test it. if null, test_pats == train_pats. you know why this is bad, right?
         """
         if delta is None:
-            self.delta = lambda: 0.0001
+            self.delta = lambda: 0.001
             #some sort of annealing procedure
         else:
             self.delta = delta
         self.n_in = n_in
         self.adjusted_nin = n_in + 1 #bias
-        if isinstance(n_hid, tuple):
-            self.n_hid = n_hid
-            self.is_deep = True
-            self.n_hid_layers = len(n_hid)
-        else:
-            self.n_hid = [n_hid]
-            self.is_deep = False #then only one layer
-            self.n_hid_layers = 1
+        if not isinstance(n_hid, tuple):
+            n_hid = (n_hid,)
+        self.n_hid = n_hid
+        self.n_hid_layers = len(n_hid)
+        self.is_deep = self.n_hid_layers > 1
         self.n_out = n_out
         self.train_pats = train_pats
         if test_pats == None:
@@ -44,7 +41,7 @@ class BakNet(object):
         self.out_l = None #lazily assigned
         self.hid_wgts = [npr.random((self.n_hid[0], self.adjusted_nin))]
         if self.is_deep:
-            for layer in xrange(self.n_hid_layers-1):
+            for layer in xrange(self.n_hid_layers-1): #is the semantics correct here?
                 self.hid_wgts.append(npr.random((self.n_hid[layer], self.n_hid[layer-1])))
         self.out_wgt = npr.random((self.n_out, self.n_hid[-1]))
         self.correct = 0
@@ -53,9 +50,7 @@ class BakNet(object):
 
     def init_pattern(self, pat):
         self.in_l = np.hstack((pat[0], np.array([1]))) #bias
-        self.hid_ls = []
-        for x in xrange(self.n_hid_layers):
-            self.hid_ls.append(np.zeros(self.n_hid[x]))
+        self.hid_ls = [np.zeros(self.n_hid[x]) for x in xrange(self.n_hid_layers)]
         self.out_l = np.zeros(self.n_out)
         self.out_teach = np.zeros(self.n_out)
         self.out_teach[pat[1]] = 1
@@ -81,11 +76,8 @@ class BakNet(object):
         self.hid_ls[0] = np.dot(self.hid_wgts[0], self.in_l)
         max_hid_idxs = [np.argmax(self.hid_ls[0])]
         if self.is_deep:
-            for layer in xrange(1,self.n_hid_layers):
-                max_hid_idxs.append(np.argmax(self.hid_wgts[layer][:,max_hid_idxs[layer-1]]))
-        for out_idx in xrange(self.n_out):
-            self.out_l[out_idx] += self.out_wgt[out_idx, max_hid_idxs[-1]]
-        max_out_idx = np.argmax(self.out_l)
+            max_hid_idxs += [np.argmax(self.hid_wgts[layer][:, max_hid_idxs[layer-1]]) for layer in xrange(1,self.n_hid_layers)]
+        max_out_idx = np.argmax(self.out_wgt[:,max_hid_idxs[-1]])
         if self.out_teach[max_out_idx] == 1:
             pass
         else:
@@ -102,13 +94,9 @@ class BakNet(object):
         self.hid_ls[0] = np.dot(self.hid_wgts[0], self.in_l)
         max_hid_idxs = [np.argmax(self.hid_ls[0])]
         if self.is_deep:
-            for layer in xrange(1,self.n_hid_layers):
-                max_hid_idxs.append(np.argmax(self.hid_wgts[layer][:,max_hid_idxs[layer-1]]))
-        for out_idx in xrange(self.n_out):
-            self.out_l[out_idx] += self.out_wgt[out_idx, max_hid_idxs[-1]]
-        max_out_idx = np.argmax(self.out_l)
+            max_hid_idxs += [np.argmax(self.hid_wgts[layer][:, max_hid_idxs[layer-1]]) for layer in xrange(1,self.n_hid_layers)]
+        max_out_idx = np.argmax(self.out_wgt[:,max_hid_idxs[-1]])
         corr_out_idx = np.argmax(self.out_teach)
-        #print max_out_idx, corr_out_idx, max_hid_idxs
         if self.out_teach[max_out_idx] == 1:
             self.correct += 1
         self.total += 1

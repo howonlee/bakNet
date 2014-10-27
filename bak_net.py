@@ -49,9 +49,10 @@ class BakNet(object):
         This is like a reverse version of tabu search, therefore the name
         """
         self.rev_tabu = {}
-        self.correct = 0
-        self.total = 0
-        self.error = 0.0
+        self.train_correct = 0
+        self.train_total = 0
+        self.test_correct = 0
+        self.test_total = 0
 
     def init_pattern(self, pat):
         if self.denoising:
@@ -87,9 +88,10 @@ class BakNet(object):
             for layer in xrange(1, self.n_hid_layers):
                 max_hid_idxs.append(np.argmax(self.hid_wgts[layer][:, max_hid_idxs[layer-1]]))
         max_out_idx = np.argmax(self.out_wgt[:,max_hid_idxs[-1]])
-        print curr_pat[1], max_out_idx
+        #print curr_pat[1], max_out_idx
         if self.out_teach[max_out_idx] == 1:
-            pass
+            self.rev_tabu[(max_out_idx, itertools.chain(max_hid_idxs))] = True
+            self.train_correct += 1
         else:
             if (max_out_idx, itertools.chain(max_hid_idxs)) in self.rev_tabu:
                 curr_delta = self.revtabu_delta
@@ -100,6 +102,7 @@ class BakNet(object):
                 for layer_idx in xrange(1, self.n_hid_layers):
                     self.hid_wgts[layer_idx][max_hid_idxs[layer_idx], max_hid_idxs[layer_idx-1]] -= curr_delta
             self.out_wgt[max_out_idx, max_hid_idxs[-1]] -= curr_delta
+        self.train_total += 1
 
     def test(self):
         curr_pat = random.choice(self.test_pats)
@@ -113,8 +116,14 @@ class BakNet(object):
         #print curr_pat[1], max_out_idx
         if self.out_teach[max_out_idx] == 1:
             self.rev_tabu[(max_out_idx, itertools.chain(max_hid_idxs))] = True
-            self.correct += 1
-        self.total += 1
+            self.test_correct += 1
+        self.test_total += 1
+
+    def reset_totals(self):
+        self.train_correct = 0
+        self.test_correct = 0
+        self.train_total = 0
+        self.test_total = 0
 
     def train_until(self, train_steps=10000, test_steps=500, stop=0.02):
         """
@@ -127,26 +136,29 @@ class BakNet(object):
                self.train()
             for st in xrange(test_steps):
                self.test()
-            self.error = 1 - float(self.correct) / float(self.total)
-            if self.error < stop:
+            error = 1 - float(self.test_correct) / float(self.test_total)
+            if error < stop:
                 still_training = False
-                self.correct = 0
-                self.total = 0
+                self.reset_totals()
             else:
                 i += 1
                 print "i: %d, time: %s" % (i, str(datetime.datetime.now()))
                 self.report()
-                self.correct = 0
-                self.total = 0
+                self.reset_totals()
 
     def report(self):
         """
         Eventually we will add cross-validation and stuff like that
         """
-        print "correct is: ", self.correct
-        print "total is: ", self.total
-        self.error = 1 - float(self.correct) / float(self.total)
-        print "error is: ", self.error
+        print "train correct is: ", self.train_correct
+        print "train total is: ", self.train_total
+        print "test correct is: ", self.test_correct
+        print "test total is: ", self.test_total
+        train_error = 1 - float(self.train_correct) / float(self.train_total)
+        print "train error is: ", train_error
+        test_error = 1 - float(self.test_correct) / float(self.test_total)
+        print "test error is: ", test_error
+        print "number of tabu members is: ", len(self.rev_tabu)
 
 def xor_problem():
     """

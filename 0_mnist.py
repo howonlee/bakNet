@@ -1,6 +1,7 @@
 import cPickle
 import gzip
 import numpy as np
+import collections
 from bak_net import BakNet
 from datetime import datetime
 
@@ -25,7 +26,7 @@ if __name__ == "__main__":
         train_set, valid_set, test_set = cPickle.load(f)
     train_pats = munge_pats(train_set)
     test_pats = munge_pats(test_set)
-    layers = 5000
+    layers = 10000
     bnet = BakNet(784, layers, 10, train_pats=train_pats, test_pats=test_pats, denoising=True)
     bnet.train_until()
     num_tests = 500

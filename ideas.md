@@ -1,4 +1,4 @@
-DO ERROR ANALYSIS
+There's a thought to be had in the error ordering
 
 SPARSITY
 

@@ -19,7 +19,7 @@ class BakNet(object):
         @param test_pats patterns to store in the net and use to test it. if null, test_pats == train_pats. you know why this is bad, right?
         """
         if delta is None:
-            self.delta = lambda: 0.001
+            self.delta = lambda: 0.0001
             #some sort of annealing procedure
         else:
             self.delta = delta
@@ -43,7 +43,6 @@ class BakNet(object):
         self.hid_ls = None #lazily assigned
         self.out_l = None #lazily assigned
         self.hid_wgts = [npr.random((self.n_hid[0], self.adjusted_nin))]
-        ### this is wrong
         if self.is_deep:
             for layer in xrange(self.n_hid_layers-1):
                 self.hid_wgts.append(npr.random((self.n_hid[layer], self.n_hid[layer-1])))
@@ -83,8 +82,7 @@ class BakNet(object):
         max_hid_idxs = [np.argmax(self.hid_ls[0])]
         if self.is_deep:
             for layer in xrange(1,self.n_hid_layers):
-                self.hid_ls[layer] = np.dot(self.hid_wgts[layer], self.hid_ls[layer-1])
-                max_hid_idxs.append(np.argmax(self.hid_ls[layer]))
+                max_hid_idxs.append(np.argmax(self.hid_wgts[layer][:,max_hid_idxs[layer-1]]))
         for out_idx in xrange(self.n_out):
             self.out_l[out_idx] += self.out_wgt[out_idx, max_hid_idxs[-1]]
         max_out_idx = np.argmax(self.out_l)
@@ -105,8 +103,7 @@ class BakNet(object):
         max_hid_idxs = [np.argmax(self.hid_ls[0])]
         if self.is_deep:
             for layer in xrange(1,self.n_hid_layers):
-                self.hid_ls[layer] = np.dot(self.hid_wgts[layer], self.hid_ls[layer-1])
-                max_hid_idxs.append(np.argmax(self.hid_ls[layer]))
+                max_hid_idxs.append(np.argmax(self.hid_wgts[layer][:,max_hid_idxs[layer-1]]))
         for out_idx in xrange(self.n_out):
             self.out_l[out_idx] += self.out_wgt[out_idx, max_hid_idxs[-1]]
         max_out_idx = np.argmax(self.out_l)
@@ -166,7 +163,7 @@ def parity_problem(bits=2):
     """
     bits_ls = [map(int, seq) for seq in itertools.product("01", repeat=bits)]
     pats = map(lambda x: (np.array(x), sum(x) % 2), bits_ls)
-    bnet = BakNet(bits, (2000,2000), 2, train_pats=pats)
+    bnet = BakNet(bits, (3000,3000), 2, train_pats=pats)
     bnet.train_until()
     bnet.print_net()
     for i in xrange(500):
@@ -179,7 +176,7 @@ if __name__ == "__main__":
         if sys.argv[1] == "xor":
             xor_problem()
     else:
-        for x in xrange(2,10):
+        for x in xrange(2,15):
             print "WE PARITYING OVER HERE ALL THE TIME"
             print "WITH BITS = ", x
             print "================="

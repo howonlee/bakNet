@@ -92,8 +92,10 @@ class BakNet(object):
             pass
         else:
             curr_delta = self.delta()
-            for layer_idx, hid_idx in enumerate(max_hid_idxs):
-                self.hid_wgts[layer_idx][hid_idx, :] -= curr_delta
+            self.hid_wgts[0][max_hid_idxs[0], :] -= curr_delta
+            if self.is_deep:
+                for layer_idx in xrange(1, self.n_hid_layers):
+                    self.hid_wgts[layer_idx][max_hid_idxs[layer_idx], max_hid_idxs[layer_idx-1]] -= curr_delta
             self.out_wgt[max_out_idx, max_hid_idxs[-1]] -= curr_delta
 
     def test(self):
@@ -164,7 +166,7 @@ def parity_problem(bits=2):
     """
     bits_ls = [map(int, seq) for seq in itertools.product("01", repeat=bits)]
     pats = map(lambda x: (np.array(x), sum(x) % 2), bits_ls)
-    bnet = BakNet(bits, (200,200), 2, train_pats=pats)
+    bnet = BakNet(bits, (2000,2000), 2, train_pats=pats)
     bnet.train_until()
     bnet.print_net()
     for i in xrange(500):

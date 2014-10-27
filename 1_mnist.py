@@ -27,3 +27,4 @@ if __name__ == "__main__":
     train_pats = munge_pats(train_set)
     test_pats = munge_pats(test_set)
     net = RandomNet(train_pats=train_pats, test_pats=test_pats)
+    net.test()

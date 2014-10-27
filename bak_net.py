@@ -87,6 +87,7 @@ class BakNet(object):
             for layer in xrange(1, self.n_hid_layers):
                 max_hid_idxs.append(np.argmax(self.hid_wgts[layer][:, max_hid_idxs[layer-1]]))
         max_out_idx = np.argmax(self.out_wgt[:,max_hid_idxs[-1]])
+        print curr_pat[1], max_out_idx
         if self.out_teach[max_out_idx] == 1:
             pass
         else:
@@ -109,7 +110,7 @@ class BakNet(object):
             for layer in xrange(1, self.n_hid_layers):
                 max_hid_idxs.append(np.argmax(self.hid_wgts[layer][:, max_hid_idxs[layer-1]]))
         max_out_idx = np.argmax(self.out_wgt[:,max_hid_idxs[-1]])
-        print curr_pat[1], max_out_idx
+        #print curr_pat[1], max_out_idx
         if self.out_teach[max_out_idx] == 1:
             self.rev_tabu[(max_out_idx, itertools.chain(max_hid_idxs))] = True
             self.correct += 1
@@ -179,5 +180,5 @@ if __name__ == "__main__":
         if sys.argv[1] == "xor":
             xor_problem()
     else:
-        for x in xrange(2,10):
+        for x in xrange(9,10):
             parity_problem(bits=x, report=False)

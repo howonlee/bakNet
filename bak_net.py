@@ -7,9 +7,8 @@ import datetime
 import sys
 
 class BakNet(object):
-    def __init__(self, n_in, n_hid, n_out, train_pats, test_pats=None, delta=0.01):
+    def __init__(self, n_in, n_hid, n_out, train_pats, test_pats=None, delta=0.01, denoising=False):
         """
-        @param delta
         @param n_in number of input units, not including bias
         @param n_hid number of hidden units
         This can be a tuple in a deep net, a single number for a normal ff bak net
@@ -17,8 +16,11 @@ class BakNet(object):
         This is important! If you have 100 possible output states, n_out will be 100!
         @param train_pats patterns to store in the net and use to train it
         @param test_pats patterns to store in the net and use to test it. if null, test_pats == train_pats. you know why this is bad, right?
+        @param delta is the delta
+        @param denoising whether to add noise to the data or not
         """
         self.delta = delta
+        self.denoising = denoising
         self.revtabu_delta = delta / 100 #delta for reversed tabu people
         self.n_in = n_in
         self.adjusted_nin = n_in + 1 #bias
@@ -52,7 +54,10 @@ class BakNet(object):
         self.error = 0.0
 
     def init_pattern(self, pat):
-        self.in_l = np.hstack((pat[0], np.array([1]))) #bias
+        if self.denoising:
+            self.in_l = np.hstack((pat[0] + 0.02 * npr.random(pat[0].shape), np.array([1])))
+        else:
+            self.in_l = np.hstack((pat[0], np.array([1]))) #bias
         self.hid_ls = [np.zeros(self.n_hid[x]) for x in xrange(self.n_hid_layers)]
         self.out_l = np.zeros(self.n_out)
         self.out_teach = np.zeros(self.n_out)
@@ -85,7 +90,7 @@ class BakNet(object):
         if self.out_teach[max_out_idx] == 1:
             pass
         else:
-            if (max_out_idx, max_hid_idxs[-1]) in self.rev_tabu:
+            if (max_out_idx, itertools.chain(max_hid_idxs)) in self.rev_tabu:
                 curr_delta = self.revtabu_delta
             else:
                 curr_delta = self.delta
@@ -104,9 +109,9 @@ class BakNet(object):
             for layer in xrange(1, self.n_hid_layers):
                 max_hid_idxs.append(np.argmax(self.hid_wgts[layer][:, max_hid_idxs[layer-1]]))
         max_out_idx = np.argmax(self.out_wgt[:,max_hid_idxs[-1]])
-        corr_out_idx = np.argmax(self.out_teach)
+        print curr_pat[1], max_out_idx
         if self.out_teach[max_out_idx] == 1:
-            self.rev_tabu[(max_out_idx, max_hid_idxs[-1])] = True
+            self.rev_tabu[(max_out_idx, itertools.chain(max_hid_idxs))] = True
             self.correct += 1
         self.total += 1
 
@@ -154,7 +159,7 @@ def xor_problem():
         bnet.test()
     bnet.report()
 
-def parity_problem(bits=2):
+def parity_problem(bits=2, report=True):
     """
     parity bit problem
     """
@@ -162,10 +167,11 @@ def parity_problem(bits=2):
     pats = map(lambda x: (np.array(x), sum(x) % 2), bits_ls)
     bnet = BakNet(bits, (3000,3000), 2, train_pats=pats)
     bnet.train_until()
-    bnet.print_net()
     for i in xrange(500):
         bnet.test()
-    bnet.report()
+    if report:
+        bnet.print_net()
+        bnet.report()
 
 
 if __name__ == "__main__":
@@ -173,10 +179,5 @@ if __name__ == "__main__":
         if sys.argv[1] == "xor":
             xor_problem()
     else:
-        for x in xrange(2,15):
-            print "WE PARITYING OVER HERE ALL THE TIME"
-            print "WITH BITS = ", x
-            print "================="
-            print "================="
-            print "================="
-            parity_problem(bits=x)
+        for x in xrange(2,10):
+            parity_problem(bits=x, report=False)

@@ -26,7 +26,7 @@ if __name__ == "__main__":
         train_set, valid_set, test_set = cPickle.load(f)
     train_pats = munge_pats(train_set)
     test_pats = munge_pats(test_set)
-    layers = 10000
+    layers = 5000
     bnet = BakNet(784, layers, 10, train_pats=train_pats, test_pats=test_pats, denoising=True)
     bnet.train_until(train_steps=2000,test_steps=100)
     num_tests = 500

@@ -11,3 +11,5 @@ Don't forget the topology. Small world net, a priori, should be really quite int
 Want a great error analysis, because 224n is picky that way
 
 NER infrastructure
+
+Get a scaling problem, study how this model does in terms of how well it scales and solves the problem.

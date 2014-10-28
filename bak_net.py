@@ -90,19 +90,25 @@ class BakNet(object):
         max_hid_idxs = [np.argmax(self.hid_ls[0])]
         if self.is_deep:
             for layer in xrange(1, self.n_hid_layers):
-                #self.hid_ls[layer] = np.dot(self.hid_wgts[layer], self.hid_ls[layer-1])
-                #max_hid_idxs.append(np.argmax(self.hid_ls[layer]))
-                max_hid_idxs.append(np.argmax(self.hid_wgts[layer][:, max_hid_idxs[layer-1]]))
+                self.hid_ls[layer] = np.dot(self.hid_wgts[layer], self.hid_ls[layer-1])
+                max_hid_idxs.append(np.argmax(self.hid_ls[layer]))
+                #max_hid_idxs.append(np.argmax(self.hid_wgts[layer][:, max_hid_idxs[layer-1]]))
         max_out_idx = np.argmax(self.out_wgt[:,max_hid_idxs[-1]])
         #print curr_pat[1], max_out_idx
+        curr_delta = self.delta / 2
         if self.out_teach[max_out_idx] == 1:
             self.rev_tabu[(max_out_idx, itertools.chain(max_hid_idxs))] = True
             self.train_correct += 1
+            """
+            self.hid_wgts[0][max_hid_idxs[0], :] += curr_delta
+            if self.is_deep:
+                for layer_idx in xrange(1, self.n_hid_layers):
+                    self.hid_wgts[layer_idx][max_hid_idxs[layer_idx], max_hid_idxs[layer_idx-1]] += curr_delta
+            self.out_wgt[max_out_idx, max_hid_idxs[-1]] += curr_delta
+            """
         else:
             if (max_out_idx, itertools.chain(max_hid_idxs)) in self.rev_tabu:
                 curr_delta = self.revtabu_delta
-            else:
-                curr_delta = self.delta
             self.hid_wgts[0][max_hid_idxs[0], :] -= curr_delta
             if self.is_deep:
                 for layer_idx in xrange(1, self.n_hid_layers):
@@ -118,7 +124,9 @@ class BakNet(object):
         max_hid_idxs = [np.argmax(self.hid_ls[0])]
         if self.is_deep:
             for layer in xrange(1, self.n_hid_layers):
-                max_hid_idxs.append(np.argmax(self.hid_wgts[layer][:, max_hid_idxs[layer-1]]))
+                #max_hid_idxs.append(np.argmax(self.hid_wgts[layer][:, max_hid_idxs[layer-1]]))
+                self.hid_ls[layer] = np.dot(self.hid_wgts[layer], self.hid_ls[layer-1])
+                max_hid_idxs.append(np.argmax(self.hid_ls[layer]))
         max_out_idx = np.argmax(self.out_wgt[:,max_hid_idxs[-1]])
         print max_hid_idxs, curr_pat
         #print curr_pat[1], max_out_idx
@@ -185,7 +193,7 @@ def parity_problem(bits=2, report=True):
     """
     bits_ls = [map(int, seq) for seq in itertools.product("01", repeat=bits)]
     pats = collections.deque(map(lambda x: (np.array(x), sum(x) % 2), bits_ls))
-    depth = tuple([1000 for x in xrange(bits)])
+    depth = tuple([10 for x in xrange(bits)])
     bnet = BakNet(bits, depth, 2, train_pats=pats)
     #train now
     for i in xrange(10000):

@@ -88,12 +88,15 @@ class BakNet(object):
         #input to first hidden. this is the only one needed in shallow net
         self.hid_ls[0] = np.dot(self.hid_wgts[0], self.in_l)
         max_hid_idxs = [np.argmax(self.hid_ls[0])]
+        min_hid_idxs = [np.argmin(self.hid_ls[0])]
         if self.is_deep:
             for layer in xrange(1, self.n_hid_layers):
-                self.hid_ls[layer] = np.dot(self.hid_wgts[layer], self.hid_ls[layer-1])
-                max_hid_idxs.append(np.argmax(self.hid_ls[layer]))
-                #max_hid_idxs.append(np.argmax(self.hid_wgts[layer][:, max_hid_idxs[layer-1]]))
+                #self.hid_ls[layer] = np.dot(self.hid_wgts[layer], self.hid_ls[layer-1])
+                #max_hid_idxs.append(np.argmax(self.hid_ls[layer]))
+                max_hid_idxs.append(np.argmax(self.hid_wgts[layer][:, max_hid_idxs[layer-1]]))
+                min_hid_idxs.append(np.argmin(self.hid_wgts[layer][:, min_hid_idxs[layer-1]]))
         max_out_idx = np.argmax(self.out_wgt[:,max_hid_idxs[-1]])
+        min_out_idx = np.argmin(self.out_wgt[:,min_hid_idxs[-1]])
         #print curr_pat[1], max_out_idx
         curr_delta = self.delta / 2
         if self.out_teach[max_out_idx] == 1:
@@ -110,10 +113,13 @@ class BakNet(object):
             if (max_out_idx, itertools.chain(max_hid_idxs)) in self.rev_tabu:
                 curr_delta = self.revtabu_delta
             self.hid_wgts[0][max_hid_idxs[0], :] -= curr_delta
+            self.hid_wgts[0][min_hid_idxs[0], :] += (curr_delta * 0.8)
             if self.is_deep:
                 for layer_idx in xrange(1, self.n_hid_layers):
                     self.hid_wgts[layer_idx][max_hid_idxs[layer_idx], max_hid_idxs[layer_idx-1]] -= curr_delta
+                    self.hid_wgts[layer_idx][min_hid_idxs[layer_idx], min_hid_idxs[layer_idx-1]] += (curr_delta * 0.8)
             self.out_wgt[max_out_idx, max_hid_idxs[-1]] -= curr_delta
+            self.out_wgt[min_out_idx, min_hid_idxs[-1]] += (curr_delta * 0.8)
         self.train_total += 1
 
     def test(self):
@@ -193,11 +199,9 @@ def parity_problem(bits=2, report=True):
     """
     bits_ls = [map(int, seq) for seq in itertools.product("01", repeat=bits)]
     pats = collections.deque(map(lambda x: (np.array(x), sum(x) % 2), bits_ls))
-    depth = tuple([10 for x in xrange(bits)])
-    bnet = BakNet(bits, depth, 2, train_pats=pats)
+    #depth = tuple([10 for x in xrange(bits)])
+    bnet = BakNet(bits, 3000, 2, train_pats=pats)
     #train now
-    for i in xrange(10000):
-        bnet.train()
     bnet.train_until()
     for i in xrange(500):
         bnet.test()

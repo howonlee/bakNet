@@ -1,4 +1,5 @@
 import sys
+import itertools
 import numpy as np
 import numpy.random as npr
 from sklearn.datasets import load_digits
@@ -90,18 +91,21 @@ def sklearn_digits():
 
 def parity_problem(bits=2):
     #stuff here
-    X = [map(int, seq) for seq in itertools.product("01", repeat=bits)]
-    y = [sum(x) for x in X]
-    nn = BakBPNet([2**bits, 50, 1])
+    X = np.array([map(int, seq) for seq in itertools.product("01", repeat=bits)])
+    y = np.array([int(sum(x) % 2 == 0) for x in X])
+    print X, y
+    nn = BakBPNet([bits, 50, 2])
     X_train, X_test, y_train, y_test = train_test_split(X, y)
-    nn.fit(X_train, y_train)
+    nn.fit(X, y, epochs=50000)
     predictions = []
     for i in range(X_test.shape[0]):
-        o = nn.predict(X_test[i] )
+        o = nn.predict(X_test[i])
         predictions.append(np.argmax(o))
+    print confusion_matrix(y_test,predictions)
+    print classification_report(y_test,predictions)
 
 if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == "xor":
         xor_prob()
     else:
-        parity_problem(8)
+        parity_problem(5)

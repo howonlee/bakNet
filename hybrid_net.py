@@ -7,29 +7,20 @@ from sklearn.metrics import confusion_matrix, classification_report
 from sklearn.preprocessing import LabelBinarizer
 from sklearn.cross_validation import train_test_split
 
-def tanh_deriv(x):
-    return 1.0 - x**2
-
-def logistic(x):
-    return 1/(1 + np.exp(-x))
-
-def logistic_deriv(x):
-    return logistic(x) * (1-logistic(x))
-
 class BakBPNet(object):
-    def __init__(self, layers, activation='tanh'):
-        if activation == 'logistic':
-            self.activation = logistic
-            self.activation_deriv = logistic_deriv
-        elif activation == 'tanh':
-            self.activation = np.tanh
-            self.activation_deriv = tanh_deriv
+    def __init__(self, layers):
+        self.activation = np.tanh
+        self.activation_deriv = lambda x: 1.0 - x**2
         self.weights = []
         for i in range(1,len(layers)-1):
             self.weights.append((2*np.random.random((layers[i-1] + 1, layers[i]+ 1))-1)*0.25)
             self.weights.append((2*np.random.random((layers[i] + 1, layers[i+1]))-1)*0.25)
 
     def fit(self, X, y, learning_rate=0.2, epochs=10000, extremal=True):
+        """
+        This way of adding the biases doesn't work for deeper nets
+        (not caring about deeper nets right now)
+        """
         X = np.atleast_2d(X)
         temp = np.ones([X.shape[0], X.shape[1]+1])
         temp[:, 0:-1] = X  # adding the bias unit to the input layer
@@ -89,23 +80,22 @@ def sklearn_digits():
     print confusion_matrix(y_test,predictions)
     print classification_report(y_test,predictions)
 
-def parity_problem(bits=2):
+def parity_problem(bits):
     #stuff here
     X = np.array([map(int, seq) for seq in itertools.product("01", repeat=bits)])
     y = np.array([int(sum(x) % 2 == 0) for x in X])
     print X, y
-    nn = BakBPNet([bits, 50, 2])
-    X_train, X_test, y_train, y_test = train_test_split(X, y)
+    nn = BakBPNet([bits, bits, 2])
     nn.fit(X, y, epochs=50000)
     predictions = []
-    for i in range(X_test.shape[0]):
-        o = nn.predict(X_test[i])
+    for i in range(X.shape[0]):
+        o = nn.predict(X[i])
         predictions.append(np.argmax(o))
-    print confusion_matrix(y_test,predictions)
-    print classification_report(y_test,predictions)
+    print confusion_matrix(y,predictions)
+    print classification_report(y,predictions)
 
 if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == "xor":
         xor_prob()
     else:
-        parity_problem(5)
+        parity_problem(8)

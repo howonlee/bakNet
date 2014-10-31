@@ -1,5 +1,7 @@
 import sys
 import itertools
+import cPickle
+import gzip
 import numpy as np
 import numpy.random as npr
 from sklearn.datasets import load_digits
@@ -13,14 +15,12 @@ class BakBPNet(object):
         self.activation_deriv = lambda x: 1.0 - x**2
         self.weights = []
         for i in range(1,len(layers)-1):
+            #this is wrong
             self.weights.append((2*np.random.random((layers[i-1] + 1, layers[i]+ 1))-1)*0.25)
             self.weights.append((2*np.random.random((layers[i] + 1, layers[i+1]))-1)*0.25)
 
     def fit(self, X, y, learning_rate=0.2, epochs=10000, extremal=True):
-        """
-        This way of adding the biases doesn't work for deeper nets
-        (not caring about deeper nets right now)
-        """
+        #this is also wrong
         X = np.atleast_2d(X)
         temp = np.ones([X.shape[0], X.shape[1]+1])
         temp[:, 0:-1] = X  # adding the bias unit to the input layer
@@ -80,13 +80,26 @@ def sklearn_digits():
     print confusion_matrix(y_test,predictions)
     print classification_report(y_test,predictions)
 
+def mnist_digits():
+    with gzip.open("mnist.pkl.gz", "rb") as f:
+        train_set, valid_set, test_set = cPickle.load(f)
+    X_train, y_train = train_set
+    X_test, y_test = test_set
+    nn = BakBPNet([784, 2000, 10])
+    nn.fit(X_train, y_train)
+    predictions = []
+    for i in range(X_test.shape[0]):
+        o = nn.predict(X_test[i])
+        predictions.append(np.argmax(o))
+    print confusion_matrix(y_test,predictions)
+    print classification_report(y_test,predictions)
+
 def parity_problem(bits):
     #stuff here
     X = np.array([map(int, seq) for seq in itertools.product("01", repeat=bits)])
     y = np.array([int(sum(x) % 2 == 0) for x in X])
-    print X, y
-    nn = BakBPNet([bits, bits, 2])
-    nn.fit(X, y, epochs=50000)
+    nn = BakBPNet([bits, bits*6, 2])
+    nn.fit(X, y)
     predictions = []
     for i in range(X.shape[0]):
         o = nn.predict(X[i])
@@ -97,5 +110,7 @@ def parity_problem(bits):
 if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == "xor":
         xor_prob()
+    elif len(sys.argv) > 1 and sys.argv[1] == "sklearn":
+        sklearn_digits()
     else:
-        parity_problem(8)
+        mnist_digits()

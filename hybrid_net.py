@@ -9,25 +9,42 @@ from sklearn.metrics import confusion_matrix, classification_report
 from sklearn.preprocessing import LabelBinarizer
 from sklearn.cross_validation import train_test_split
 
+def normalize(mat):
+    mat -= mat.min()
+    mat /= mat.max()
+    return mat
+
 class BakBPNet(object):
     def __init__(self, layers):
         self.activation = np.tanh
         self.activation_deriv = lambda x: 1.0 - x**2
         self.weights = []
         for i in range(1,len(layers)-1):
-            #this is wrong
-            self.weights.append((2*np.random.random((layers[i-1] + 1, layers[i]+ 1))-1)*0.25)
-            self.weights.append((2*np.random.random((layers[i] + 1, layers[i+1]))-1)*0.25)
+            #this assumes a 1 layer net, because of the dimension assymetry
+            #there's th(n+1) weight matrices, not th(2n)
+            self.weights.append(self.scale_weights(npr.random((layers[i-1]+1, layers[i]+1))))
+            self.weights.append(self.scale_weights(npr.random((layers[i]+1, layers[i+1]))))
+
+    def scale_weights(self, wgts):
+        return (2 * wgts - 1) * 0.25
+
+    def add_bias(self, X):
+        X = np.atleast_2d(X)
+        temp = np.atleast_2d(np.ones(X.shape[0])).T
+        return np.concatenate((X, temp),axis=1)
 
     def fit(self, X, y, learning_rate=0.2, epochs=10000, extremal=True):
-        #this is also wrong
-        X = np.atleast_2d(X)
-        temp = np.ones([X.shape[0], X.shape[1]+1])
-        temp[:, 0:-1] = X  # adding the bias unit to the input layer
-        X = temp
+        """
+        SGD fit
+        extremal = option for extremal adaptive dynamics
+        """
+        X = self.add_bias(X)
         y = np.array(y)
+        epoch_frac = epochs // 20
 
         for k in range(epochs):
+            if k % epoch_frac == 0:
+                print "curr epoch is: ", k
             i = np.random.randint(X.shape[0])
             a = [X[i]]
 
@@ -63,10 +80,8 @@ def xor_prob():
 
 def sklearn_digits():
     digits = load_digits() #from sklearn
-    X = digits.data
+    X = normalize(digits.data)
     y = digits.target
-    X -= X.min()
-    X /= X.max()
     nn = BakBPNet([64,100,10])
     X_train, X_test, y_train, y_test = train_test_split(X, y)
     labels_train = LabelBinarizer().fit_transform(y_train)
@@ -85,8 +100,12 @@ def mnist_digits():
         train_set, valid_set, test_set = cPickle.load(f)
     X_train, y_train = train_set
     X_test, y_test = test_set
-    nn = BakBPNet([784, 2000, 10])
-    nn.fit(X_train, y_train)
+    X_train = normalize(X_train)
+    X_test = normalize(X_test)
+    labels_train = LabelBinarizer().fit_transform(y_train)
+    labels_test = LabelBinarizer().fit_transform(y_test)
+    nn = BakBPNet([784, 300, 10])
+    nn.fit(X_train, labels_train, epochs=100000)
     predictions = []
     for i in range(X_test.shape[0]):
         o = nn.predict(X_test[i])
@@ -98,8 +117,9 @@ def parity_problem(bits):
     #stuff here
     X = np.array([map(int, seq) for seq in itertools.product("01", repeat=bits)])
     y = np.array([int(sum(x) % 2 == 0) for x in X])
-    nn = BakBPNet([bits, bits*6, 2])
-    nn.fit(X, y)
+    labels = LabelBinarizer().fit_transform(y)
+    nn = BakBPNet([bits, 50, 2])
+    nn.fit(X, labels)
     predictions = []
     for i in range(X.shape[0]):
         o = nn.predict(X[i])
@@ -112,5 +132,7 @@ if __name__ == "__main__":
         xor_prob()
     elif len(sys.argv) > 1 and sys.argv[1] == "sklearn":
         sklearn_digits()
-    else:
+    elif len(sys.argv) > 1 and sys.argv[1] == "mnist":
         mnist_digits()
+    else:
+        parity_problem(8)

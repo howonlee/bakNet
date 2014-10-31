@@ -69,24 +69,39 @@ def xor_prob():
     for i in [[0,0], [0,1], [1,0], [1,1]]:
         print i, nn.predict(i)
 
+def sklearn_digits():
+    digits = load_digits() #from sklearn
+    X = digits.data
+    y = digits.target
+    X -= X.min()
+    X /= X.max()
+    nn = BakBPNet([64,100,10])
+    X_train, X_test, y_train, y_test = train_test_split(X, y)
+    labels_train = LabelBinarizer().fit_transform(y_train)
+    labels_test = LabelBinarizer().fit_transform(y_test)
+
+    nn.fit(X_train,labels_train,epochs=30000)
+    predictions = []
+    for i in range(X_test.shape[0]):
+        o = nn.predict(X_test[i] )
+        predictions.append(np.argmax(o))
+    print confusion_matrix(y_test,predictions)
+    print classification_report(y_test,predictions)
+
+def parity_problem(bits=2):
+    #stuff here
+    X = [map(int, seq) for seq in itertools.product("01", repeat=bits)]
+    y = [sum(x) for x in X]
+    nn = BakBPNet([2**bits, 50, 1])
+    X_train, X_test, y_train, y_test = train_test_split(X, y)
+    nn.fit(X_train, y_train)
+    predictions = []
+    for i in range(X_test.shape[0]):
+        o = nn.predict(X_test[i] )
+        predictions.append(np.argmax(o))
+
 if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == "xor":
         xor_prob()
     else:
-        digits = load_digits() #from sklearn
-        X = digits.data
-        y = digits.target
-        X -= X.min()
-        X /= X.max()
-        nn = BakBPNet([64,100,10])
-        X_train, X_test, y_train, y_test = train_test_split(X, y)
-        labels_train = LabelBinarizer().fit_transform(y_train)
-        labels_test = LabelBinarizer().fit_transform(y_test)
-
-        nn.fit(X_train,labels_train,epochs=30000)
-        predictions = []
-        for i in range(X_test.shape[0]):
-            o = nn.predict(X_test[i] )
-            predictions.append(np.argmax(o))
-        print confusion_matrix(y_test,predictions)
-        print classification_report(y_test,predictions)
+        parity_problem(8)

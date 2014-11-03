@@ -49,43 +49,21 @@ class BakBPNet(object):
             a = [X[i]]
 
             for l in range(len(self.weights)):
-                a.append(self.activation(np.dot(a[l], self.weights[l])))
+                activation = self.activation(np.dot(a[l], self.weights[l]))
+                a.append(activation)
+                if extremal:
+                    max_hid_idxs = [np.argmax(activation)] # will be revised for deep net
             error = y[i] - a[-1]
             deltas = [error * self.activation_deriv(a[-1])]
-
             if extremal:
-                pass
-            """
-        self.hid_ls[0] = np.dot(self.hid_wgts[0], self.in_l)
-        max_hid_idxs = [np.argmax(self.hid_ls[0])]
-        if self.is_deep:
-            for layer in xrange(1, self.n_hid_layers):
-                #self.hid_ls[layer] = np.dot(self.hid_wgts[layer], self.hid_ls[layer-1])
-                #max_hid_idxs.append(np.argmax(self.hid_ls[layer]))
-                max_hid_idxs.append(np.argmax(self.hid_wgts[layer][:, max_hid_idxs[layer-1]]))
-        max_out_idx = np.argmax(self.out_wgt[:,max_hid_idxs[-1]])
-        #print curr_pat[1], max_out_idx
-        curr_delta = self.delta / 2
-        if self.out_teach[max_out_idx] == 1:
-        else:
-            self.hid_wgts[0][max_hid_idxs[0], :] -= curr_delta
-            self.hid_wgts[0][min_hid_idxs[0], :] += (curr_delta * 0.8)
-            self.out_wgt[max_out_idx, max_hid_idxs[-1]] -= curr_delta
-            self.out_wgt[min_out_idx, min_hid_idxs[-1]] += (curr_delta * 0.8)
-        """
-
-
-
-
-
-
-
-
-
-
-
-
-
+                max_out_idx = np.argmax(self.out_wgt[:,max_hid_idxs[-1]]) #revise
+                print max_hid_idxs, max_out_idx
+                if self.out_teach[max_out_idx] == 1:
+                else:
+                    self.hid_wgts[0][max_hid_idxs[0], :] -= curr_delta
+                    self.hid_wgts[0][min_hid_idxs[0], :] += (curr_delta * 0.8)
+                    self.out_wgt[max_out_idx, max_hid_idxs[-1]] -= curr_delta
+                    self.out_wgt[min_out_idx, min_hid_idxs[-1]] += (curr_delta * 0.8)
 
             for l in range(len(a) - 2, 0, -1): # we need to begin at the second to last layer
                 deltas.append(deltas[-1].dot(self.weights[l].T)*self.activation_deriv(a[l]))

@@ -56,9 +56,10 @@ class BakBPNet(object):
             error = y[i] - a[-1]
             deltas = [error * self.activation_deriv(a[-1])]
             if extremal:
-                max_out_idx = np.argmax(self.out_wgt[:,max_hid_idxs[-1]]) #revise
+                max_out_idx = np.argmax(self.weights[1,:]) #is this it?
                 print max_hid_idxs, max_out_idx
-                if self.out_teach[max_out_idx] == 1: #revise
+                if y[max_out_idx] == 1: #is this it?
+                    pass
                 else:
                     self.hid_wgts[0][max_hid_idxs[0], :] -= curr_delta #revise
                     self.hid_wgts[0][min_hid_idxs[0], :] += (curr_delta * 0.8) #revise

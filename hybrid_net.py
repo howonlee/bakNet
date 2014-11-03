@@ -58,12 +58,12 @@ class BakBPNet(object):
             if extremal:
                 max_out_idx = np.argmax(self.out_wgt[:,max_hid_idxs[-1]]) #revise
                 print max_hid_idxs, max_out_idx
-                if self.out_teach[max_out_idx] == 1:
+                if self.out_teach[max_out_idx] == 1: #revise
                 else:
-                    self.hid_wgts[0][max_hid_idxs[0], :] -= curr_delta
-                    self.hid_wgts[0][min_hid_idxs[0], :] += (curr_delta * 0.8)
-                    self.out_wgt[max_out_idx, max_hid_idxs[-1]] -= curr_delta
-                    self.out_wgt[min_out_idx, min_hid_idxs[-1]] += (curr_delta * 0.8)
+                    self.hid_wgts[0][max_hid_idxs[0], :] -= curr_delta #revise
+                    self.hid_wgts[0][min_hid_idxs[0], :] += (curr_delta * 0.8) #revise
+                    self.out_wgt[max_out_idx, max_hid_idxs[-1]] -= curr_delta #revise
+                    self.out_wgt[min_out_idx, min_hid_idxs[-1]] += (curr_delta * 0.8) #revise
 
             for l in range(len(a) - 2, 0, -1): # we need to begin at the second to last layer
                 deltas.append(deltas[-1].dot(self.weights[l].T)*self.activation_deriv(a[l]))

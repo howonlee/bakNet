@@ -52,19 +52,17 @@ class BakBPNet(object):
                 activation = self.activation(np.dot(a[l], self.weights[l]))
                 a.append(activation)
                 if extremal:
+                    ############################# is this right?
                     max_hid_idxs = [np.argmax(activation)] # will be revised for deep net
             error = y[i] - a[-1]
             deltas = [error * self.activation_deriv(a[-1])]
             if extremal:
-                max_out_idx = np.argmax(self.weights[1,:]) #is this it?
-                print max_hid_idxs, max_out_idx
-                if y[max_out_idx] == 1: #is this it?
-                    pass
-                else:
-                    self.hid_wgts[0][max_hid_idxs[0], :] -= curr_delta #revise
-                    self.hid_wgts[0][min_hid_idxs[0], :] += (curr_delta * 0.8) #revise
-                    self.out_wgt[max_out_idx, max_hid_idxs[-1]] -= curr_delta #revise
-                    self.out_wgt[min_out_idx, min_hid_idxs[-1]] += (curr_delta * 0.8) #revise
+                #stuff stuff stuff
+                ######################################
+                ######################################
+                ######################################
+                ######################################
+                pass
 
             for l in range(len(a) - 2, 0, -1): # we need to begin at the second to last layer
                 deltas.append(deltas[-1].dot(self.weights[l].T)*self.activation_deriv(a[l]))
@@ -147,5 +145,7 @@ if __name__ == "__main__":
         sklearn_digits()
     elif len(sys.argv) > 1 and sys.argv[1] == "mnist":
         mnist_digits()
-    else:
+    elif len(sys.argv) > 1 and sys.argv[1] == "parity":
         parity_problem(8)
+    else:
+        xor_prob()

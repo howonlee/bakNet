@@ -134,7 +134,7 @@ class BakNet(object):
                 self.hid_ls[layer] = np.dot(self.hid_wgts[layer], self.hid_ls[layer-1])
                 max_hid_idxs.append(np.argmax(self.hid_ls[layer]))
         max_out_idx = np.argmax(self.out_wgt[:,max_hid_idxs[-1]])
-        print max_hid_idxs, curr_pat
+        #print max_hid_idxs, curr_pat
         #print curr_pat[1], max_out_idx
         if self.out_teach[max_out_idx] == 1:
             self.rev_tabu[(max_out_idx, itertools.chain(max_hid_idxs))] = True
@@ -200,7 +200,7 @@ def parity_problem(bits=2, report=True):
     bits_ls = [map(int, seq) for seq in itertools.product("01", repeat=bits)]
     pats = collections.deque(map(lambda x: (np.array(x), sum(x) % 2), bits_ls))
     #depth = tuple([10 for x in xrange(bits)])
-    bnet = BakNet(bits, 3000, 2, train_pats=pats)
+    bnet = BakNet(bits, 1000, 2, train_pats=pats)
     #train now
     bnet.train_until()
     for i in xrange(500):

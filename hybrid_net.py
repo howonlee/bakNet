@@ -51,18 +51,8 @@ class BakBPNet(object):
             for l in range(len(self.weights)):
                 activation = self.activation(np.dot(a[l], self.weights[l]))
                 a.append(activation)
-                if extremal:
-                    ############################# is this right?
-                    max_hid_idxs = [np.argmax(activation)] # will be revised for deep net
             error = y[i] - a[-1]
             deltas = [error * self.activation_deriv(a[-1])]
-            if extremal:
-                #stuff stuff stuff
-                ######################################
-                ######################################
-                ######################################
-                ######################################
-                pass
 
             for l in range(len(a) - 2, 0, -1): # we need to begin at the second to last layer
                 deltas.append(deltas[-1].dot(self.weights[l].T)*self.activation_deriv(a[l]))
@@ -86,6 +76,8 @@ def xor_prob():
     X = np.array([[0,0],[0,1],[1,0],[1,1]])
     y = np.array([0,1,1,0])
     nn.fit(X, y)
+    print nn.weights[0]
+    print nn.weights[1]
     for i in [[0,0], [0,1], [1,0], [1,1]]:
         print i, nn.predict(i)
 
@@ -106,7 +98,7 @@ def sklearn_digits():
     print confusion_matrix(y_test,predictions)
     print classification_report(y_test,predictions)
 
-def mnist_digits():
+def mnist_digits(load=False):
     with gzip.open("mnist.pkl.gz", "rb") as f:
         train_set, valid_set, test_set = cPickle.load(f)
     X_train, y_train = train_set
@@ -115,8 +107,11 @@ def mnist_digits():
     X_test = normalize(X_test)
     labels_train = LabelBinarizer().fit_transform(y_train)
     labels_test = LabelBinarizer().fit_transform(y_test)
-    nn = BakBPNet([784, 10000, 10])
-    nn.fit(X_train, labels_train, epochs=50000)
+    nn = BakBPNet([784, 2000, 10])
+    if load:
+        nn.weights[0] = np.load("bak_hid_wgts.npy")[0].T
+        nn.weights[1] = np.load("bak_out_wgts.npy").T
+    nn.fit(X_train, labels_train, epochs=2000)
     predictions = []
     for i in range(X_test.shape[0]):
         o = nn.predict(X_test[i])
@@ -145,6 +140,8 @@ if __name__ == "__main__":
         sklearn_digits()
     elif len(sys.argv) > 1 and sys.argv[1] == "mnist":
         mnist_digits()
+    elif len(sys.argv) > 1 and sys.argv[1] == "mnist_preload":
+        mnist_digits(load=True)
     elif len(sys.argv) > 1 and sys.argv[1] == "parity":
         parity_problem(8)
     else:

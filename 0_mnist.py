@@ -26,10 +26,8 @@ if __name__ == "__main__":
         train_set, valid_set, test_set = cPickle.load(f)
     train_pats = munge_pats(train_set)
     test_pats = munge_pats(test_set)
-    layers = 5000
+    layers = 2000
     bnet = BakNet(784, layers, 10, train_pats=train_pats, test_pats=test_pats, denoising=True)
-    bnet.train_until(train_steps=2000,test_steps=100)
-    num_tests = 500
-    for j in xrange(num_tests):
-        bnet.test()
-    bnet.report()
+    bnet.train_until(train_steps=2000,test_steps=100, stop=0.8) #pretty embarrasing, eh?
+    np.save("bak_hid_wgts", bnet.hid_wgts)
+    np.save("bak_out_wgts", bnet.out_wgt)

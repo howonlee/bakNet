@@ -81,11 +81,14 @@ def xor_prob():
     for i in [[0,0], [0,1], [1,0], [1,1]]:
         print i, nn.predict(i)
 
-def sklearn_digits():
+def sklearn_digits(load=False):
     digits = load_digits() #from sklearn
     X = normalize(digits.data)
     y = digits.target
     nn = BakBPNet([64,100,10])
+    if load:
+        nn.weights[0] = np.load("bak_sk_hid_wgts.npy")[0].T
+        nn.weights[1] = np.load("bak_sk_out_wgts.npy").T
     X_train, X_test, y_train, y_test = train_test_split(X, y)
     labels_train = LabelBinarizer().fit_transform(y_train)
     labels_test = LabelBinarizer().fit_transform(y_test)
@@ -142,6 +145,8 @@ if __name__ == "__main__":
         mnist_digits()
     elif len(sys.argv) > 1 and sys.argv[1] == "mnist_preload":
         mnist_digits(load=True)
+    elif len(sys.argv) > 1 and sys.argv[1] == "sklearn_preload":
+        sklearn_digits(load=True)
     elif len(sys.argv) > 1 and sys.argv[1] == "parity":
         parity_problem(8)
     else:

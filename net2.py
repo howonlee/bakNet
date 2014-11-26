@@ -1,8 +1,11 @@
+from __future__ import division
 import numpy as np
 from scipy import optimize
-from __future__ import division
+from sklearn import cross_validation
+from sklearn.metrics import accuracy_score
+import sklearn.datasets as datasets
 
-class NN_1HL(object):
+class Net2(object):
 
     def __init__(self, reg_lambda=0, epsilon_init=0.12, hidden_layer_size=25, opti_method='TNC', maxiter=500):
         self.reg_lambda = reg_lambda
@@ -125,3 +128,12 @@ class NN_1HL(object):
     def predict_proba(self, X):
         _, _, _, _, h = self._forward(X, self.t1, self.t2)
         return h
+
+if __name__ == "__main__":
+    iris = datasets.load_iris()
+    X = iris.data
+    y = iris.target
+    X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, y, test_size=0.4)
+    nn = Net2()
+    nn.fit(X_train, y_train)
+    print accuracy_score(y_test, nn.predict(X_test))

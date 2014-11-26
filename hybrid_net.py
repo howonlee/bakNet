@@ -17,7 +17,7 @@ def normalize(mat):
 class BakBPNet(object):
     def __init__(self, layers):
         self.activation = np.tanh
-        self.activation_deriv = lambda x: 1.0 - x**2
+        self.activation_deriv = lambda x: 1.0 - np.tanh(x)**2
         self.weights = []
         for i in range(1,len(layers)-1):
             #this assumes a 1 layer net, because of the dimension assymetry
@@ -29,32 +29,32 @@ class BakBPNet(object):
         return (2 * wgts - 1) * 0.25
 
     def add_bias(self, X):
+        #add as in to concatenate, not to sum
         X = np.atleast_2d(X)
         temp = np.atleast_2d(np.ones(X.shape[0])).T
         return np.concatenate((X, temp),axis=1)
 
-    def fit(self, X, y, learning_rate=0.2, epochs=10000, extremal=True):
+    def mse(self, err):
+        return np.mean(np.square(err))
+
+    def fit(self, X, y, learning_rate=0.2, epochs=10000, extremal=False):
         """
         SGD fit
-        extremal = option for extremal adaptive dynamics
         """
         X = self.add_bias(X)
         y = np.array(y)
         epoch_frac = epochs // 20
-
         for k in range(epochs):
             if k % epoch_frac == 0:
                 print "curr epoch is: ", k
             i = np.random.randint(X.shape[0])
             a = [X[i]]
-
             for l in range(len(self.weights)):
                 activation = self.activation(np.dot(a[l], self.weights[l]))
                 a.append(activation)
-            error = y[i] - a[-1]
+            error = a[-1] - y[i]
             deltas = [error * self.activation_deriv(a[-1])]
-
-            for l in range(len(a) - 2, 0, -1): # we need to begin at the second to last layer
+            for l in range(len(a)-2, 0, -1): # we need to begin at the second to last layer
                 deltas.append(deltas[-1].dot(self.weights[l].T)*self.activation_deriv(a[l]))
             deltas.reverse()
             for i in range(len(self.weights)):
@@ -114,7 +114,7 @@ def mnist_digits(load=False):
     if load:
         nn.weights[0] = np.load("bak_hid_wgts.npy")[0].T
         nn.weights[1] = np.load("bak_out_wgts.npy").T
-    nn.fit(X_train, labels_train, epochs=2000)
+    nn.fit(X_train, labels_train, epochs=20000)
     predictions = []
     for i in range(X_test.shape[0]):
         o = nn.predict(X_test[i])

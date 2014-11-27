@@ -83,7 +83,10 @@ class EONet(object):
             J = J + reg
         return J
 
-    def eo(self, fn, thetas, args=None, options=None):
+    def eo(self, fn, thetas, args=None):
+        if args == None:
+            print "need the args"
+            return None
         pass
 
     def fit(self, X, y):
@@ -98,8 +101,7 @@ class EONet(object):
         theta2_0 = self.rand_init(self.hidden_layer_size, num_labels)
         thetas0 = self.pack_thetas(theta1_0, theta2_0)
 
-        options = {'maxiter': self.maxiter, 'disp': True}
-        _res = self.eo(self.function, thetas0, args=(input_layer_size, self.hidden_layer_size, num_labels, X, y, 0), options=options)
+        _res = self.eo(self.function, thetas0, args=(input_layer_size, self.hidden_layer_size, num_labels, X, y, 0))
 
         self.t1, self.t2 = self.unpack_thetas(_res.x, input_layer_size, self.hidden_layer_size, num_labels)
 

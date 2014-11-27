@@ -157,5 +157,5 @@ def iris_class():
     print accuracy_score(y_test, nn.predict(X_test))
 
 if __name__ == "__main__":
-    mnist_digits()
+    #mnist_digits()
     #iris_class()

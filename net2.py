@@ -4,6 +4,10 @@ from scipy import optimize
 from sklearn import cross_validation
 from sklearn.metrics import accuracy_score
 import sklearn.datasets as datasets
+from sklearn.metrics import confusion_matrix, classification_report
+from sklearn.preprocessing import LabelBinarizer
+import gzip
+import cPickle
 
 class Net2(object):
 
@@ -110,13 +114,16 @@ class Net2(object):
     def fit(self, X, y):
         num_features = X.shape[0]
         input_layer_size = X.shape[1]
-        num_labels = len(set(y))
+        try:
+            num_labels = len(set(y))
+        except:
+            num_labels = y.size
 
         theta1_0 = self.rand_init(input_layer_size, self.hidden_layer_size)
         theta2_0 = self.rand_init(self.hidden_layer_size, num_labels)
         thetas0 = self.pack_thetas(theta1_0, theta2_0)
 
-        options = {'maxiter': self.maxiter}
+        options = {'maxiter': self.maxiter, 'disp': True}
         _res = optimize.minimize(self.function, thetas0, jac=self.function_prime, method=self.method,
                                  args=(input_layer_size, self.hidden_layer_size, num_labels, X, y, 0), options=options)
 
@@ -129,11 +136,26 @@ class Net2(object):
         _, _, _, _, h = self._forward(X, self.t1, self.t2)
         return h
 
-if __name__ == "__main__":
+def mnist_digits():
+    from scipy.io import loadmat
+    data = loadmat('ex3data1.mat')
+    X, y = data['X'], data['y']
+    y = y.reshape(X.shape[0], )
+    y = y - 1
+    X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, y, test_size=0.4)
+    nn = NN_1HL(maxiter=100)
+    nn.fit(X_train, y_train)
+    accuracy_score(y_test, nn.predict(X_test))
+
+def iris_class():
     iris = datasets.load_iris()
     X = iris.data
     y = iris.target
     X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, y, test_size=0.4)
-    nn = Net2()
+    nn = Net2(hidden_layer_size=25)
     nn.fit(X_train, y_train)
     print accuracy_score(y_test, nn.predict(X_test))
+
+if __name__ == "__main__":
+    mnist_digits()
+    #iris_class()

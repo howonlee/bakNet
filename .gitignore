@@ -5,4 +5,5 @@
 *.npy
 *.pdf
 *.gz
+*.mat
 res

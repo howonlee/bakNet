@@ -143,9 +143,9 @@ def mnist_digits():
     y = y.reshape(X.shape[0], )
     y = y - 1
     X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, y, test_size=0.4)
-    nn = NN_1HL(maxiter=100)
+    nn = Net2(maxiter=100)
     nn.fit(X_train, y_train)
-    accuracy_score(y_test, nn.predict(X_test))
+    print accuracy_score(y_test, nn.predict(X_test))
 
 def iris_class():
     iris = datasets.load_iris()

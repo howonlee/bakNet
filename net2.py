@@ -38,13 +38,14 @@ class Net2(object):
 
     def unpack_thetas(self, thetas, input_layer_size, hidden_layer_size, num_labels):
         t1_start = 0
-        t1_end = hidden_layer_size * (input_layer_size + 1)
+        t1_end = hidden_layer_size * (input_layer_size + 1) #that's the bias
         t1 = thetas[t1_start:t1_end].reshape((hidden_layer_size, input_layer_size + 1))
         t2 = thetas[t1_end:].reshape((num_labels, hidden_layer_size + 1))
         return t1, t2
 
     def _forward(self, X, t1, t2):
         m = X.shape[0]
+        #maybe for the softmax?
         ones = None
         if len(X.shape) == 1:
             ones = np.array(1).reshape(1,)
@@ -106,7 +107,7 @@ class Net2(object):
         Theta2_grad = (1 / m) * Delta2
 
         if reg_lambda != 0:
-            Theta1_grad[:, 1:] = Theta1_grad[:, 1:] + (reg_lambda / m) * t1f
+            Theta1_grad[:, 1:] = Theta1_grad[:, 1:] + (reg_lambda / m) * t1f #### regularization doesn't apply to the bias
             Theta2_grad[:, 1:] = Theta2_grad[:, 1:] + (reg_lambda / m) * t2f
 
         return self.pack_thetas(Theta1_grad, Theta2_grad)
@@ -130,7 +131,7 @@ class Net2(object):
         self.t1, self.t2 = self.unpack_thetas(_res.x, input_layer_size, self.hidden_layer_size, num_labels)
 
     def predict(self, X):
-        return self.predict_proba(X).argmax(0)
+        return self.predict_proba(X).argmax(0) #axis 0
 
     def predict_proba(self, X):
         _, _, _, _, h = self._forward(X, self.t1, self.t2)

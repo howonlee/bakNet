@@ -115,7 +115,21 @@ def iris_class():
     for row in xrange(X_train.shape[0]):
         rbm_trainer.learn(X_train[row])
     ## how to make thoughts?
-    print rbm.reconstruct(X_train) - X_train
+    print rbm.reconstruct(X_test) - X_test
+
+def mnist_digits():
+    from scipy.io import loadmat
+    data = loadmat('ex3data1.mat')
+    X, y = data['X'], data['y']
+    y = y.reshape(X.shape[0], )
+    y = y - 1
+    X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, y, test_size=0.4)
+    rbm = RBM(X_train.shape[1], 400)
+    rbm_trainer = Trainer(rbm)
+    for row in xrange(X_train.shape[0]):
+        rbm_trainer.learn(X_train[row])
+    ## how to make thoughts?
+    print rbm.reconstruct(X_test) - X_test
 
 if __name__ == "__main__":
     """
@@ -125,4 +139,4 @@ if __name__ == "__main__":
     Trainer = lmj.rbm.ConvolutionalTrainer if args.conv else lmj.rbm.Trainer
     trainer = Trainer(rbm, l2=args.l2, momentum=args.momentum, target_sparsity=args.sparsity)
     """
-    iris_class()
+    mnist_digits()

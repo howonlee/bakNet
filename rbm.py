@@ -41,16 +41,16 @@ class RBM(object):
     def num_visible(self):
         return len(self.vis_bias)
 
-    def hidden_expectation(self, visible, bias=0.):
-        return sigmoid(np.dot(self.weights, visible.T).T + self.hid_bias + bias)
+    def hidden_expectation(self, visible):
+        return sigmoid(np.dot(self.weights, visible.T).T + self.hid_bias.T)
 
-    def visible_expectation(self, hidden, bias=0.):
-        return np.dot(hidden, self.weights) + self.vis_bias + bias
+    def visible_expectation(self, hidden):
+        return np.dot(hidden, self.weights) + self.vis_bias
 
     def iter_passes(self, visible):
         while True:
             hidden = self.hidden_expectation(visible)
-            yield visible, hidden
+            yield np.atleast_2d(visible), np.atleast_2d(hidden)
             visible = self.visible_expectation(bernoulli(hidden))
 
     def reconstruct(self, visible, passes=1):
@@ -67,7 +67,7 @@ class Trainer(object):
 
     def learn(self, visible):
         gradients = self.calculate_gradients(visible)
-        self.apply_gradients(*gradients)
+        self.punish_weight(*gradients)
 
     def calculate_gradients(self, visible_batch):
         '''Calculate gradients for a batch of visible data.
@@ -98,7 +98,7 @@ class Trainer(object):
                 k = int(rng.pareto(tau))
             worst = g.argsort()[-k:][::-1][-1]
             target[worst] += (rng.rand() * 0.05 - 0.025)
-            _g[:] = g
+            _g[:] = np.atleast_2d(g).T
         update('vis_bias', visible, self.grad_vis)
         update('hid_bias', hidden, self.grad_hid)
         update('weights', weights, self.grad_weights)
@@ -109,10 +109,20 @@ def iris_class():
     X = iris.data
     y = iris.target
     X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, y, test_size=0.4)
-    rbm = RBM(num_visible, num_hidden)
+    print X_train.shape
+    rbm = RBM(X_train.shape[1], 4)
     rbm_trainer = Trainer(rbm)
-    rbm_trainer.learn()
-    print accuracy_score(y_test, nn.predict(X_test))
+    for row in xrange(X_train.shape[0]):
+        rbm_trainer.learn(X_train[row])
+    ## how to make thoughts?
+    print rbm.reconstruct(X_train) - X_train
 
 if __name__ == "__main__":
+    """
+    rbm = args.model and pickle.load(open(args.model, 'rb')) or Model(
+        28 * 28, args.n * args.n, not args.gaussian)
+
+    Trainer = lmj.rbm.ConvolutionalTrainer if args.conv else lmj.rbm.Trainer
+    trainer = Trainer(rbm, l2=args.l2, momentum=args.momentum, target_sparsity=args.sparsity)
+    """
     iris_class()

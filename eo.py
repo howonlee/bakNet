@@ -11,6 +11,11 @@ import cPickle
 
 class EONet(object):
 
+    """
+    Unchanged from the feedforward architecture
+    Must go down before the new EO content starts
+    """
+
     def __init__(self, hidden_layer_size=25, maxiter=20000):
         self.hidden_layer_size = hidden_layer_size
         self.activation_func = self.sigmoid
@@ -40,27 +45,7 @@ class EONet(object):
         t2 = thetas[t1_end:].reshape((num_labels, hidden_layer_size + 1))
         return t1, t2
 
-    def argmax(self, ls):
-        return max(enumerate(ls), key=operator.itemgetter(1))[0]
-
-    def get_kth_highest_arg(self, ls, k):
-        return sorted(enumerate(ls), key=operator.itemgetter(1), reverse=True)[k][0]
-
-    def swap_city(self, energies, soln, tau=1.15):
-        ################################
-        k = len(soln)
-        while k > len(soln)-1:
-            k = int(np.random.pareto(tau))
-        worst_city = get_kth_highest_arg(energies, k)
-        new_soln = list(soln) #deep copy
-        rand_idx = random.randrange(0, len(new_soln))
-        new_soln[rand_idx], new_soln[worst_city] = new_soln[worst_city], new_soln[rand_idx]
-        return new_soln
-
-    def _forward(self, X, t1, t2):
-        """
-        Unchanged from the feedforward architecture
-        """
+    def forward(self, X, t1, t2):
         m = X.shape[0]
         ones = None
         if len(X.shape) == 1:
@@ -81,8 +66,19 @@ class EONet(object):
         a3 = self.activation_func(z3)
         return a1, z2, a2, z3, a3
 
-    def calc_local_energy(self, distmat, soln):
+    """
+    Here begins the new code
+    """
+
+    def argmax(self, ls):
+        return max(enumerate(ls), key=operator.itemgetter(1))[0]
+
+    def get_kth_highest_arg(self, ls, k):
+        return sorted(enumerate(ls), key=operator.itemgetter(1), reverse=True)[k][0]
+
+    def calc_local_energy(self, thetas, input_layer_size, hidden_layer_size, num_labels, X, y):
         ######################################
+        t1, t2 = self.unpack_thetas(thetas, input_layer_size, hidden_layer_size, num_labels)
         energies = []
         for i, city in enumerate(soln):
             #e_i = p_i - min_{j \neq i} (d_{ij})
@@ -97,11 +93,23 @@ class EONet(object):
         m = X.shape[0]
         Y = np.eye(num_labels)[y]
 
-        _, _, _, _, h = self._forward(X, t1, t2)
+        _, _, _, _, h = self.forward(X, t1, t2)
         costPositive = -Y * np.log(h).T
         costNegative = (1 - Y) * np.log(1 - h).T
         cost = costPositive - costNegative
         return np.sum(cost) / m #J
+
+    def weight_extinction(self, energies, soln, tau=1.15):
+        ################################
+        k = len(soln)
+        while k > len(soln)-1:
+            k = int(np.random.pareto(tau))
+        worst_city = get_kth_highest_arg(energies, k)
+        new_soln = list(soln) #deep copy
+        rand_idx = random.randrange(0, len(new_soln))
+        new_soln[rand_idx], new_soln[worst_city] = new_soln[worst_city], new_soln[rand_idx]
+        return new_soln
+
 
     def eo(self, X, y):
         num_features = X.shape[0]
@@ -135,7 +143,7 @@ class EONet(object):
         return self.predict_proba(X).argmax(0)
 
     def predict_proba(self, X):
-        _, _, _, _, h = self._forward(X, self.t1, self.t2)
+        _, _, _, _, h = self.forward(X, self.t1, self.t2)
         return h
 
 def mnist_digits():

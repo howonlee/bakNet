@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import matplotlib.path as mpath
 import matplotlib.patches as mpatches
 
-def setup_tsp(n=500):
+def setup_tsp(n=20):
     #50 by 50, uniformly distributed in 2-space
     config = {}
     for label in xrange(n):
@@ -50,12 +50,15 @@ def get_kth_highest_arg(ls, k):
 
 def swap_city(energies, soln, tau=1.15):
     k = len(soln)
+    dist = len(soln)
     while k > len(soln)-1:
         k = int(np.random.pareto(tau))
+    while dist > len(soln)-1:
+        dist = int(np.random.pareto(tau))
     worst_city = get_kth_highest_arg(energies, k)
     new_soln = list(soln) #deep copy
-    rand_idx = random.randrange(0, len(new_soln))
-    new_soln[rand_idx], new_soln[worst_city] = new_soln[worst_city], new_soln[rand_idx]
+    new_idx = (worst_city + dist) % len(soln)
+    new_soln[new_idx], new_soln[worst_city] = new_soln[worst_city], new_soln[new_idx]
     return new_soln
 
 def optimize_tsp(config, steps=10000, disp=False):
@@ -96,7 +99,7 @@ def show_distmat(distmat):
 
 if __name__ == "__main__":
     #show_tsp(config)
-    config = setup_tsp(n=100)
+    config = setup_tsp(n=50)
     for x in xrange(2):
         order, score = optimize_tsp(config, steps=250000, disp=True)
         print order, score

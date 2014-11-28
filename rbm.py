@@ -54,7 +54,7 @@ class RBM(object):
     def iter_passes(self, visible):
         while True:
             hidden = self.hidden_expectation(visible)
-            yield np.atleast_2d(visible), np.atleast_2d(hidden)
+            yield np.atleast_2d(visible), hidden
             visible = self.visible_expectation(bernoulli(hidden))
 
     def reconstruct(self, visible, passes=1):
@@ -101,8 +101,11 @@ class Trainer(object):
             while k > g_len-1:
                 k = int(rng.pareto(tau))
             worst = g.argsort()[-k:][::-1][-1]
-            target[worst] += (rng.rand() * 0.05 - 0.025)
-            _g[:] = np.atleast_2d(g).T
+            target[worst % g_len] += (rng.rand() * 0.05 - 0.025)
+            if _g.shape == g.shape:
+                _g[:] = np.atleast_2d(g)
+            else:
+                _g[:] = np.atleast_2d(g).T
         update('vis_bias', visible, self.grad_vis)
         update('hid_bias', hidden, self.grad_hid)
         update('weights', weights, self.grad_weights)
@@ -114,7 +117,7 @@ def iris_class():
     y = iris.target
     X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, y, test_size=0.4)
     print X_train.shape
-    rbm = RBM(X_train.shape[1], 4)
+    rbm = RBM(X_train.shape[1], 2)
     rbm_trainer = Trainer(rbm)
     for row in xrange(X_train.shape[0]):
         rbm_trainer.learn(X_train[row])
@@ -128,7 +131,7 @@ def mnist_digits():
     y = y.reshape(X.shape[0], )
     y = y - 1
     X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, y, test_size=0.4)
-    rbm = RBM(X_train.shape[1], 400)
+    rbm = RBM(X_train.shape[1], 20)
     rbm_trainer = Trainer(rbm)
     for row in xrange(X_train.shape[0]):
         rbm_trainer.learn(X_train[row])

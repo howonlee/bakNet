@@ -8,6 +8,8 @@ from sklearn.metrics import confusion_matrix, classification_report
 from sklearn.preprocessing import LabelBinarizer
 import gzip
 import cPickle
+import sys
+import datetime
 
 class EONet(object):
 
@@ -16,11 +18,11 @@ class EONet(object):
     Must go down before the new EO content starts
     """
 
-    def __init__(self, hidden_layer_size=25, maxiter=20000):
+    def __init__(self, epsilon_init=0.12, hidden_layer_size=25):
         self.hidden_layer_size = hidden_layer_size
+        self.epsilon_init = epsilon_init
         self.activation_func = self.sigmoid
         self.activation_func_prime = self.sigmoid_prime
-        self.maxiter = maxiter
 
     def sigmoid(self, z):
         return 1 / (1 + np.exp(-z))
@@ -66,28 +68,29 @@ class EONet(object):
         a3 = self.activation_func(z3)
         return a1, z2, a2, z3, a3
 
-    """
-    Here begins the new code
-    """
-
-    def argmax(self, ls):
-        return max(enumerate(ls), key=operator.itemgetter(1))[0]
-
-    def get_kth_highest_arg(self, ls, k):
-        return sorted(enumerate(ls), key=operator.itemgetter(1), reverse=True)[k][0]
-
     def calc_local_energy(self, thetas, input_layer_size, hidden_layer_size, num_labels, X, y):
-        ######################################
         t1, t2 = self.unpack_thetas(thetas, input_layer_size, hidden_layer_size, num_labels)
-        energies = []
-        for i, city in enumerate(soln):
-            #e_i = p_i - min_{j \neq i} (d_{ij})
-            j = soln[(i+1) % len(soln)]
-            energies.append(distmat[city,j] - distmat[city,:].min())
-        return energies
+        m = X.shape[0]
+        t1f = t1[:, 1:]
+        t2f = t2[:, 1:]
+        Y = np.eye(num_labels)[y]
+
+        Delta1, Delta2 = 0, 0
+        for i, row in enumerate(X):
+            a1, z2, a2, z3, a3 = self.forward(row, t1, t2)
+
+            # Backprop
+            d3 = a3 - Y[i, :].T
+            d2 = np.dot(t2f.T, d3) * self.activation_func_prime(z2)
+
+            Delta2 += np.dot(d3[np.newaxis].T, a2[np.newaxis])
+            Delta1 += np.dot(d2[np.newaxis].T, a1[np.newaxis])
+
+        Theta1_grad = (1 / m) * Delta1
+        Theta2_grad = (1 / m) * Delta2
+        return self.pack_thetas(Theta1_grad, Theta2_grad)
 
     def calc_total_energy(self, thetas, input_layer_size, hidden_layer_size, num_labels, X, y):
-        ################################
         t1, t2 = self.unpack_thetas(thetas, input_layer_size, hidden_layer_size, num_labels)
 
         m = X.shape[0]
@@ -99,19 +102,23 @@ class EONet(object):
         cost = costPositive - costNegative
         return np.sum(cost) / m #J
 
-    def weight_extinction(self, energies, soln, tau=1.15):
-        ################################
-        k = len(soln)
-        while k > len(soln)-1:
+    def weight_extinction(self, energies, thetas, tau=1.15):
+        """
+        Entirely with theta and solution packed.
+        """
+        k = thetas.shape[0]
+        thetas_len = thetas.shape[0]
+        while k > thetas_len-1:
             k = int(np.random.pareto(tau))
-        worst_city = get_kth_highest_arg(energies, k)
-        new_soln = list(soln) #deep copy
-        rand_idx = random.randrange(0, len(new_soln))
-        new_soln[rand_idx], new_soln[worst_city] = new_soln[worst_city], new_soln[rand_idx]
-        return new_soln
+        worst_city = energies.argsort()[-k:][::-1][-1]
+        #thetas[worst_city] += np.random.rand() * 0.1 - 0.05
+        thetas[worst_city] -= energies[worst_city] * 0.07
+        return thetas
 
+    def gradient_descent(self, energies, thetas, alpha=0.02):
+        return thetas - (energies * alpha)
 
-    def eo(self, X, y):
+    def eo(self, X, y, steps=25000, disp=True):
         num_features = X.shape[0]
         input_layer_size = X.shape[1]
         try:
@@ -121,22 +128,20 @@ class EONet(object):
 
         theta1_0 = self.rand_init(input_layer_size, self.hidden_layer_size)
         theta2_0 = self.rand_init(self.hidden_layer_size, num_labels)
-        thetas0 = self.pack_thetas(theta1_0, theta2_0)
-        #######################
-        best_s = get_random_solution(len(config))
+        best_s = self.pack_thetas(theta1_0, theta2_0)
         best_energy = float("inf")
         total_energy = float("inf")
-        curr_s = list(best_s)
-        distmat = dist_matrix(config)
+        curr_s = best_s.copy()
         for time in xrange(steps):
-            if disp and time % (steps // 20) == 0:
-                print "time: ", time
-            energies = calc_city_energy(distmat, curr_s)
-            total_energy = calc_total_energy(distmat, energies)
+            if disp and time % (steps // 100) == 0:
+                print "time: ", time, datetime.datetime.now().strftime("%Y %m %d %H:%M:%S")
+            energies = self.calc_local_energy(curr_s, input_layer_size, self.hidden_layer_size, num_labels, X, y)
+            total_energy = self.calc_total_energy(curr_s, input_layer_size, self.hidden_layer_size, num_labels, X, y)
             if total_energy < best_energy:
                 best_energy = total_energy
-                best_s = curr_s
-            curr_s = swap_city(energies, curr_s)
+                best_s = curr_s.copy()
+            curr_s = self.weight_extinction(energies, curr_s)
+            #curr_s = self.gradient_descent(energies, curr_s)
         self.t1, self.t2 = self.unpack_thetas(best_s, input_layer_size, self.hidden_layer_size, num_labels)
 
     def predict(self, X):
@@ -153,16 +158,20 @@ def mnist_digits():
     y = y.reshape(X.shape[0], )
     y = y - 1
     X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, y, test_size=0.4)
-    nn = EONet(maxiter=100)
+    nn = EONet()
     nn.eo(X_train, y_train)
-    print accuracy_score(y_test, nn.predict(X_test))
+    print "====="
+    predictions = nn.predict(X_test)
+    print accuracy_score(y_test, predictions)
+    print confusion_matrix(y_test, predictions)
+    print classification_report(y_test, predictions)
 
 def iris_class():
     iris = datasets.load_iris()
     X = iris.data
     y = iris.target
     X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, y, test_size=0.4)
-    nn = EONet(hidden_layer_size=25)
+    nn = EONet(hidden_layer_size=15)
     nn.eo(X_train, y_train)
     print accuracy_score(y_test, nn.predict(X_test))
 

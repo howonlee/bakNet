@@ -31,11 +31,11 @@ def bernoulli(p):
 class RBM(object):
     def __init__(self, num_visible, num_hidden, scale=0.001):
         self.weights = scale * rng.randn(num_hidden, num_visible)
-        self.hid_bias = scale * rng.randn(num_hidden, 1)
-        self.vis_bias = scale * rng.randn(num_visible, 1)
+        self.hid_bias = scale * rng.randn(num_hidden,1)
+        self.vis_bias = scale * rng.randn(num_visible)
 
     def hidden_expectation(self, visible):
-        return sigmoid(np.dot(self.weights, visible.T).T + self.hid_bias.T)
+        return sigmoid(np.dot(self.weights, visible.T).T + self.hid_bias)
 
     def visible_expectation(self, hidden):
         return np.dot(hidden, self.weights) + self.vis_bias #sigmoid?
@@ -43,7 +43,7 @@ class RBM(object):
     def iter_passes(self, visible):
         while True:
             hidden = self.hidden_expectation(visible)
-            yield np.atleast_2d(visible), hidden
+            yield visible, hidden
             visible = self.visible_expectation(bernoulli(hidden))
 
     def reconstruct(self, visible, passes=1):
@@ -77,14 +77,17 @@ class Trainer(object):
 
     def punish_weight(self, weights, visible, hidden, tau=1.15):
         def update(name, g, _g):
+            _g = _g.ravel()
             target = getattr(self.rbm, name)
-            k = g.shape[0]
-            g_len = g.shape[0]
+            k = len(_g)
+            g_len = len(_g)
+            #print "g_len: ", g_len
+            #print "target shape: ", target.shape
             while k > g_len-1:
                 k = int(rng.pareto(tau))
             worst = g.argsort()[-k:][::-1][-1]
-            target[worst % g_len] += (rng.rand() * 0.05 - 0.025)
-            _g[:] = g
+            target.flat[worst] += g.flat[worst] ## so currently crappy gradient descent
+            _g[:] = g.ravel()
         update('vis_bias', visible, self.grad_vis)
         update('hid_bias', hidden, self.grad_hid)
         update('weights', weights, self.grad_weights)
@@ -104,18 +107,17 @@ def iris_class():
     print rbm.reconstruct(X_test) - X_test
 
 def mnist_digits():
-    from scipy.io import loadmat
-    data = loadmat('ex3data1.mat')
-    X, y = data['X'], data['y']
-    y = y.reshape(X.shape[0], )
-    y = y - 1
-    X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, y, test_size=0.4)
-    rbm = RBM(X_train.shape[1], 20)
+    with gzip.open("mnist.pkl.gz", "rb") as f:
+        train_set, valid_set, test_set = cPickle.load(f)
+    X_train, y_train = train_set
+    X_test, y_test = test_set
+    print X_train.shape
+    rbm = RBM(X_train.shape[1], 100) ##maybe wrong
     rbm_trainer = Trainer(rbm)
-    for row in xrange(X_train.shape[0]):
-        rbm_trainer.learn(X_train[row])
-    ## how to make thoughts?
-    print rbm.reconstruct(X_test) - X_test
+    for row in xrange(X_train.shape[0] // 100):
+        to_learn = X_train[row:row+100]
+        rbm_trainer.learn(to_learn)
+    print rbm.reconstruct(X_test + (rng.rand(*X_test.shape) - 0.5)) - X_test
 
 if __name__ == "__main__":
     """

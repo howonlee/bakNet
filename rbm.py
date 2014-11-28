@@ -1,6 +1,18 @@
+from __future__ import division
 import numpy as np
 import logging
 import numpy.random as rng
+import gzip
+import cPickle
+import sys
+import datetime
+import random
+from scipy import optimize
+from sklearn import cross_validation
+from sklearn.metrics import accuracy_score
+import sklearn.datasets as datasets
+from sklearn.metrics import confusion_matrix, classification_report
+from sklearn.preprocessing import LabelBinarizer
 
 """
 Lief Ericsson 2011, from the py-rbm repo. Edited to be extremal optimization
@@ -77,16 +89,30 @@ class Trainer(object):
 
         return gw, gv, gh
 
-    def punish_weight(self, weights, visible, hidden):
+    def punish_weight(self, weights, visible, hidden, tau=1.15):
         def update(name, g, _g):
             target = getattr(self.rbm, name)
-            g *= 1 - self.momentum
-            g += self.momentum * (g* target)
-            target += learning_rate * g
+            k = g.shape[0]
+            g_len = g.shape[0]
+            while k > g_len-1:
+                k = int(rng.pareto(tau))
+            worst = g.argsort()[-k:][::-1][-1]
+            target[worst] += (rng.rand() * 0.05 - 0.025)
             _g[:] = g
         update('vis_bias', visible, self.grad_vis)
         update('hid_bias', hidden, self.grad_hid)
         update('weights', weights, self.grad_weights)
 
+def iris_class():
+    #this will require some thought
+    iris = datasets.load_iris()
+    X = iris.data
+    y = iris.target
+    X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, y, test_size=0.4)
+    rbm = RBM(num_visible, num_hidden)
+    rbm_trainer = Trainer(rbm)
+    rbm_trainer.learn()
+    print accuracy_score(y_test, nn.predict(X_test))
+
 if __name__ == "__main__":
-    pass
+    iris_class()

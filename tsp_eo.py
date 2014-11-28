@@ -48,7 +48,7 @@ def argmax(ls):
 def get_kth_highest_arg(ls, k):
     return sorted(enumerate(ls), key=operator.itemgetter(1), reverse=True)[k][0]
 
-def swap_city(energies, soln, tau=1.15):
+def swap_city(energies, soln, tau=1.5):
     k = len(soln)
     dist = len(soln)
     while k > len(soln)-1:
@@ -101,6 +101,6 @@ if __name__ == "__main__":
     #show_tsp(config)
     config = setup_tsp(n=50)
     for x in xrange(2):
-        order, score = optimize_tsp(config, steps=250000, disp=True)
+        order, score = optimize_tsp(config, steps=50000, disp=True)
         print order, score
         show_tsp(config, order)

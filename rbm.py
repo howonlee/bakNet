@@ -18,6 +18,10 @@ from sklearn.preprocessing import LabelBinarizer
 Lief Ericsson 2011, from the py-rbm repo. Edited to be extremal optimization
 """
 
+"""
+Now, this really does have to be wrong. But how?
+"""
+
 def sigmoid(eta):
     return 1. / (1. + np.exp(-eta))
 

@@ -35,9 +35,8 @@ def calc_city_energy(distmat, soln):
     energies = []
     for i, city in enumerate(soln):
         #e_i = p_i - min_{j \neq i} (d_{ij})
-        j = (i + 1) % len(soln)
-        energies.append(distmat[i,j] - distmat[i,:].min())
-    print energies
+        j = soln[(i+1) % len(soln)]
+        energies.append(distmat[city,j] - distmat[city,:].min())
     return energies
 
 def calc_total_energy(distmat, city_energies):
@@ -75,8 +74,6 @@ def optimize_tsp(config, steps=10000, disp=False):
         if total_energy < best_energy:
             best_energy = total_energy
             best_s = curr_s
-            print best_energy
-            print "woollooo woooloo"
         curr_s = swap_city(energies, curr_s)
     return best_s, best_energy
 
@@ -101,8 +98,8 @@ def show_distmat(distmat):
 
 if __name__ == "__main__":
     #show_tsp(config)
-    config = setup_tsp(n=5)
-    for x in xrange(20):
-        order, score = optimize_tsp(config, steps=1, disp=False)
+    config = setup_tsp(n=100)
+    for x in xrange(2):
+        order, score = optimize_tsp(config, steps=100000, disp=True)
         print order, score
         show_tsp(config, order)

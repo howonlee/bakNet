@@ -129,9 +129,9 @@ class Trainer(object):
         self.grad_vis = np.zeros(rbm.vis_bias.shape, float)
         self.grad_hid = np.zeros(rbm.hid_bias.shape, float)
 
-    def learn(self, visible, learning_rate=0.2):
+    def learn(self, visible):
         gradients = self.calculate_gradients(visible)
-        self.apply_gradients(*gradients, learning_rate=learning_rate)
+        self.apply_gradients(*gradients)
 
     def calculate_gradients(self, visible_batch):
         '''Calculate gradients for a batch of visible data.
@@ -154,19 +154,12 @@ class Trainer(object):
         return gw, gv, gh
 
     def punish_weight(self, weights, visible, hidden):
-        pass
-
-    def apply_gradients(self, weights, visible, hidden, learning_rate=0.2):
-        '''
-        '''
-        def update(name, g, _g, l2=0):
+        def update(name, g, _g):
             target = getattr(self.rbm, name)
             g *= 1 - self.momentum
-            g += self.momentum * (g - l2 * target)
+            g += self.momentum * (g* target)
             target += learning_rate * g
             _g[:] = g
-
         update('vis_bias', visible, self.grad_vis)
         update('hid_bias', hidden, self.grad_hid)
-        update('weights', weights, self.grad_weights, self.l2)
-
+        update('weights', weights, self.grad_weights)

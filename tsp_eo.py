@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import matplotlib.path as mpath
 import matplotlib.patches as mpatches
 
-def setup_tsp(n=100):
+def setup_tsp(n=500):
     #50 by 50, uniformly distributed in 2-space
     config = {}
     for label in xrange(n):
@@ -45,10 +45,16 @@ def calc_total_energy(distmat, city_energies):
 def argmax(ls):
     return max(enumerate(ls), key=operator.itemgetter(1))[0]
 
+def get_kth_highest_arg(ls, k):
+    return sorted(enumerate(ls), key=operator.itemgetter(1), reverse=True)[k][0]
+
 def swap_city(energies, soln, tau=1.15):
     #################
     #first implementation: take the worst energy each time
-    worst_city = argmax(energies)
+    k = len(soln)
+    while k > len(soln)-1:
+        k = int(np.random.pareto(tau))
+    worst_city = get_kth_highest_arg(energies, k)
     new_soln = list(soln) #deep copy
     rand_idx = random.randrange(0, len(new_soln))
     new_soln[rand_idx], new_soln[worst_city] = new_soln[worst_city], new_soln[rand_idx]
@@ -57,7 +63,8 @@ def swap_city(energies, soln, tau=1.15):
 def optimize_tsp(config, steps=10000, disp=False):
     best_s = get_random_solution(len(config))
     best_energy = float("inf")
-    curr_s = best_s
+    total_energy = float("inf")
+    curr_s = list(best_s)
     distmat = dist_matrix(config)
     for time in xrange(steps):
         if disp and time % (steps // 20) == 0:
@@ -67,6 +74,9 @@ def optimize_tsp(config, steps=10000, disp=False):
         if total_energy < best_energy:
             best_energy = total_energy
             best_s = curr_s
+            print energies
+            print best_energy
+            print "woollooo woooloo"
         curr_s = swap_city(energies, curr_s)
     return best_s, best_energy
 
@@ -91,7 +101,8 @@ def show_distmat(distmat):
 
 if __name__ == "__main__":
     #show_tsp(config)
-    config = setup_tsp()
-    for x in xrange(1):
-        order, score = optimize_tsp(config, disp=True)
+    config = setup_tsp(n=5)
+    for x in xrange(20):
+        order, score = optimize_tsp(config, steps=1, disp=False)
+        print order, score
         show_tsp(config, order)

@@ -31,20 +31,30 @@ def bernoulli(p):
 class RBM(object):
     def __init__(self, num_visible, num_hidden, scale=0.001):
         self.weights = scale * rng.randn(num_hidden, num_visible)
-        self.hid_bias = scale * rng.randn(num_hidden,1)
+        self.hid_bias = scale * rng.randn(num_hidden)
         self.vis_bias = scale * rng.randn(num_visible)
 
     def hidden_expectation(self, visible):
-        return sigmoid(np.dot(self.weights, visible.T).T + self.hid_bias)
+        print "viz shape: ", visible.shape
+        print "dot shape: ", np.dot(self.weights, visible.T).shape
+        print "hid bias shape: ", self.hid_bias.shape
+        val = sigmoid(np.dot(self.weights, visible.T) + self.hid_bias)
+        print "shape: ", val.shape
+        return val
 
     def visible_expectation(self, hidden):
+        print "dot vizexpectations shape: ", np.dot(hidden, self.weights).shape
+        print "visbias shape: ", self.vis_bias.shape
         return np.dot(hidden, self.weights) + self.vis_bias #sigmoid?
 
     def iter_passes(self, visible):
         while True:
             hidden = self.hidden_expectation(visible)
+            print "hid shape after iterpass ", hidden.shape
             yield visible, hidden
+            print "bernoulli shape: ", bernoulli(hidden).shape
             visible = self.visible_expectation(bernoulli(hidden))
+            print "viz shape after iterpass ", visible.shape
 
     def reconstruct(self, visible, passes=1):
         for i, (visible, _) in enumerate(self.iter_passes(visible)):
@@ -70,8 +80,8 @@ class Trainer(object):
         gw = (np.dot(h0.T, v0) - np.dot(h1.T, v1)) / len(visible_batch)
         gv = (v0 - v1).mean(axis=0)
         gh = (h0 - h1).mean(axis=0)
-        logging.debug('displacement: %.3g, hidden std: %.3g',
-                      np.linalg.norm(gv), h0.std(axis=1).mean())
+        #logging.debug('displacement: %.3g, hidden std: %.3g',
+        #              np.linalg.norm(gv), h0.std(axis=1).mean())
 
         return gw, gv, gh
 
@@ -85,6 +95,7 @@ class Trainer(object):
             #print "target shape: ", target.shape
             while k > g_len-1:
                 k = int(rng.pareto(tau))
+            print g
             worst = g.argsort()[-k:][::-1][-1]
             target.flat[worst] += g.flat[worst] ## so currently crappy gradient descent
             _g[:] = g.ravel()
@@ -112,10 +123,10 @@ def mnist_digits():
     X_train, y_train = train_set
     X_test, y_test = test_set
     print X_train.shape
-    rbm = RBM(X_train.shape[1], 100) ##maybe wrong
+    rbm = RBM(X_train.shape[1], X_train.shape[1]) ##maybe wrong
     rbm_trainer = Trainer(rbm)
-    for row in xrange(X_train.shape[0] // 100):
-        to_learn = X_train[row:row+100]
+    for row in xrange(X_train.shape[0]):
+        to_learn = X_train[row]
         rbm_trainer.learn(to_learn)
     print rbm.reconstruct(X_test + (rng.rand(*X_test.shape) - 0.5)) - X_test
 

@@ -80,12 +80,6 @@ class EONet(object):
             J = J + reg
         return J
 
-    def eo(self, fn, thetas, args=None):
-        if args == None:
-            print "need the args"
-            return None
-        pass
-
     def fit(self, X, y):
         num_features = X.shape[0]
         input_layer_size = X.shape[1]
@@ -132,3 +126,50 @@ def iris_class():
 if __name__ == "__main__":
     #mnist_digits()
     iris_class()
+
+"""
+
+def calc_city_energy(distmat, soln):
+    energies = []
+    for i, city in enumerate(soln):
+        #e_i = p_i - min_{j \neq i} (d_{ij})
+        j = soln[(i+1) % len(soln)]
+        energies.append(distmat[city,j] - distmat[city,:].min())
+    return energies
+
+def calc_total_energy(distmat, city_energies):
+    return sum(city_energies) + distmat.min(axis=0).sum()
+
+def argmax(ls):
+    return max(enumerate(ls), key=operator.itemgetter(1))[0]
+
+def get_kth_highest_arg(ls, k):
+    return sorted(enumerate(ls), key=operator.itemgetter(1), reverse=True)[k][0]
+
+def swap_city(energies, soln, tau=1.15):
+    k = len(soln)
+    while k > len(soln)-1:
+        k = int(np.random.pareto(tau))
+    worst_city = get_kth_highest_arg(energies, k)
+    new_soln = list(soln) #deep copy
+    rand_idx = random.randrange(0, len(new_soln))
+    new_soln[rand_idx], new_soln[worst_city] = new_soln[worst_city], new_soln[rand_idx]
+    return new_soln
+
+def optimize_tsp(config, steps=10000, disp=False):
+    best_s = get_random_solution(len(config))
+    best_energy = float("inf")
+    total_energy = float("inf")
+    curr_s = list(best_s)
+    distmat = dist_matrix(config)
+    for time in xrange(steps):
+        if disp and time % (steps // 20) == 0:
+            print "time: ", time
+        energies = calc_city_energy(distmat, curr_s)
+        total_energy = calc_total_energy(distmat, energies)
+        if total_energy < best_energy:
+            best_energy = total_energy
+            best_s = curr_s
+        curr_s = swap_city(energies, curr_s)
+    return best_s, best_energy
+"""

@@ -11,13 +11,10 @@ import cPickle
 
 class EONet(object):
 
-    def __init__(self, reg_lambda=0, epsilon_init=0.12, hidden_layer_size=25, maxiter=500):
-        self.reg_lambda = reg_lambda
-        self.epsilon_init = epsilon_init
+    def __init__(self, hidden_layer_size=25, maxiter=20000):
         self.hidden_layer_size = hidden_layer_size
         self.activation_func = self.sigmoid
         self.activation_func_prime = self.sigmoid_prime
-        self.method = opti_method
         self.maxiter = maxiter
 
     def sigmoid(self, z):
@@ -133,5 +130,5 @@ def iris_class():
     print accuracy_score(y_test, nn.predict(X_test))
 
 if __name__ == "__main__":
-    mnist_digits()
-    #iris_class()
+    #mnist_digits()
+    iris_class()

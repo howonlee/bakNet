@@ -25,9 +25,6 @@ Now, this really does have to be wrong. But how?
 def sigmoid(eta):
     return 1. / (1. + np.exp(-eta))
 
-def identity(eta):
-    return eta
-
 def bernoulli(p):
     return rng.rand(*p.shape) < p
 
@@ -37,19 +34,11 @@ class RBM(object):
         self.hid_bias = scale * rng.randn(num_hidden, 1)
         self.vis_bias = scale * rng.randn(num_visible, 1)
 
-    @property
-    def num_hidden(self):
-        return len(self.hid_bias)
-
-    @property
-    def num_visible(self):
-        return len(self.vis_bias)
-
     def hidden_expectation(self, visible):
         return sigmoid(np.dot(self.weights, visible.T).T + self.hid_bias.T)
 
     def visible_expectation(self, hidden):
-        return np.dot(hidden, self.weights) + self.vis_bias
+        return np.dot(hidden, self.weights) + self.vis_bias #sigmoid?
 
     def iter_passes(self, visible):
         while True:
@@ -74,13 +63,6 @@ class Trainer(object):
         self.punish_weight(*gradients)
 
     def calculate_gradients(self, visible_batch):
-        '''Calculate gradients for a batch of visible data.
-
-        Returns a 3-tuple of gradients: weights, visible bias, hidden bias.
-
-        visible_batch: A (batch size, visible units) array of visible data. Each
-          row represents one visible data sample.
-        '''
         passes = self.rbm.iter_passes(visible_batch)
         v0, h0 = passes.next()
         v1, h1 = passes.next()
@@ -102,10 +84,7 @@ class Trainer(object):
                 k = int(rng.pareto(tau))
             worst = g.argsort()[-k:][::-1][-1]
             target[worst % g_len] += (rng.rand() * 0.05 - 0.025)
-            if _g.shape == g.shape:
-                _g[:] = np.atleast_2d(g)
-            else:
-                _g[:] = np.atleast_2d(g).T
+            _g[:] = g
         update('vis_bias', visible, self.grad_vis)
         update('hid_bias', hidden, self.grad_hid)
         update('weights', weights, self.grad_weights)

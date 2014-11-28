@@ -49,8 +49,6 @@ def get_kth_highest_arg(ls, k):
     return sorted(enumerate(ls), key=operator.itemgetter(1), reverse=True)[k][0]
 
 def swap_city(energies, soln, tau=1.15):
-    #################
-    #first implementation: take the worst energy each time
     k = len(soln)
     while k > len(soln)-1:
         k = int(np.random.pareto(tau))
@@ -100,6 +98,6 @@ if __name__ == "__main__":
     #show_tsp(config)
     config = setup_tsp(n=100)
     for x in xrange(2):
-        order, score = optimize_tsp(config, steps=100000, disp=True)
+        order, score = optimize_tsp(config, steps=250000, disp=True)
         print order, score
         show_tsp(config, order)

@@ -40,25 +40,14 @@ class EONet(object):
         t2 = thetas[t1_end:].reshape((num_labels, hidden_layer_size + 1))
         return t1, t2
 
-    def calc_weight_energy(distmat, soln):
-        ######################################
-        energies = []
-        for i, city in enumerate(soln):
-            #e_i = p_i - min_{j \neq i} (d_{ij})
-            j = soln[(i+1) % len(soln)]
-            energies.append(distmat[city,j] - distmat[city,:].min())
-        return energies
-
-    def calc_total_energy(distmat, city_energies):
-        return sum(city_energies) + distmat.min(axis=0).sum()
-
-    def argmax(ls):
+    def argmax(self, ls):
         return max(enumerate(ls), key=operator.itemgetter(1))[0]
 
-    def get_kth_highest_arg(ls, k):
+    def get_kth_highest_arg(self, ls, k):
         return sorted(enumerate(ls), key=operator.itemgetter(1), reverse=True)[k][0]
 
-    def swap_city(energies, soln, tau=1.15):
+    def swap_city(self, energies, soln, tau=1.15):
+        ################################
         k = len(soln)
         while k > len(soln)-1:
             k = int(np.random.pareto(tau))
@@ -69,6 +58,9 @@ class EONet(object):
         return new_soln
 
     def _forward(self, X, t1, t2):
+        """
+        Unchanged from the feedforward architecture
+        """
         m = X.shape[0]
         ones = None
         if len(X.shape) == 1:
@@ -89,7 +81,17 @@ class EONet(object):
         a3 = self.activation_func(z3)
         return a1, z2, a2, z3, a3
 
-    def function(self, thetas, input_layer_size, hidden_layer_size, num_labels, X, y, reg_lambda):
+    def calc_local_energy(self, distmat, soln):
+        ######################################
+        energies = []
+        for i, city in enumerate(soln):
+            #e_i = p_i - min_{j \neq i} (d_{ij})
+            j = soln[(i+1) % len(soln)]
+            energies.append(distmat[city,j] - distmat[city,:].min())
+        return energies
+
+    def calc_total_energy(self, thetas, input_layer_size, hidden_layer_size, num_labels, X, y):
+        ################################
         t1, t2 = self.unpack_thetas(thetas, input_layer_size, hidden_layer_size, num_labels)
 
         m = X.shape[0]
@@ -100,9 +102,8 @@ class EONet(object):
         costNegative = (1 - Y) * np.log(1 - h).T
         cost = costPositive - costNegative
         return np.sum(cost) / m #J
-def optimize_tsp(config, steps=10000, disp=False):
 
-    def fit(self, X, y):
+    def eo(self, X, y):
         num_features = X.shape[0]
         input_layer_size = X.shape[1]
         try:
@@ -145,7 +146,7 @@ def mnist_digits():
     y = y - 1
     X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, y, test_size=0.4)
     nn = EONet(maxiter=100)
-    nn.fit(X_train, y_train)
+    nn.eo(X_train, y_train)
     print accuracy_score(y_test, nn.predict(X_test))
 
 def iris_class():
@@ -154,7 +155,7 @@ def iris_class():
     y = iris.target
     X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, y, test_size=0.4)
     nn = EONet(hidden_layer_size=25)
-    nn.fit(X_train, y_train)
+    nn.eo(X_train, y_train)
     print accuracy_score(y_test, nn.predict(X_test))
 
 if __name__ == "__main__":

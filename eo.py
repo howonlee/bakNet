@@ -1,15 +1,16 @@
 from __future__ import division
 import numpy as np
+import gzip
+import cPickle
+import sys
+import datetime
+import random
 from scipy import optimize
 from sklearn import cross_validation
 from sklearn.metrics import accuracy_score
 import sklearn.datasets as datasets
 from sklearn.metrics import confusion_matrix, classification_report
 from sklearn.preprocessing import LabelBinarizer
-import gzip
-import cPickle
-import sys
-import datetime
 
 class EONet(object):
 
@@ -111,14 +112,16 @@ class EONet(object):
         while k > thetas_len-1:
             k = int(np.random.pareto(tau))
         worst_city = energies.argsort()[-k:][::-1][-1]
-        #thetas[worst_city] += np.random.rand() * 0.1 - 0.05
-        thetas[worst_city] -= energies[worst_city] * 0.07
+        rand_idx = random.randrange(0, thetas_len)
+        thetas[worst_city] += (np.random.rand() * 0.05 - 0.025)
+        #thetas[worst_city] -= energies[worst_city] * 0.1
+        #thetas[rand_idx], thetas[worst_city] = thetas[worst_city], thetas[rand_idx]
         return thetas
 
     def gradient_descent(self, energies, thetas, alpha=0.02):
         return thetas - (energies * alpha)
 
-    def eo(self, X, y, steps=25000, disp=True):
+    def eo(self, X, y, steps=10000, disp=True):
         num_features = X.shape[0]
         input_layer_size = X.shape[1]
         try:
@@ -131,14 +134,19 @@ class EONet(object):
         best_s = self.pack_thetas(theta1_0, theta2_0)
         best_energy = float("inf")
         total_energy = float("inf")
-        prev_energies = None
+        prev_energies = np.array(0) #null
         curr_s = best_s.copy()
+        num_true = 0
+        num_false = 0
         for time in xrange(steps):
             if disp and time % (steps // 100) == 0:
                 print "time: ", time, datetime.datetime.now().strftime("%Y %m %d %H:%M:%S")
+                print num_true / (time + 1)
             energies = self.calc_local_energy(curr_s, input_layer_size, self.hidden_layer_size, num_labels, X, y)
-            if prev_energies:
-                print energies - prev_energies
+            if prev_energies.any():
+                t1, t2 = self.unpack_thetas(energies - prev_energies, input_layer_size, self.hidden_layer_size, num_labels)
+                if t2[1].any() and t2[0].any() and t2[2].any():
+                    num_true += 1
             prev_energies = energies
             total_energy = self.calc_total_energy(curr_s, input_layer_size, self.hidden_layer_size, num_labels, X, y)
             if total_energy < best_energy:

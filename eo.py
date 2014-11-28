@@ -131,17 +131,20 @@ class EONet(object):
         best_s = self.pack_thetas(theta1_0, theta2_0)
         best_energy = float("inf")
         total_energy = float("inf")
+        prev_energies = None
         curr_s = best_s.copy()
         for time in xrange(steps):
             if disp and time % (steps // 100) == 0:
                 print "time: ", time, datetime.datetime.now().strftime("%Y %m %d %H:%M:%S")
             energies = self.calc_local_energy(curr_s, input_layer_size, self.hidden_layer_size, num_labels, X, y)
+            if prev_energies:
+                print energies - prev_energies
+            prev_energies = energies
             total_energy = self.calc_total_energy(curr_s, input_layer_size, self.hidden_layer_size, num_labels, X, y)
             if total_energy < best_energy:
                 best_energy = total_energy
                 best_s = curr_s.copy()
             curr_s = self.weight_extinction(energies, curr_s)
-            #curr_s = self.gradient_descent(energies, curr_s)
         self.t1, self.t2 = self.unpack_thetas(best_s, input_layer_size, self.hidden_layer_size, num_labels)
 
     def predict(self, X):

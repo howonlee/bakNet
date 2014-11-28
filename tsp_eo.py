@@ -1,6 +1,7 @@
 import numpy as np
 import random
 import operator
+import math
 import matplotlib.pyplot as plt
 
 def setup_tsp(n=20):
@@ -10,13 +11,17 @@ def setup_tsp(n=20):
         config[label] = (random.random() * 50, random.random() * 50)
     return config
 
+def dist(tup1, tup2):
+    #2-dimensional euclidean distance
+    return math.sqrt((tup2[0] - tup1[0]) ** 2 + (tup2[1] - tup1[1]) ** 2)
+
 def dist_matrix(config):
     config_ls = config.items()
     dim = len(config_ls)
     distmat = np.zeros((dim, dim))
-    for x in config_ls:
-        for y in config_ls:
-            distmat[x[0], y[0]] = dist ##### make the dist
+    for first in config_ls:
+        for second in config_ls:
+            distmat[first[0], second[0]] = dist(first[1], second[1])
     return distmat
 
 def get_random_solution(n=20):
@@ -30,11 +35,23 @@ def calc_city_energy(distmat, soln):
 def calc_total_energy(distmat, soln):
     pass
 
-def select_city(energies, soln, alpha):
+def swap_city(energies, soln, tau=1.15):
     pass
 
-def optimize_tsp():
-    pass
+def optimize_tsp(steps=30000, n=20):
+    config = setup_tsp(n)
+    best_s = get_random_solution(n)
+    best_energy = float("inf")
+    curr_s = best_s
+    distmat = distance_matrix(config)
+    for time in xrange(steps):
+        total_energy = calc_total_energy(distmat, curr_s)
+        if total_energy < best_energy:
+            best_energy = total_energy
+            best_s = curr_s
+        energies = calc_city_energy(distmat, curr_s)
+        curr_s = swap_city(energies, curr_s)
+    return best_s, best_energy
 
 def show_tsp(config, order=None):
     config_ls = config.items()
@@ -44,6 +61,11 @@ def show_tsp(config, order=None):
     plt.scatter(xs, ys, c=labels)
     plt.show()
 
+def show_distmat(distmat):
+    plt.matshow(distmat)
+    plt.show()
+
 if __name__ == "__main__":
-    config = setup_tsp()
-    show_tsp(config)
+    #show_tsp(config)
+    show_distmat(dist_matrix(config))
+    #print optimize_tsp()

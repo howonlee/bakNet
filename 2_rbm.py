@@ -64,8 +64,11 @@ class RBM:
             # Update weights.
             if self.is_eo:
                 ############################################
-                energies = ((pos_associations - neg_associations) / num_examples)
-                print energies.shape
+                energies = (neg_associations - pos_associations)
+                ### the contribution of each weight to the total
+                #energies = (data - neg_visible_probs).sum(axis=0)
+                print "weight shape : ", self.weights.shape
+                print "energies shape: ", energies.shape
                 k = energies.shape[0] + 1
                 while k > energies.shape[0]:
                     k = int(np.random.pareto(tau))
@@ -77,7 +80,7 @@ class RBM:
                 print worst
                 rand_idx = random.randrange(0, energies.shape[0])
                 print "energy: ", energies.flat[worst]
-                self.weights.flat[worst] += 0.1 * np.random.rand()
+                self.weights.flat[worst] -= 0.1
                 error = np.sum((data - neg_visible_probs) ** 2)
                 #self.is_eo = False
                 if error < self.best_error:
@@ -212,7 +215,7 @@ if __name__ == '__main__':
     X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=0)
     print X_train.shape
     r = RBM(num_visible = 64, num_hidden = 100, is_eo=True)
-    r.train(X_train, max_epochs=20000)
+    r.train(X_train, max_epochs=25000)
     r.weights = r.best_weights
     print "weights"
     print "=========="

@@ -159,4 +159,4 @@ def iris_class():
 
 if __name__ == "__main__":
     #mnist_digits()
-    #iris_class()
+    iris_class()

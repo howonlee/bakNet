@@ -1,5 +1,6 @@
 import numpy as np
 import gzip
+import random
 import cPickle
 import matplotlib.pyplot as plt
 from scipy.ndimage import convolve
@@ -10,7 +11,7 @@ echen, on github
 """
 
 class RBM:
-    def __init__(self, num_visible, num_hidden, learning_rate = 0.06):
+    def __init__(self, num_visible, num_hidden, is_eo=False, learning_rate = 0.06):
         self.num_hidden = num_hidden
         self.num_visible = num_visible
         self.learning_rate = learning_rate
@@ -21,9 +22,12 @@ class RBM:
         # Insert weights for the bias units into the first row and first column.
         self.weights = np.insert(self.weights, 0, 0, axis = 0)
         self.weights = np.insert(self.weights, 0, 0, axis = 1)
-        self.best_weights = self.weights.copy()
+        self.is_eo = is_eo
+        if self.is_eo:
+            self.best_weights = self.weights.copy()
+            self.best_error = float("inf")
 
-    def train(self, data, max_epochs = 1000):
+    def train(self, data, max_epochs = 1000, tau=1.5):
         """
         Train the machine.
 
@@ -58,9 +62,30 @@ class RBM:
             neg_associations = np.dot(neg_visible_probs.T, neg_hidden_probs)
 
             # Update weights.
-            self.weights += self.learning_rate * ((pos_associations - neg_associations) / num_examples)
-
-            error = np.sum((data - neg_visible_probs) ** 2)
+            if self.is_eo:
+                ############################################
+                energies = ((pos_associations - neg_associations) / num_examples)
+                print energies.shape
+                k = energies.shape[0] + 1
+                while k > energies.shape[0]:
+                    k = int(np.random.pareto(tau))
+                #print "k: ", k
+                #print "argsorted: ", energies.ravel().argsort()
+                #print "k member: ", energies.ravel().argsort()[-(k+1)]
+                #print "argsorted len: ", len(energies.ravel().argsort())
+                worst = energies.ravel().argsort()[-(k+1)]
+                print worst
+                rand_idx = random.randrange(0, energies.shape[0])
+                print "energy: ", energies.flat[worst]
+                self.weights.flat[worst] += 0.1 * np.random.rand()
+                error = np.sum((data - neg_visible_probs) ** 2)
+                #self.is_eo = False
+                if error < self.best_error:
+                    self.best_error = error
+                    self.best_weights = self.weights.copy()
+            else:
+                self.weights += self.learning_rate * ((pos_associations - neg_associations) / num_examples)
+                error = np.sum((data - neg_visible_probs) ** 2)
             print("Epoch %s: error is %s" % (epoch, error))
 
     def run_visible(self, data):
@@ -186,10 +211,12 @@ if __name__ == '__main__':
     X = (X - np.min(X, 0)) / (np.max(X, 0) + 0.0001) #scale
     X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=0)
     print X_train.shape
-    r = RBM(num_visible = 64, num_hidden = 100)
-    r.train(X_train, max_epochs=100)
+    r = RBM(num_visible = 64, num_hidden = 100, is_eo=True)
+    r.train(X_train, max_epochs=20000)
+    r.weights = r.best_weights
     print "weights"
     print "=========="
     print r.weights
-    plt.matshow(r.daydream(50)[40].reshape(8,8), cmap=plt.cm.gray_r)
+    print r.best_error
+    plt.matshow(r.daydream(50), cmap=plt.cm.gray_r)
     plt.show()

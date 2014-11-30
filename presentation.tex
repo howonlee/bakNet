@@ -8,20 +8,6 @@
 \title{Extremal Optimization}
 \author{Howon Lee}
 \maketitle
-%%what is the question?
-%%why is it interesting?
-%%what approach will you be taking to address it?
-%%details of approach. specific target phenomenon. model network task setting, architecture, processing and learning algorithm, training environment
-%%expected or preliminary results
-%%problems and issues
-%%summary and next steps
-
-%%% start with the Bak-sneppen story. Model of qualitative parts of evolution. Lattice model, do some gnarly physics. Talk about the results of those people.
-%%% Bak and Chialvo do adaptive extremal optimization on a fake-ish neural net model. Conjunctive model means that it just sucks for problems like the parity problem, although the forgiveness thing ties everything together.
-%%% shit results on Bak net. note that the shit results are a little less worse for natural data
-%%% Talk about extremal optimization in the more abstract sense. Travelling salesman problem. Boetticher's work on the deterministic EO and tau-EO.
-%%% Figuring out applying the abstract EO algorithm to things. Note that the locality of fitness that the model requires is much easier to do in Boltzmann machine, decide to do RBM on those machines.
-%%% Results. Try some classifications. Do time course of learning on the shit error measure that we have and a non-shit error measure. Compare to gradient descent for learning. Apologize for not having simulated annealing to compare to.
 
 \begin{frame}
   \frametitle{What is the question?}
@@ -31,11 +17,12 @@
 \begin{frame}
   \frametitle{Why is it interesting?}
   Qualitative model of evolution: Bak-Sneppen model.
+  %%% start with the Bak-sneppen story. Model of qualitative parts of evolution. Lattice model, do some gnarly physics. Talk about the results of those people.
   %%% steal a chart
 
   Rules of Bak-Sneppen model. How does it behave?
 
-  Caveats: CR Shalizi, "A Simple Model of the Evolution of Simple Models of Evolution"
+  Caveats: CR Shalizi, W Tozier, "A Simple Model of the Evolution of Simple Models of Evolution"
 \end{frame}
 
 \begin{frame}
@@ -47,6 +34,7 @@
 
 \begin{frame}
   \frametitle{Adaptive Learning by Extremal Dynamics and Negative Feedback}
+  %%% Bak and Chialvo do adaptive extremal optimization on a fake-ish neural net model. Conjunctive model means that it just sucks for problems like the parity problem, although the forgiveness thing ties everything together.
   How it works, from 20000 feet
   Problems: Conjunctive neurons
   Similarity to Tabu search, simulated annealing?
@@ -55,6 +43,7 @@
 \begin{frame}
   \frametitle{Results with Bak-Chialvo net}
   %%%% miserable results
+  %%% shit results on Bak net. note that the shit results are a little less worse for natural data
 \end{frame}
 
 \begin{frame}
@@ -62,6 +51,7 @@
   How it works, from 20000 feet
   Existing results, from Boetticher: TSP
   %%% steal a chart
+  %%% Talk about extremal optimization in the more abstract sense. Travelling salesman problem. Boetticher's work on the deterministic EO and tau-EO.
 \end{frame}
 
 \begin{frame}
@@ -70,9 +60,23 @@
   %%%% miserable results
 \end{frame}
 
+
+\begin{frame}
+  \frametitle{Task}
+  %%details of approach. specific target phenomenon. model network task setting, architecture, processing and learning algorithm, training environment
+  %%% Figuring out applying the abstract EO algorithm to things. Note that the locality of fitness that the model requires is much easier to do in Boltzmann machine, decide to do RBM on those machines.
+\end{frame}
+
 \begin{frame}
   \frametitle{Results on RBM}
   %%%% charts charts charts
+  %%% Results. Try some classifications. Do time course of learning on the shit error measure that we have and a non-shit error measure. Compare to gradient descent for learning. Apologize for not having simulated annealing to compare to.
+\end{frame}
+
+\begin{frame}
+  \frametitle{Problems, Issues}
+  %%%% presumably I have some problems and issues
+
 \end{frame}
 
 \begin{frame}

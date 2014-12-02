@@ -23,6 +23,7 @@ class RBM:
         self.weights = np.insert(self.weights, 0, 0, axis = 0)
         self.weights = np.insert(self.weights, 0, 0, axis = 1)
         self.is_eo = is_eo
+        self.errors = []
         if self.is_eo:
             self.best_weights = self.weights.copy()
             self.best_error = float("inf")
@@ -67,8 +68,8 @@ class RBM:
                 energies = (neg_associations - pos_associations)
                 ### the contribution of each weight to the total
                 #energies = (data - neg_visible_probs).sum(axis=0)
-                print "weight shape : ", self.weights.shape
-                print "energies shape: ", energies.shape
+                #print "weight shape : ", self.weights.shape
+                #print "energies shape: ", energies.shape
                 k = energies.shape[0] + 1
                 while k > energies.shape[0]:
                     k = int(np.random.pareto(tau))
@@ -77,9 +78,9 @@ class RBM:
                 #print "k member: ", energies.ravel().argsort()[-(k+1)]
                 #print "argsorted len: ", len(energies.ravel().argsort())
                 worst = energies.ravel().argsort()[-(k+1)]
-                print worst
+                #print worst
                 rand_idx = random.randrange(0, energies.shape[0])
-                print "energy: ", energies.flat[worst]
+                #print "energy: ", energies.flat[worst]
                 #self.weights.flat[worst] -= 0.1
                 self.weights.flat[worst] -= np.random.rand()
                 error = np.sum((data - neg_visible_probs) ** 2)
@@ -87,10 +88,12 @@ class RBM:
                 if error < self.best_error:
                     self.best_error = error
                     self.best_weights = self.weights.copy()
+                self.errors.append(error)
             else:
                 self.weights += self.learning_rate * ((pos_associations - neg_associations) / num_examples)
                 error = np.sum((data - neg_visible_probs) ** 2)
-            print("Epoch %s: error is %s" % (epoch, error))
+                self.errors.append(error)
+            #print("Epoch %s: error is %s" % (epoch, error))
 
     def run_visible(self, data):
         """
@@ -215,12 +218,8 @@ if __name__ == '__main__':
     X = (X - np.min(X, 0)) / (np.max(X, 0) + 0.0001) #scale
     X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=0)
     print X_train.shape
-    r = RBM(num_visible = 64, num_hidden = 100, is_eo=True)
-    r.train(X_train, max_epochs=3000)
-    r.weights = r.best_weights
-    print "weights"
-    print "=========="
-    print r.weights
-    print r.best_error
-    plt.matshow(r.daydream(50), cmap=plt.cm.gray_r)
-    plt.show()
+    r = RBM(num_visible = 64, num_hidden = 100, is_eo=False)
+    r.train(X_train, max_epochs=1000)
+    #r.weights = r.best_weights
+    print r.errors
+    #plt.matshow(r.daydream(50), cmap=plt.cm.gray_r)

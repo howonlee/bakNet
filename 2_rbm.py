@@ -218,7 +218,7 @@ if __name__ == '__main__':
     X = (X - np.min(X, 0)) / (np.max(X, 0) + 0.0001) #scale
     X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=0)
     print X_train.shape
-    r = RBM(num_visible = 64, num_hidden = 100, is_eo=False)
+    r = RBM(num_visible = 64, num_hidden = 100, is_eo=True)
     r.train(X_train, max_epochs=1000)
     #r.weights = r.best_weights
     print r.errors

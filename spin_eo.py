@@ -11,14 +11,14 @@ def setup_ising(n=20):
     #n by n ising model
     config = np.ones(n)
     weights = collections.defaultdict(random.random)
-    for x in np.nditer(config, op_flats=['readwrite']):
+    for x in np.nditer(config, op_flags=['readwrite']):
         if random.random() > 0.5:
             x[...] = -1
     return (config, weights)
 
-def conf_energy(config, weights, n):
-    local_energy = np.zeros(n-2)
-    for x in xrange(1,n-1):
+def conf_energy(config, weights):
+    local_energy = np.zeros(config.shape[0]-2)
+    for x in xrange(1,config.shape[0]-1):
         local_energy[x-1] = weights[(x,x+1)]*config[x]*config[x+1] + weights[(x-1,x)]*config[x-1]*config[x]
     hamiltonian = local_energy.sum()
     return (hamiltonian, local_energy)
@@ -31,16 +31,16 @@ def get_kth_highest_arg(ls, k):
 
 def swap_state(energies, soln, tau=1.5):
 ####
-    k = len(soln)
-    dist = len(soln)
-    while k > len(soln)-1:
+    k = soln.shape[0] #eventually, the ravel solution
+    dist = soln.shape[0]
+    while k > soln.shape[0]-3:
         k = int(np.random.pareto(tau))
     while dist > len(soln)-1:
         dist = int(np.random.pareto(tau))
-    worst_city = get_kth_highest_arg(energies, k)
-    new_soln = list(soln) #deep copy
-    new_idx = (worst_city + dist) % len(soln)
-    new_soln[new_idx], new_soln[worst_city] = new_soln[worst_city], new_soln[new_idx]
+    worst = energies.ravel().argsort()[-(k+1)]
+    new_soln = soln.copy()
+    new_idx = random.randint(0,soln.shape[0]-1)
+    new_soln[new_idx], new_soln[worst] = new_soln[worst], new_soln[new_idx]
     return new_soln
 
 def optimize_spinglass(config, weights, steps=10000, disp=False):
@@ -61,7 +61,8 @@ def optimize_spinglass(config, weights, steps=10000, disp=False):
 if __name__ == "__main__":
     config, weights = setup_ising(n=50)
     for x in xrange(2):
-        opt_config, score = optimize_tsp(config, weights, steps=50000, disp=True)
-        plt.matshow(opt_config)
-        plt.matshow(weights)
-        plt.show()
+        opt_config, score = optimize_spinglass(config, weights, steps=50000, disp=True)
+        print opt_config
+        #plt.matshow(opt_config)
+        #plt.matshow(weights)
+        #plt.show()

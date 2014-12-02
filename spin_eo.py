@@ -9,7 +9,7 @@ import matplotlib.patches as mpatches
 
 def setup_ising(n=20):
     #n by n ising model
-    config = np.ones(n)
+    config = np.ones((n,n))
     weights = collections.defaultdict(random.random)
     for x in np.nditer(config, op_flags=['readwrite']):
         if random.random() > 0.5:
@@ -17,20 +17,16 @@ def setup_ising(n=20):
     return (config, weights)
 
 def conf_energy(config, weights):
-    local_energy = np.zeros(config.shape[0]-2)
-    for x in xrange(1,config.shape[0]-1):
-        local_energy[x-1] = weights[(x,x+1)]*config[x]*config[x+1] + weights[(x-1,x)]*config[x-1]*config[x]
+    dims = config.shape
+    local_energy = np.zeros(dims[0]-2, dims[1]-2)
+    for x in xrange(1,dims[0]-1):
+        for y in xrange(1,dims[1]-1): #4 local energies adjacent now...
+            local_energy[x-1, y-1] = weights[(x,x+1)]*config[x]*config[x+1] + weights[(x-1,x)]*config[x-1]*config[x]
     hamiltonian = local_energy.sum()
     return (hamiltonian, local_energy)
 
-def argmax(ls):
-    return max(enumerate(ls), key=operator.itemgetter(1))[0]
-
-def get_kth_highest_arg(ls, k):
-    return sorted(enumerate(ls), key=operator.itemgetter(1), reverse=True)[k][0]
-
 def swap_state(energies, soln, tau=1.5):
-####
+    #### index via the ravel
     k = soln.shape[0] #eventually, the ravel solution
     dist = soln.shape[0]
     while k > soln.shape[0]-3:

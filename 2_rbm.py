@@ -70,9 +70,12 @@ class RBM:
                 #energies = (data - neg_visible_probs).sum(axis=0)
                 #print "weight shape : ", self.weights.shape
                 #print "energies shape: ", energies.shape
-                k = energies.shape[0] + 1
-                while k > energies.shape[0]:
-                    k = int(np.random.pareto(tau))
+
+                k = 0
+                #k = energies.shape[0] + 1
+                #while k > energies.shape[0]:
+                #    k = int(np.random.pareto(tau))
+
                 #print "k: ", k
                 #print "argsorted: ", energies.ravel().argsort()
                 #print "k member: ", energies.ravel().argsort()[-(k+1)]

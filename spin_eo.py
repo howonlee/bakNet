@@ -29,8 +29,19 @@ def argmax(ls):
 def get_kth_highest_arg(ls, k):
     return sorted(enumerate(ls), key=operator.itemgetter(1), reverse=True)[k][0]
 
-def swap_state(energies, curr_s):
-    pass
+def swap_state(energies, soln, tau=1.5):
+####
+    k = len(soln)
+    dist = len(soln)
+    while k > len(soln)-1:
+        k = int(np.random.pareto(tau))
+    while dist > len(soln)-1:
+        dist = int(np.random.pareto(tau))
+    worst_city = get_kth_highest_arg(energies, k)
+    new_soln = list(soln) #deep copy
+    new_idx = (worst_city + dist) % len(soln)
+    new_soln[new_idx], new_soln[worst_city] = new_soln[worst_city], new_soln[new_idx]
+    return new_soln
 
 def optimize_spinglass(config, weights, steps=10000, disp=False):
     best_s = config

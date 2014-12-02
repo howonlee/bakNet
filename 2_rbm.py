@@ -215,7 +215,7 @@ if __name__ == '__main__':
     X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=0)
     print X_train.shape
     r = RBM(num_visible = 64, num_hidden = 100, is_eo=True)
-    r.train(X_train, max_epochs=25000)
+    r.train(X_train, max_epochs=3000)
     r.weights = r.best_weights
     print "weights"
     print "=========="

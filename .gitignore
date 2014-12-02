@@ -1,6 +1,10 @@
 *.pyc
 *.pdf
 *.log
+*.toc
+*.out
+*.nav
+*.snm
 *.aux
 *.npy
 *.pdf

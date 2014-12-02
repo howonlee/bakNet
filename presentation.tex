@@ -2,8 +2,6 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{graphicx}
-\usepackage[margin=1in]{geometry}
-\newcommand{\del}{\nabla}
 \begin{document}
 \title{Extremal Optimization}
 \author{Howon Lee}
@@ -29,28 +27,29 @@
 \begin{frame}
   \frametitle{Approaches Taken}
   Bak and Chialvo's model
+
   More abstract: extremal optimization
+
   Finally: Using $\tau$-EO on RBM
 \end{frame}
 
 \begin{frame}
   \frametitle{Adaptive Learning by Extremal Dynamics and Negative Feedback}
-  %%% Bak and Chialvo do adaptive extremal optimization on a fake-ish neural net model. Conjunctive model means that it just sucks for problems like the parity problem, although the forgiveness thing ties everything together.
   How it works, from 20000 feet
-  Problems: Conjunctive neurons
+
+  Problems: Conjunctive neurons %%% chart showing the conjunctive neurons
+  %%% shit results on Bak net. note that the shit results are a little less worse for natural data
+
+  Forgiveness?
+
   Similarity to Tabu search, simulated annealing?
   %%% have my replication, and my results?
 \end{frame}
 
 \begin{frame}
-  \frametitle{Results with Bak-Chialvo net}
-  %%%% miserable results
-  %%% shit results on Bak net. note that the shit results are a little less worse for natural data
-\end{frame}
-
-\begin{frame}
   \frametitle{More abstractly: EO, $\tau$-EO}
   How it works, from 20000 feet
+
   Existing results, from Boetticher: TSP
   %%% steal a chart
   %%% Talk about extremal optimization in the more abstract sense. Travelling salesman problem. Boetticher's work on the deterministic EO and tau-EO.
@@ -59,7 +58,10 @@
 \begin{frame}
   \frametitle{$\tau$-EO on neural nets}
   Why not feedforward?
-  %%%% miserable results
+
+  Locality
+
+  %%% let's have a completely null graph here
 \end{frame}
 
 
@@ -83,7 +85,7 @@
 
 \begin{frame}
   \frametitle{Going forward}
-  In report: compare with simulated annealing
+  %5In report: compare with simulated annealing? maybe?
   In report: look at created weights
   After class: use in a deep architecture
   After class: investigate with non-restricted BM's

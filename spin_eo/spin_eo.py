@@ -33,11 +33,13 @@ def conf_energy(config):
     hamiltonian = local_energy.sum()
     return (hamiltonian, local_energy)
 
-def swap_state(energies, soln, tau=1.1):
+def swap_state(energies, soln, tau=1.1, use_k=True):
     #### index via the ravel
-    k = soln.size #eventually, the ravel solution
-    while k > soln.size-1:
-        k = int(np.random.pareto(tau))
+    k = 0
+    if use_k:
+        k = soln.size #eventually, the ravel solution
+        while k > soln.size-1:
+            k = int(np.random.pareto(tau))
     worst = energies.ravel().argsort()[-(k+1)]
     new_soln = soln.copy()
     new_idx = random.randint(0,soln.size-1)
@@ -50,20 +52,18 @@ def optimize_spinglass(config, steps=10000, disp=False):
     total_energy = float("inf")
     curr_s = best_s.copy()
     for time in xrange(steps):
-        if disp and time % (steps // 200) == 0:
-            #print "time: ", time
-            print best_energy
         total_energy, energies = conf_energy(curr_s)
+        print total_energy
         if total_energy < best_energy:
             best_energy = total_energy
             best_s = curr_s
-        curr_s = swap_state(energies, curr_s)
+        curr_s = swap_state(energies, curr_s, use_k=False)
     return best_s, best_energy
 
 if __name__ == "__main__":
-    config = setup_ising(n=60)
+    config = setup_ising(n=30)
     for x in xrange(1):
-        opt_config, score = optimize_spinglass(config, steps=40000, disp=True)
+        opt_config, score = optimize_spinglass(config, steps=4000, disp=True)
         #print opt_config.shape
         plt.matshow(opt_config)
         plt.show()

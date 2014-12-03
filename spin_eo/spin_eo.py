@@ -33,7 +33,7 @@ def conf_energy(config):
     hamiltonian = local_energy.sum()
     return (hamiltonian, local_energy)
 
-def swap_state(energies, soln, tau=1.5):
+def swap_state(energies, soln, tau=1.1):
     #### index via the ravel
     k = soln.size #eventually, the ravel solution
     while k > soln.size-1:
@@ -51,8 +51,8 @@ def optimize_spinglass(config, steps=10000, disp=False):
     curr_s = best_s.copy()
     for time in xrange(steps):
         if disp and time % (steps // 200) == 0:
-            print "time: ", time
-            print "current best energy: ", best_energy
+            #print "time: ", time
+            print best_energy
         total_energy, energies = conf_energy(curr_s)
         if total_energy < best_energy:
             best_energy = total_energy
@@ -63,7 +63,7 @@ def optimize_spinglass(config, steps=10000, disp=False):
 if __name__ == "__main__":
     config = setup_ising(n=60)
     for x in xrange(1):
-        opt_config, score = optimize_spinglass(config, steps=4000, disp=True)
+        opt_config, score = optimize_spinglass(config, steps=40000, disp=True)
         #print opt_config.shape
         plt.matshow(opt_config)
         plt.show()

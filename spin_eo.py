@@ -49,6 +49,7 @@ def optimize_spinglass(config, weights, steps=10000, disp=False):
     for time in xrange(steps):
         if disp and time % (steps // 200) == 0:
             print "time: ", time
+            print "current best energy: ", best_energy
         total_energy, energies = conf_energy(curr_s, weights)
         if total_energy < best_energy:
             best_energy = total_energy

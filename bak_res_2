@@ -1,0 +1,320 @@
+i: 1, time: 2014-12-02 21:40:18.500474
+train correct is:  21
+train total is:  200
+test correct is:  5
+test total is:  100
+train error is:  0.895
+test error is:  0.95
+number of tabu members is:  26
+i: 2, time: 2014-12-02 21:40:18.858835
+train correct is:  14
+train total is:  200
+test correct is:  9
+test total is:  100
+train error is:  0.93
+test error is:  0.91
+number of tabu members is:  49
+i: 3, time: 2014-12-02 21:40:19.220420
+train correct is:  23
+train total is:  200
+test correct is:  8
+test total is:  100
+train error is:  0.885
+test error is:  0.92
+number of tabu members is:  80
+i: 4, time: 2014-12-02 21:40:19.600749
+train correct is:  25
+train total is:  200
+test correct is:  10
+test total is:  100
+train error is:  0.875
+test error is:  0.9
+number of tabu members is:  115
+i: 5, time: 2014-12-02 21:40:19.963473
+train correct is:  30
+train total is:  200
+test correct is:  13
+test total is:  100
+train error is:  0.85
+test error is:  0.87
+number of tabu members is:  158
+i: 6, time: 2014-12-02 21:40:20.317878
+train correct is:  17
+train total is:  200
+test correct is:  15
+test total is:  100
+train error is:  0.915
+test error is:  0.85
+number of tabu members is:  190
+i: 7, time: 2014-12-02 21:40:20.671493
+train correct is:  23
+train total is:  200
+test correct is:  14
+test total is:  100
+train error is:  0.885
+test error is:  0.86
+number of tabu members is:  227
+i: 8, time: 2014-12-02 21:40:21.025249
+train correct is:  21
+train total is:  200
+test correct is:  10
+test total is:  100
+train error is:  0.895
+test error is:  0.9
+number of tabu members is:  258
+i: 9, time: 2014-12-02 21:40:21.387045
+train correct is:  21
+train total is:  200
+test correct is:  12
+test total is:  100
+train error is:  0.895
+test error is:  0.88
+number of tabu members is:  291
+i: 10, time: 2014-12-02 21:40:21.742875
+train correct is:  26
+train total is:  200
+test correct is:  11
+test total is:  100
+train error is:  0.87
+test error is:  0.89
+number of tabu members is:  328
+i: 11, time: 2014-12-02 21:40:22.098197
+train correct is:  30
+train total is:  200
+test correct is:  15
+test total is:  100
+train error is:  0.85
+test error is:  0.85
+number of tabu members is:  373
+i: 12, time: 2014-12-02 21:40:22.451404
+train correct is:  26
+train total is:  200
+test correct is:  22
+test total is:  100
+train error is:  0.87
+test error is:  0.78
+number of tabu members is:  421
+i: 13, time: 2014-12-02 21:40:22.806823
+train correct is:  27
+train total is:  200
+test correct is:  19
+test total is:  100
+train error is:  0.865
+test error is:  0.81
+number of tabu members is:  467
+i: 14, time: 2014-12-02 21:40:23.161995
+train correct is:  32
+train total is:  200
+test correct is:  16
+test total is:  100
+train error is:  0.84
+test error is:  0.84
+number of tabu members is:  515
+i: 15, time: 2014-12-02 21:40:23.519870
+train correct is:  28
+train total is:  200
+test correct is:  18
+test total is:  100
+train error is:  0.86
+test error is:  0.82
+number of tabu members is:  561
+i: 16, time: 2014-12-02 21:40:23.895429
+train correct is:  21
+train total is:  200
+test correct is:  19
+test total is:  100
+train error is:  0.895
+test error is:  0.81
+number of tabu members is:  601
+i: 17, time: 2014-12-02 21:40:24.251744
+train correct is:  29
+train total is:  200
+test correct is:  15
+test total is:  100
+train error is:  0.855
+test error is:  0.85
+number of tabu members is:  645
+i: 18, time: 2014-12-02 21:40:24.604340
+train correct is:  19
+train total is:  200
+test correct is:  11
+test total is:  100
+train error is:  0.905
+test error is:  0.89
+number of tabu members is:  675
+i: 19, time: 2014-12-02 21:40:24.970749
+train correct is:  20
+train total is:  200
+test correct is:  17
+test total is:  100
+train error is:  0.9
+test error is:  0.83
+number of tabu members is:  712
+i: 20, time: 2014-12-02 21:40:25.322354
+train correct is:  36
+train total is:  200
+test correct is:  13
+test total is:  100
+train error is:  0.82
+test error is:  0.87
+number of tabu members is:  761
+i: 21, time: 2014-12-02 21:40:25.678032
+train correct is:  42
+train total is:  200
+test correct is:  19
+test total is:  100
+train error is:  0.79
+test error is:  0.81
+number of tabu members is:  822
+i: 22, time: 2014-12-02 21:40:26.045638
+train correct is:  38
+train total is:  200
+test correct is:  11
+test total is:  100
+train error is:  0.81
+test error is:  0.89
+number of tabu members is:  871
+i: 23, time: 2014-12-02 21:40:26.402825
+train correct is:  27
+train total is:  200
+test correct is:  7
+test total is:  100
+train error is:  0.865
+test error is:  0.93
+number of tabu members is:  905
+i: 24, time: 2014-12-02 21:40:26.762136
+train correct is:  20
+train total is:  200
+test correct is:  15
+test total is:  100
+train error is:  0.9
+test error is:  0.85
+number of tabu members is:  940
+i: 25, time: 2014-12-02 21:40:27.122036
+train correct is:  25
+train total is:  200
+test correct is:  9
+test total is:  100
+train error is:  0.875
+test error is:  0.91
+number of tabu members is:  974
+i: 26, time: 2014-12-02 21:40:27.479667
+train correct is:  17
+train total is:  200
+test correct is:  15
+test total is:  100
+train error is:  0.915
+test error is:  0.85
+number of tabu members is:  1006
+i: 27, time: 2014-12-02 21:40:27.836905
+train correct is:  25
+train total is:  200
+test correct is:  10
+test total is:  100
+train error is:  0.875
+test error is:  0.9
+number of tabu members is:  1041
+i: 28, time: 2014-12-02 21:40:28.189647
+train correct is:  27
+train total is:  200
+test correct is:  14
+test total is:  100
+train error is:  0.865
+test error is:  0.86
+number of tabu members is:  1082
+i: 29, time: 2014-12-02 21:40:28.539660
+train correct is:  33
+train total is:  200
+test correct is:  14
+test total is:  100
+train error is:  0.835
+test error is:  0.86
+number of tabu members is:  1129
+i: 30, time: 2014-12-02 21:40:28.891749
+train correct is:  33
+train total is:  200
+test correct is:  13
+test total is:  100
+train error is:  0.835
+test error is:  0.87
+number of tabu members is:  1175
+i: 31, time: 2014-12-02 21:40:29.244125
+train correct is:  27
+train total is:  200
+test correct is:  20
+test total is:  100
+train error is:  0.865
+test error is:  0.8
+number of tabu members is:  1222
+i: 32, time: 2014-12-02 21:40:29.594349
+train correct is:  25
+train total is:  200
+test correct is:  14
+test total is:  100
+train error is:  0.875
+test error is:  0.86
+number of tabu members is:  1261
+i: 33, time: 2014-12-02 21:40:29.949134
+train correct is:  36
+train total is:  200
+test correct is:  14
+test total is:  100
+train error is:  0.82
+test error is:  0.86
+number of tabu members is:  1311
+i: 34, time: 2014-12-02 21:40:30.300127
+train correct is:  32
+train total is:  200
+test correct is:  17
+test total is:  100
+train error is:  0.84
+test error is:  0.83
+number of tabu members is:  1360
+i: 35, time: 2014-12-02 21:40:30.650957
+train correct is:  29
+train total is:  200
+test correct is:  23
+test total is:  100
+train error is:  0.855
+test error is:  0.77
+number of tabu members is:  1412
+i: 36, time: 2014-12-02 21:40:31.002680
+train correct is:  37
+train total is:  200
+test correct is:  21
+test total is:  100
+train error is:  0.815
+test error is:  0.79
+number of tabu members is:  1470
+i: 37, time: 2014-12-02 21:40:31.357724
+train correct is:  34
+train total is:  200
+test correct is:  11
+test total is:  100
+train error is:  0.83
+test error is:  0.89
+number of tabu members is:  1515
+i: 38, time: 2014-12-02 21:40:31.708465
+train correct is:  34
+train total is:  200
+test correct is:  18
+test total is:  100
+train error is:  0.83
+test error is:  0.82
+number of tabu members is:  1567
+i: 39, time: 2014-12-02 21:40:32.063688
+train correct is:  33
+train total is:  200
+test correct is:  16
+test total is:  100
+train error is:  0.835
+test error is:  0.84
+number of tabu members is:  1616
+i: 40, time: 2014-12-02 21:40:32.416356
+train correct is:  24
+train total is:  200
+test correct is:  18
+test total is:  100
+train error is:  0.88
+test error is:  0.82
+number of tabu members is:  1658

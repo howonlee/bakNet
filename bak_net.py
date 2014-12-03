@@ -171,15 +171,10 @@ class BakNet(object):
         """
         Eventually we will add cross-validation and stuff like that
         """
-        print "train correct is: ", self.train_correct
-        print "train total is: ", self.train_total
-        print "test correct is: ", self.test_correct
-        print "test total is: ", self.test_total
         train_error = 1 - float(self.train_correct) / float(self.train_total)
-        print "train error is: ", train_error
+        print train_error
         test_error = 1 - float(self.test_correct) / float(self.test_total)
-        print "test error is: ", test_error
-        print "number of tabu members is: ", len(self.rev_tabu)
+        print test_error
 
 def xor_problem():
     """

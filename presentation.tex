@@ -7,9 +7,6 @@
 \author{Howon Lee}
 \maketitle
 
-%%%% report everything, it will be enough, I think
-%%%% you don't have to get positive results
-
 \begin{frame}
   \frametitle{What is the question?}
   How can you use extremal dynamics to train some kind of neural net?
@@ -33,20 +30,26 @@
 
   More abstract: extremal optimization
 
-  Finally: Using $\tau$-EO on RBM
+  Finally: Using $\tau$-EO on RBM, classification results
 \end{frame}
 
 \begin{frame}
   \frametitle{Adaptive Learning by Extremal Dynamics and Negative Feedback}
   How it works, from 20000 feet
+  \begin{figure}
+    \includegraphics{bak_chialvo_net_topology}
+  \end{figure}
 
-  Problems: Conjunctive neurons %%% chart showing the conjunctive neurons
-  %%% shit results on Bak net. note that the shit results are a little less worse for natural data
+  Problems: Conjunctive neurons
+  %%% shit results on Bak net, on natural data.
+\end{frame}
 
+\begin{frame}
+  \frametitle{Adaptive Learning by Extremal Dynamics and Negative Feedback}
   Forgiveness?
 
-  Similarity to Tabu search, simulated annealing?
-  %%% have my replication, and my results?
+  Comparison to simulated annealing
+  %% specific chart: juxtaposition of their results, my results
 \end{frame}
 
 \begin{frame}
@@ -54,19 +57,25 @@
   How it works, from 20000 feet
 
   Existing results, from Boetticher: TSP
+  \begin{figure}
+    \includegraphics{eo_alg}
+  \end{figure}
   %%% steal a chart
   %%% Talk about extremal optimization in the more abstract sense. Travelling salesman problem. Boetticher's work on the deterministic EO and tau-EO.
 \end{frame}
 
 \begin{frame}
-  \frametitle{$\tau$-EO on neural nets}
-  Why not feedforward?
+  \frametitle{$\tau$-EO on RBM}
+  Why not feedforward? BM vs. Ising Model
 
   Locality: RBM
 
+  \begin{figure}
+    \includegraphics{rbm_eq}
+  \end{figure}
+
   %%% let's have a completely null graph here
 \end{frame}
-
 
 \begin{frame}
   \frametitle{Task}
@@ -79,19 +88,20 @@
 
 \begin{frame}
   \frametitle{Results on RBM}
-  %%%% charts charts charts
-  %%% Results. Try some classifications. Do time course of learning on the shit error measure that we have and a non-shit error measure. Compare to gradient descent for learning. Apologize for not having simulated annealing to compare to.
+  %%%% chart of the learning progress of the energy
+  
+  %%% maybe too much effort: look at the weights 
+  %%%% chart of the classification performance on the pictures task: tau-eo, eo, gradient descent
 \end{frame}
 
 \begin{frame}
   \frametitle{Problems, Issues}
-  Becoming really gradient-free?
-
+  Comparison to Ising model not that good
+  Results
 \end{frame}
 
 \begin{frame}
   \frametitle{Going forward}
-  %5In report: compare with simulated annealing? maybe?
   In report: look at created weights
   After class: use in a deep architecture
   After class: investigate with non-restricted BM's

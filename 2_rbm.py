@@ -34,7 +34,7 @@ class RBM:
     def load(path):
         pass
 
-    def train(self, data, max_epochs = 1000, tau=1.5):
+    def train(self, data, max_epochs = 1000, tau=1.0):
         """
         Train the machine.
 
@@ -97,8 +97,7 @@ class RBM:
                 if error < self.best_error:
                     self.best_error = error
                     self.best_weights = self.weights.copy()
-                if epoch > 2000:
-                    self.errors.append(error)
+                self.errors.append(error)
             else:
                 self.weights += self.learning_rate * ((pos_associations - neg_associations) / num_examples)
                 error = np.sum((data - neg_visible_probs) ** 2)
@@ -229,7 +228,7 @@ if __name__ == '__main__':
     X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=0)
     print X_train.shape
     r = RBM(num_visible = 64, num_hidden = 100, is_eo=True)
-    r.train(X_train, max_epochs=5000)
+    r.train(X_train, max_epochs=1000)
     #r.weights = r.best_weights
     print r.errors
     #plt.matshow(r.daydream(50), cmap=plt.cm.gray_r)

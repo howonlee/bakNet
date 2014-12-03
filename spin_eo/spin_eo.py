@@ -61,9 +61,14 @@ def optimize_spinglass(config, steps=10000, disp=False):
     return best_s, best_energy
 
 if __name__ == "__main__":
-    config = setup_ising(n=30)
+    config = setup_ising(n=50)
     for x in xrange(1):
-        opt_config, score = optimize_spinglass(config, steps=4000, disp=True)
+        opt_config, score = optimize_spinglass(config, steps=2000, disp=True)
         #print opt_config.shape
         plt.matshow(opt_config)
-        plt.show()
+        plt.title("Ising model, 2000 steps tEO")
+        plt.savefig("2000.png")
+        opt_config, score = optimize_spinglass(config, steps=8000, disp=True)
+        plt.matshow(opt_config)
+        plt.title("Ising model, 10000 steps tEO")
+        plt.savefig("10000.png")

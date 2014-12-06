@@ -53,8 +53,10 @@ def flip_state(energies, soln, tau=1.1, use_k=True, clamp=-1):
 def learn_bm(config, weights, pat):
     soln_wo_clamp, _ = optimize_bm(config, weights, steps=200)
     soln_w_clamp, _ = optimize_bm(config, weights, steps=200, clamp=pat)
-    #what does it mean to take the equilibrium statistics of such a thing?
-    #take the difference, assume T=1
+    # I need p_ij's
+    for x in xrange(len(soln_wo_clamp)):
+        for y in xrange(len(soln_w_clamp)):
+            weights[x,y] -= soln_wo_clamp[x] * soln_wo_clamp[y]
     return (config, weights)
 
 def optimize_bm(config, weights, steps=10000, disp=False, clamp=None):

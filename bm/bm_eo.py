@@ -1,6 +1,7 @@
 import numpy as np
 import random
 import operator
+import itertools
 import collections
 import math
 from numba import jit #requires anaconda
@@ -15,7 +16,7 @@ def setup_bm(n=100):
     for x in np.nditer(config, op_flags=['readwrite']):
         if random.random() > 0.5:
             x[...] = -1
-    weights = np.random.rand((n,n)) #will be sparse
+    weights = np.random.rand(n,n) #will be sparse
     return (config, weights)
 
 @jit
@@ -23,12 +24,16 @@ def conf_energy(config, weights):
     dims = config.shape
     local_energy = np.zeros_like(config)
     for x in xrange(0, dims[0]):
-        x_plus = (x + 1) % dims[0]
-        x_minus = (x - 1) % dims[0]
-        local_energy[x] += weights[x,x_plus] * config[x] * config[x_plus]
-        local_energy[x] += weights[x_minus,x] * config[x_minus] * config[x]
+        for y in xrange(0, dims[0]):
+            if x == y: continue
+            local_energy[x] += weights[x,y] * config[x] * config[y]
     hamiltonian = local_energy.sum()
     return (hamiltonian, local_energy)
+
+#just do the parity bits function, basically
+def gen_paritybits(bits=5):
+    bits_ls = [map(int, seq) + [sum(map(int, seq)) % 2] for seq in itertools.product("01", repeat=bits)]
+    return bits_ls
 
 def swap_state(energies, soln, tau=1.1, use_k=True):
     #### index via the ravel
@@ -62,8 +67,9 @@ def optimize_bm(config, weights, steps=10000, disp=False):
 
 if __name__ == "__main__":
     config, weights = setup_bm(n=30)
-    for x in xrange(1):
-        opt_config, score = optimize_spinglass(config, steps=4000, disp=True)
+    parity_bits = gen_paritybits()
+    for x in xrange(0):
+        opt_config, score = optimize_bm(config, steps=4000, disp=True)
         config, weights = learn_bm(config, weights)
         #print opt_config.shape
         #plt.matshow(opt_config)

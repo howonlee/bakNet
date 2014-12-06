@@ -51,6 +51,7 @@ def swap_state(energies, soln, tau=1.1, use_k=True):
 def learn_bm(config, weights, pat):
     #optimize the bm without the clamp
     #optimize the bm with the clamp
+    #what does it mean to take the equilibrium statistics of such a thing?
     #take the difference, assume T=1
     return (config, weights)
 

@@ -103,15 +103,27 @@
 
 %%%% organization
 
-\section{Stuff} %%%%%
-
 \section{} %What is the issue or question you will be addressing?
 
 \section{} %Why is it interesting, what has previously been done, and what remains to be done?
 
-\section{Novel Approach} %What approach will you be taking to address it? (at a big picture level; novel and/or otherwise noteworthy aspects)
+\section{Novel Approach}
 
-\section{Details of Approach}%Specific target phenomenon or phenomena you will be addressing: e.g., pattern of data you intend to try to fit. Model network task setting, architecture, processing and learning algorithm, training environment (corpus used for training, knowledge base built in to network),
+I will try to use the method by Boetticher et al on the problem of taking equilibrium-like statistics from a Boltzmann machine, to see if it helps the current intractable problem of non-restricted Boltzmann machine learning. The method, called Extremal Optimization (EO), has been used in Ising model systems before (spin glasses modelled by an Ising model system), but not to the updating of a Boltzmann machine, to my knowledge. %%%% cite Boetticher and the Ising model tau-EO paper.
+
+EO is a global optimization technique, inspired by a model of evolution proposed by Bak and Sneppen, and the qualitative results that result from that model. %%% bit of exegesis of Bak-Sneppen model; %%%% cite Bak-Sneppen paper
+
+%% now finally explain EO
+%% tau-EO
+
+%%%In order to explain what EO is, it is helpful to have a prior picture of simulated annealing(SA). Both of these optimization techniques are attempts to solve the problem of local optima that all hill-climbing optimization algorithms are subject to. SA, in order to maximize a criterion, considers a neighboring state and takes or rejects the neighboring state based upon the Metropolis-Hastings criterion. That Metropolis-Hastings criterion depends upon a temperature which is varied during the course of the algorithm: this is called the annealing schedule. A high temperature allows more thorough exploration of the solution space and a low temperature allows more bias towards an optimum solution. Together, they are a global optimization algorithm.
+%% compare and contrast EO, SA
+
+%What approach will you be taking to address it? (at a big picture level; novel and/or otherwise noteworthy aspects)
+
+\section{Details of Approach}
+
+%Specific target phenomenon or phenomena you will be addressing: e.g., pattern of data you intend to try to fit. Model network task setting, architecture, processing and learning algorithm, training environment (corpus used for training, knowledge base built in to network),
 
 \section{Results and Analysis}
 

@@ -6,27 +6,39 @@ import collections
 import math
 from numba import jit #requires anaconda
 import matplotlib.pyplot as plt
-import matplotlib.path as mpath
-import matplotlib.patches as mpatches
 
 def setup_bm(n=100):
     #n lattice point bm
     #hidden nodes are implicit
-    config = np.ones(n)
-    for x in np.nditer(config, op_flags=['readwrite']):
-        if random.random() > 0.5:
-            x[...] = -1
-    weights = np.random.rand(n,n) #will be sparse
+    config = np.rand(n)
+    weights = np.random.rand(n,n)
+    weights = (weights + weight.T) / 2 #symmetry
+    np.fill_diagonal(weights, 0) #no self-connections
     return (config, weights)
 
 @jit
+def draw_from_config(config, n=5):
+    #configuration is actually a distribution
+    #draw from it
+    #maybe multiple draws, and then take average?
+    draw = np.zeros_like(config)
+    for x in xrange(n):
+        for y in xrange(len(config)):
+            if np.random.rand() < y:
+                draw[x] += 1
+    draw /= float(n)
+    return draw
+
+@jit
 def conf_energy(config, weights):
+    #in the BM case, this is actually the energy delta
+    #\Delta E_k = \sum_i w_{ki} s_i
     dims = config.shape
     local_energy = np.zeros_like(config)
-    for x in xrange(0, dims[0]):
-        for y in xrange(0, dims[0]):
-            if x == y: continue
-            local_energy[x] += weights[x,y] * config[x] * config[y]
+    draw = draw_from_config(config)
+    for x in xrange(0, dims[0]): #k
+        for y in xrange(0, x):
+            local_energy[x] += weights[x,y] * draw[y]
     hamiltonian = local_energy.sum()
     return (hamiltonian, local_energy)
 
@@ -47,6 +59,7 @@ def flip_state(energies, soln, tau=1.1, use_k=True, clamp=-1):
                 k = int(np.random.pareto(tau))
         worst = energies.ravel().argsort()[-(k+1)]
     new_soln = soln.copy()
+    #it shouldn't be flipping, but I can't think of what...
     new_soln[worst] = 1 - new_soln[worst]
     return new_soln
 

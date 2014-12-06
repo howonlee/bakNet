@@ -48,10 +48,14 @@ def swap_state(energies, soln, tau=1.1, use_k=True):
     new_soln.flat[new_idx], new_soln.flat[worst] = new_soln.flat[worst], new_soln.flat[new_idx]
     return new_soln
 
-def learn_bm(config, weights):
-    pass
+def learn_bm(config, weights, pat):
+    #optimize the bm without the clamp
+    #optimize the bm with the clamp
+    #take the difference, assume T=1
+    return (config, weights)
 
-def optimize_bm(config, weights, steps=10000, disp=False):
+def optimize_bm(config, weights, steps=10000, disp=False, clamp=None):
+    #clamp is simple Python array always
     best_s = config
     best_energy = float("inf")
     total_energy = float("inf")
@@ -68,9 +72,9 @@ def optimize_bm(config, weights, steps=10000, disp=False):
 if __name__ == "__main__":
     config, weights = setup_bm(n=30)
     parity_bits = gen_paritybits()
-    for x in xrange(0):
-        opt_config, score = optimize_bm(config, steps=4000, disp=True)
-        config, weights = learn_bm(config, weights)
-        #print opt_config.shape
-        #plt.matshow(opt_config)
-        #plt.show()
+    for idx, x in enumerate(parity_bits):
+        if idx % 3: #if you did % 2, you would be in big trouble
+            config, weights = learn_bm(config, weights, x)
+        else:
+            pass
+    #now try the performance by clamping and optimizing...

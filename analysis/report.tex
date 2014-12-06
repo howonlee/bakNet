@@ -13,6 +13,93 @@
 %%%% to talk about
 
 %explain the bak net
+  How can you use extremal dynamics to train some kind of neural net?
+  Qualitative model of evolution: Bak-Sneppen model.
+  \begin{figure}
+    \includegraphics{bak_sneppen}
+  \end{figure}
+
+  Rules of Bak-Sneppen model. How does it behave? Criticality. Self-organized criticality.
+
+  Caveats: CR Shalizi, W Tozier, "A Simple Model of the Evolution of Simple Models of Evolution"
+  
+  Bak and Chialvo's model
+
+  More abstract: extremal optimization
+
+  Finally: Using $\tau$-EO on RBM, classification results
+  
+  How it works, from 20000 feet
+  \begin{figure}
+    \includegraphics{bak_chialvo_net_topology}
+  \end{figure}
+  
+  Problems: Conjunctive neurons
+  \begin{figure}
+    \includegraphics{bak_plot}
+  \end{figure}
+
+  Comparison to simulated annealing
+  
+  How it works, from 20000 feet
+
+  Existing results, from Boetticher: TSP, Ising model
+
+  $\tau$-EO
+  
+  \begin{figure}
+    \includegraphics{eo_alg}
+  \end{figure}
+  
+  The hope:
+  \begin{figure}
+    \includegraphics{boettcher}
+  \end{figure}
+  
+  Why not feedforward? BM vs. Ising Model
+
+  Locality: RBM
+
+  \begin{figure}
+    \includegraphics{rbm_eq}
+  \end{figure}
+  
+  \frametitle{Ising Model}
+  \begin{figure}
+    \includegraphics{2000}
+  \end{figure}
+  \begin{figure}
+    \includegraphics{10000}
+  \end{figure}
+  
+  \frametitle{Ising Model}
+  \begin{figure}
+    \includegraphics{ising_energy_unzoomed}
+  \end{figure}
+  
+  \begin{figure}
+    \includegraphics{ising_energy_zoomed}
+  \end{figure}
+
+  See performance in RBM learning, as simple as possible
+
+  Bit string: metaphor of Hamming cliff in GA
+
+  Actually, this is just a weird coordinate descent
+  
+  \begin{figure}
+    \includegraphics{eo_rbm_unzoomed}
+  \end{figure}
+ 
+  \begin{figure}
+    \includegraphics{eo_rbm_zoomed}
+  \end{figure}
+
+  Make an algorithm that actually differs from CDiv
+
+  Try non-restricted RBM, and learn with regular gradient
+
+  (using EO in place of SA)
 %claim of bak and chialvo
 %evolutionary background
 %performance replications

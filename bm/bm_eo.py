@@ -10,7 +10,10 @@ import matplotlib.pyplot as plt
 def setup_bm(n=100):
     #n lattice point bm
     #hidden nodes are implicit
-    config = np.rand(n)
+    config = np.ones(n)
+    for x in np.nditer(config, op_flags=['readwrite']):
+        if random.random() > 0.5:
+            x[...] = -0
     weights = np.random.rand(n,n)
     weights = (weights + weight.T) / 2 #symmetry
     np.fill_diagonal(weights, 0) #no self-connections
@@ -19,12 +22,11 @@ def setup_bm(n=100):
 @jit
 def draw_from_config(config, n=5):
     #configuration is actually a distribution
-    #draw from it
-    #maybe multiple draws, and then take average?
+    #draw logistic
     draw = np.zeros_like(config)
     for x in xrange(n):
         for y in xrange(len(config)):
-            if np.random.rand() < y:
+            if np.random.rand() < y: #this is wrong
                 draw[x] += 1
     draw /= float(n)
     return draw
@@ -35,7 +37,7 @@ def conf_energy(config, weights):
     #\Delta E_k = \sum_i w_{ki} s_i
     dims = config.shape
     local_energy = np.zeros_like(config)
-    draw = draw_from_config(config)
+    #draw = draw_from_config(config)
     for x in xrange(0, dims[0]): #k
         for y in xrange(0, x):
             local_energy[x] += weights[x,y] * draw[y]
@@ -46,6 +48,9 @@ def conf_energy(config, weights):
 def gen_paritybits(bits=5):
     bits_ls = [map(int, seq) + [sum(map(int, seq)) % 2] for seq in itertools.product("01", repeat=bits)]
     return bits_ls
+
+def gen_bits(bits=5):
+    return [map(int, seq) for seq in itertools.product("01", repeat=bits)]
 
 def flip_state(energies, soln, tau=1.1, use_k=True, clamp=-1):
     #here, clamp is the index of the last clamp

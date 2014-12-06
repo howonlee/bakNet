@@ -35,22 +35,24 @@ def gen_paritybits(bits=5):
     bits_ls = [map(int, seq) + [sum(map(int, seq)) % 2] for seq in itertools.product("01", repeat=bits)]
     return bits_ls
 
-def swap_state(energies, soln, tau=1.1, use_k=True):
+def flip_state(energies, soln, tau=1.1, use_k=True, clamp=-1):
+    #here, clamp is the index of the last clamp
     #### index via the ravel
     k = 0
-    if use_k:
-        k = soln.size #eventually, the ravel solution
-        while k > soln.size-1:
-            k = int(np.random.pareto(tau))
-    worst = energies.ravel().argsort()[-(k+1)]
+    worst = -1
+    while worst > clamp:
+        if use_k:
+            k = soln.size #eventually, the ravel solution
+            while k > soln.size-1:
+                k = int(np.random.pareto(tau))
+        worst = energies.ravel().argsort()[-(k+1)]
     new_soln = soln.copy()
-    new_idx = random.randint(0,soln.size-1)
-    new_soln.flat[new_idx], new_soln.flat[worst] = new_soln.flat[worst], new_soln.flat[new_idx]
+    new_soln[worst] = 1 - new_soln[worst]
     return new_soln
 
 def learn_bm(config, weights, pat):
-    #optimize the bm without the clamp
-    #optimize the bm with the clamp
+    soln_wo_clamp, _ = optimize_bm(config, weights, steps=200)
+    soln_w_clamp, _ = optimize_bm(config, weights, steps=200, clamp=pat)
     #what does it mean to take the equilibrium statistics of such a thing?
     #take the difference, assume T=1
     return (config, weights)
@@ -62,12 +64,12 @@ def optimize_bm(config, weights, steps=10000, disp=False, clamp=None):
     total_energy = float("inf")
     curr_s = best_s.copy()
     for time in xrange(steps):
-        total_energy, energies = conf_energy(curr_s)
+        total_energy, energies = conf_energy(curr_s, weights)
         print total_energy
         if total_energy < best_energy:
             best_energy = total_energy
             best_s = curr_s
-        curr_s = swap_state(energies, curr_s, use_k=False)
+        curr_s = flip_state(energies, curr_s, use_k=False, clamp=len(clamp))
     return best_s, best_energy
 
 if __name__ == "__main__":

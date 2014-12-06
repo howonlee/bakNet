@@ -90,8 +90,8 @@ class RBM:
                 #print worst
                 rand_idx = random.randrange(0, energies.shape[0])
                 #print "energy: ", energies.flat[worst]
-                #self.weights.flat[worst] -= 0.1
-                self.weights.flat[worst] -= np.random.rand()
+                self.weights.flat[worst] -= 5
+                #self.weights.flat[worst] -= np.random.rand()
                 error = np.sum((data - neg_visible_probs) ** 2)
                 #self.is_eo = False
                 if error < self.best_error:
@@ -102,7 +102,7 @@ class RBM:
                 self.weights += self.learning_rate * ((pos_associations - neg_associations) / num_examples)
                 error = np.sum((data - neg_visible_probs) ** 2)
                 self.errors.append(error)
-            #print("Epoch %s: error is %s" % (epoch, error))
+            print("Epoch %s: error is %s" % (epoch, error))
 
     def run_visible(self, data):
         """

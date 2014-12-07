@@ -33,7 +33,13 @@ def random_activation():
 
 def update(activation, weights, numIters=1):
     unit = random.randint(0,15)
-    pass
+    netinput = weights[unit].dot(activation)
+    if (random.random() < sigmoid(netinput)):
+        activation[unit] = 1
+    else:
+        activation[unit] = 0
+    return activation
 
 if __name__ == "__main__":
+    #just need to visualize it, actually
     pass

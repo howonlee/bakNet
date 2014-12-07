@@ -1,6 +1,7 @@
 import numpy as np
 import random
 import operator
+import math
 import itertools
 import collections
 import math
@@ -13,22 +14,25 @@ def setup_bm(n=100):
     config = np.ones(n)
     for x in np.nditer(config, op_flags=['readwrite']):
         if random.random() > 0.5:
-            x[...] = -0
-    weights = np.random.rand(n,n)
-    weights = (weights + weight.T) / 2 #symmetry
+            x[...] = 0
+    weights = np.random.rand(n,n) - 0.5
+    weights = (weights + weights.T) / 2 #symmetry
     np.fill_diagonal(weights, 0) #no self-connections
     return (config, weights)
 
+def sigmoid(x):
+    #assume temperature's 1
+    return 1.0 / (1 + math.exp(-x))
+
 @jit
-def draw_from_config(config, n=5):
+def draw_from_config(energy_delta, n=1):
     #configuration is actually a distribution
     #draw logistic
-    draw = np.zeros_like(config)
+    draw = np.zeros_like(energy_delta)
     for x in xrange(n):
-        for y in xrange(len(config)):
-            if np.random.rand() < y: #this is wrong
+        for y in energy_delta:
+            if np.random.rand() < logistic(energy_delta): #this is wrong
                 draw[x] += 1
-    draw /= float(n)
     return draw
 
 @jit
@@ -37,10 +41,9 @@ def conf_energy(config, weights):
     #\Delta E_k = \sum_i w_{ki} s_i
     dims = config.shape
     local_energy = np.zeros_like(config)
-    #draw = draw_from_config(config)
     for x in xrange(0, dims[0]): #k
         for y in xrange(0, x):
-            local_energy[x] += weights[x,y] * draw[y]
+            local_energy[x] -= weights[x,y] * config[x] * config[y]
     hamiltonian = local_energy.sum()
     return (hamiltonian, local_energy)
 
@@ -56,13 +59,12 @@ def flip_state(energies, soln, tau=1.1, use_k=True, clamp=-1):
     #here, clamp is the index of the last clamp
     #### index via the ravel
     k = 0
-    worst = -1
-    while worst > clamp:
-        if use_k:
-            k = soln.size #eventually, the ravel solution
-            while k > soln.size-1:
-                k = int(np.random.pareto(tau))
-        worst = energies.ravel().argsort()[-(k+1)]
+    if use_k:
+        k = soln.size #eventually, the ravel solution
+        while k > soln.size-1:
+            k = int(np.random.pareto(tau))
+    #worst = energies.ravel().argsort()[-(k+1)]
+    worst = energies.ravel().argsort()[-(k+1)]
     new_soln = soln.copy()
     #it shouldn't be flipping, but I can't think of what...
     new_soln[worst] = 1 - new_soln[worst]
@@ -85,19 +87,21 @@ def optimize_bm(config, weights, steps=10000, disp=False, clamp=None):
     curr_s = best_s.copy()
     for time in xrange(steps):
         total_energy, energies = conf_energy(curr_s, weights)
-        print total_energy
         if total_energy < best_energy:
             best_energy = total_energy
             best_s = curr_s
-        curr_s = flip_state(energies, curr_s, use_k=False, clamp=len(clamp))
+        print "total_energy, best_energy: ", total_energy, best_energy
+        clamp_val = len(clamp) if clamp else -1
+        curr_s = flip_state(energies, curr_s, use_k=False, clamp=clamp_val)
     return best_s, best_energy
 
 if __name__ == "__main__":
-    config, weights = setup_bm(n=30)
+    config, weights = setup_bm(n=300)
     parity_bits = gen_paritybits()
-    for idx, x in enumerate(parity_bits):
-        if idx % 3: #if you did % 2, you would be in big trouble
-            config, weights = learn_bm(config, weights, x)
-        else:
-            pass
+    config = optimize_bm(config, weights, steps=1000)
+    #for idx, x in enumerate(parity_bits):
+    #    if idx % 3: #if you did % 2, you would be in big trouble
+    #        config, weights = learn_bm(config, weights, x)
+    #    else:
+    #        pass
     #now try the performance by clamping and optimizing...

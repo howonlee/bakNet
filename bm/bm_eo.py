@@ -138,10 +138,10 @@ if __name__ == "__main__":
     for idx, x in enumerate(parity_bits):
         if idx % 3: #if you did % 2, you would be in big trouble
             config, weights = learn_bm(config, weights, x)
-            print "weights now: ", weights
         else:
             pass
-    print "weights now: ", weights
+    plt.matshow(weights)
+    plt.show()
     parity_bits_2 = gen_bits() #without the answer
     print parity_bits_2[0]
     print sample_bm(config, weights, 5, clamp=parity_bits_2[0])

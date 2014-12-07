@@ -72,13 +72,13 @@ def flip_state(energies, soln, tau=1.1, use_k=True, clamp=-1):
     return new_soln
 
 def learn_bm(config, weights, pat):
-    wo_clamp = sample_bm(config, weights, steps=500)
-    w_clamp = sample_bm(config, weights, steps=500, clamp=pat)
+    wo_clamp = sample_bm(config, weights, steps=1000)
+    w_clamp = sample_bm(config, weights, steps=1000, clamp=pat)
     p_ij= np.outer(w_clamp, w_clamp)
     p_ij_prime = np.outer(wo_clamp, wo_clamp)
     # I need p_ij's
     # make the p_ij matrices, basically
-    weights -= (p_ij - p_ij_prime)
+    weights -= (0.1 * (p_ij - p_ij_prime))
     #np.fill_diagonal(weights, 0) #no self-connections
     return (config, weights)
 

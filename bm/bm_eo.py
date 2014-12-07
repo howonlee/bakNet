@@ -97,9 +97,8 @@ def learn_bm(config, weights, pat):
     p_ij_prime = make_pij(solns_w_clamp)
     # I need p_ij's
     # make the p_ij matrices, basically
-    for x in xrange(solns_wo_clamp[0].shape[0]):
-        for y in xrange(solns_w_clamp[0].shape[0]):
-            weights[x,y] -= p_ij[x,y] - p_ij_prime[x,y]
+    weights -= (p_ij - p_ij_prime)
+    np.fill_diagonal(weights, 0) #no self-connections
     return (config, weights)
 
 def sample_bm(config, weights, steps=100, disp=False, clamp=None):
@@ -117,7 +116,7 @@ def sample_bm(config, weights, steps=100, disp=False, clamp=None):
         curr_s.append(flip_state(energies, curr_s[-1], use_k=False, clamp=clamp_val))
     return curr_s
 
-def optimize_bm(config, weights, steps=10000, disp=False, clamp=None):
+def optimize_bm(config, weights, steps=100, disp=False, clamp=None):
     #clamp is simple Python array always
     best_s = config
     best_energy = float("inf")
@@ -133,16 +132,13 @@ def optimize_bm(config, weights, steps=10000, disp=False, clamp=None):
     return best_s, best_energy
 
 if __name__ == "__main__":
-    config, weights = setup_bm(n=10)
+    config, weights = setup_bm(n=40)
     parity_bits = gen_paritybits()
     for idx, x in enumerate(parity_bits):
-        if idx % 3: #if you did % 2, you would be in big trouble
-            config, weights = learn_bm(config, weights, x)
-        else:
-            pass
-    plt.matshow(weights)
-    plt.show()
+        config, weights = learn_bm(config, weights, x)
+    #plt.matshow(weights, cmap=plt.cm.gray)
+    #plt.show()
     parity_bits_2 = gen_bits() #without the answer
-    print parity_bits_2[0]
-    print sample_bm(config, weights, 5, clamp=parity_bits_2[0])
+    for bits in parity_bits_2:
+        print sample_bm(config, weights, 1, clamp=bits)[-1]
     #now try the performance by clamping and optimizing...

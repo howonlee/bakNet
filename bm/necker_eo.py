@@ -32,8 +32,12 @@ def random_activation():
 
 def update(activation, weights):
     #get local energies
-    energies = something
-    unit = np.argmax(energies)
+    energies = np.zeros(16)
+    for i in xrange(16):
+        for j in xrange(16):
+            energies[i] += weights[i][j] * activation[j] * activation[i]
+    #print energies
+    unit = np.argmin(energies)
     activation[unit] = 1 - activation[unit]
     return activation
 

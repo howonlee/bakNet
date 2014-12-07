@@ -1,6 +1,7 @@
 import numpy as np
 import math
 import random
+import itertools
 
 weights = np.array([
     [0,2,0,2,2,0,0,0,-3,-3,0,0,0,0,0,0],
@@ -30,7 +31,7 @@ def random_activation():
             act[x] = 1
     return act
 
-def update(activation, weights):
+def update(activation, weights, tau=1.5):
     #get local energies
     energies = np.zeros(16)
     for i in xrange(16):
@@ -42,7 +43,10 @@ def update(activation, weights):
     return activation
 
 if __name__ == "__main__":
-    activation = np.array([1,1,0,0,1,0,1,1,0,1,0,0,0,1,1,0])
-    for i in xrange(100):
-        activation = update(activation, weights)
+    activations = [np.array(map(int, seq)) for seq in itertools.product("01", repeat=16)]
+    for activation in activations:
+        print "================"
         print activation
+        for i in xrange(100):
+            activation = update(activation, weights)
+            print activation

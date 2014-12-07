@@ -20,6 +20,9 @@ def setup_bm(n=100):
     np.fill_diagonal(weights, 0) #no self-connections
     return (config, weights)
 
+"""
+I don't think I need this... do I?
+
 def sigmoid(x):
     #assume temperature's 1
     return 1.0 / (1 + math.exp(-x))
@@ -34,6 +37,7 @@ def draw_from_config(energy_delta, n=1):
             if np.random.rand() < logistic(energy_delta): #this is wrong
                 draw[x] += 1
     return draw
+"""
 
 @jit
 def conf_energy(config, weights):
@@ -59,25 +63,64 @@ def flip_state(energies, soln, tau=1.1, use_k=True, clamp=-1):
     #here, clamp is the index of the last clamp
     #### index via the ravel
     k = 0
-    if use_k:
-        k = soln.size #eventually, the ravel solution
-        while k > soln.size-1:
-            k = int(np.random.pareto(tau))
+    worst = -5
+    if clamp:
+        while worst < clamp:
+            k = soln.size
+            while k > soln.size-1:
+                k = int(np.random.pareto(tau))
+            worst = energies.ravel().argsort()[-(k+1)]
+    else:
+        if use_k:
+            k = soln.size #eventually, the ravel solution
+            while k > soln.size-1:
+                k = int(np.random.pareto(tau))
+        worst = energies.ravel().argsort()[-(k+1)]
     #worst = energies.ravel().argsort()[-(k+1)]
-    worst = energies.ravel().argsort()[-(k+1)]
     new_soln = soln.copy()
     #it shouldn't be flipping, but I can't think of what...
     new_soln[worst] = 1 - new_soln[worst]
     return new_soln
 
+def make_pij(config_list):
+    p_ij = np.zeros((config_list[0].shape[0], config_list[0].shape[0]))
+    #probably spiffy vecced way
+    for config in config_list:
+        for x in xrange(config.shape[0]):
+            if config[x] == 1:
+                for y in xrange(config.shape[0]):
+                    if config[y] == 1:
+                        p_ij += 1
+    p_ij /= len(config_list)
+    return p_ij
+
 def learn_bm(config, weights, pat):
-    soln_wo_clamp, _ = optimize_bm(config, weights, steps=200)
-    soln_w_clamp, _ = optimize_bm(config, weights, steps=200, clamp=pat)
+    solns_wo_clamp = sample_bm(config, weights, steps=200)
+    solns_w_clamp = sample_bm(config, weights, steps=200, clamp=pat)
+    p_ij = make_pij(solns_wo_clamp)
+    p_ij_prime = make_pij(solns_w_clamp)
     # I need p_ij's
-    for x in xrange(len(soln_wo_clamp)):
-        for y in xrange(len(soln_w_clamp)):
-            weights[x,y] -= soln_wo_clamp[x] * soln_wo_clamp[y]
+    # make the p_ij matrices, basically
+    for x in xrange(solns_wo_clamp[0].shape[0]):
+        for y in xrange(solns_w_clamp[0].shape[0]):
+            weights[x,y] -= p_ij[x,y] - p_ij_prime[x,y]
     return (config, weights)
+
+def sample_bm(config, weights, steps=100, disp=False, clamp=None):
+    print "sampling....", clamp
+    #clamp is simple Python array always
+    best_s = config
+    best_energy = float("inf")
+    total_energy = float("inf")
+    curr_s = [best_s]
+    for time in xrange(steps):
+        total_energy, energies = conf_energy(curr_s[-1], weights)
+        if total_energy < best_energy:
+            best_energy = total_energy
+            best_s = curr_s
+        clamp_val = len(clamp) if clamp else -1
+        curr_s.append(flip_state(energies, curr_s[-1], use_k=False, clamp=clamp_val))
+    return curr_s
 
 def optimize_bm(config, weights, steps=10000, disp=False, clamp=None):
     #clamp is simple Python array always
@@ -96,12 +139,12 @@ def optimize_bm(config, weights, steps=10000, disp=False, clamp=None):
     return best_s, best_energy
 
 if __name__ == "__main__":
-    config, weights = setup_bm(n=300)
+    config, weights = setup_bm(n=10)
     parity_bits = gen_paritybits()
-    config = optimize_bm(config, weights, steps=1000)
-    #for idx, x in enumerate(parity_bits):
-    #    if idx % 3: #if you did % 2, you would be in big trouble
-    #        config, weights = learn_bm(config, weights, x)
-    #    else:
-    #        pass
+    for idx, x in enumerate(parity_bits):
+        if idx % 3: #if you did % 2, you would be in big trouble
+            config, weights = learn_bm(config, weights, x)
+            print "weights now: ", weights
+        else:
+            pass
     #now try the performance by clamping and optimizing...

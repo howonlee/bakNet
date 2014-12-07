@@ -20,8 +20,6 @@ def rand_vec(n=100):
     return vec
 
 def setup_bm(n=100):
-    #n lattice point bm
-    #hidden nodes are implicit
     config = rand_vec(n)
     weights = np.random.rand(n,n) - 0.5
     weights = (weights + weights.T) / 2 #symmetry

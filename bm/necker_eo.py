@@ -1,4 +1,6 @@
 import numpy as np
+import math
+import random
 
 weights = np.array([
     [0,2,0,2,2,0,0,0,-3,-3,0,0,0,0,0,0],
@@ -17,5 +19,26 @@ weights = np.array([
     [0,0,0,0,-3,-3,0,0,0,2,0,0,2,0,2,0],
     [0,0,0,0,0,0,-3,-3,0,0,2,0,0,2,0,2],
     [0,0,0,0,0,0,-3,-3,0,0,0,2,2,0,2,0]])
-activation = np.array([1,1,0,0,1,0,1,1,0,1,0,0,0,1,1,0])
 
+def sigmoid(x):
+    return 1.0 / (1 + math.exp(-x))
+
+def random_activation():
+    act = np.zeros(16)
+    for x in xrange(16):
+        if random.random() > 0.5:
+            act[x] = 1
+    return act
+
+def update(activation, weights):
+    #get local energies
+    energies = something
+    unit = np.argmax(energies)
+    activation[unit] = 1 - activation[unit]
+    return activation
+
+if __name__ == "__main__":
+    activation = np.array([1,1,0,0,1,0,1,1,0,1,0,0,0,1,1,0])
+    for i in xrange(100):
+        activation = update(activation, weights)
+        print activation

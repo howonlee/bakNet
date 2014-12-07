@@ -19,7 +19,6 @@ weights = np.array([
     [0,0,0,0,-3,-3,0,0,0,2,0,0,2,0,2,0],
     [0,0,0,0,0,0,-3,-3,0,0,2,0,0,2,0,2],
     [0,0,0,0,0,0,-3,-3,0,0,0,2,2,0,2,0]])
-activation = np.array([1,1,0,0,1,0,1,1,0,1,0,0,0,1,1,0])
 
 def sigmoid(x):
     return 1.0 / (1 + math.exp(-x))
@@ -31,7 +30,7 @@ def random_activation():
             act[x] = 1
     return act
 
-def update(activation, weights, numIters=1):
+def update(activation, weights):
     unit = random.randint(0,15)
     netinput = weights[unit].dot(activation)
     if (random.random() < sigmoid(netinput)):
@@ -41,5 +40,7 @@ def update(activation, weights, numIters=1):
     return activation
 
 if __name__ == "__main__":
-    #just need to visualize it, actually
-    pass
+    activation = np.array([1,1,0,0,1,0,1,1,0,1,0,0,0,1,1,0])
+    for i in xrange(100):
+        activation = update(activation, weights)
+        print activation

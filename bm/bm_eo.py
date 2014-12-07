@@ -86,11 +86,7 @@ def make_pij(config_list):
     p_ij = np.zeros((config_list[0].shape[0], config_list[0].shape[0]))
     #probably spiffy vecced way
     for config in config_list:
-        for x in xrange(config.shape[0]):
-            if config[x] == 1:
-                for y in xrange(config.shape[0]):
-                    if config[y] == 1:
-                        p_ij += 1
+        p_ij += np.outer(config, config)
     p_ij /= len(config_list)
     return p_ij
 
@@ -107,7 +103,6 @@ def learn_bm(config, weights, pat):
     return (config, weights)
 
 def sample_bm(config, weights, steps=100, disp=False, clamp=None):
-    print "sampling....", clamp
     #clamp is simple Python array always
     best_s = config
     best_energy = float("inf")
@@ -133,7 +128,6 @@ def optimize_bm(config, weights, steps=10000, disp=False, clamp=None):
         if total_energy < best_energy:
             best_energy = total_energy
             best_s = curr_s
-        print "total_energy, best_energy: ", total_energy, best_energy
         clamp_val = len(clamp) if clamp else -1
         curr_s = flip_state(energies, curr_s, use_k=False, clamp=clamp_val)
     return best_s, best_energy

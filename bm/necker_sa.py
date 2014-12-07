@@ -1,6 +1,7 @@
 import numpy as np
 import math
 import random
+import itertools
 
 weights = np.array([
     [0,2,0,2,2,0,0,0,-3,-3,0,0,0,0,0,0],
@@ -40,7 +41,19 @@ def update(activation, weights):
     return activation
 
 if __name__ == "__main__":
-    activation = np.array([1,1,0,0,1,0,1,1,0,1,0,0,0,1,1,0])
-    for i in xrange(100):
-        activation = update(activation, weights)
-        print activation
+    global_minima = set()
+    global_1 = np.array([1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0])
+    global_2 = np.array([0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1])
+    global_1.flags.writeable = False
+    global_2.flags.writeable = False
+    global_minima.add(hash(global_1.data))
+    global_minima.add(hash(global_2.data))
+    activations = [np.array(map(int, seq)) for seq in itertools.product("01", repeat=16)]
+    for activation in activations:
+        for i in xrange(1000):
+            activation = update(activation, weights)
+            activation_copy = activation.copy()
+            activation_copy.flags.writeable = False
+            if hash(activation_copy.data) in global_minima:
+                print i
+                break

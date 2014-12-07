@@ -32,6 +32,9 @@ def random_activation():
     return act
 
 def noise(x):
+    """
+    Unused
+    """
     rand_vec = np.random.random_sample(x.shape)
     rand_vec -= 0.5
     rand_vec *= 0.02
@@ -43,7 +46,6 @@ def update(activation, weights, tau=1.5):
     for i in xrange(16):
         for j in xrange(16):
             energies[i] += weights[i][j] * activation[j] * activation[i]
-    energies = noise(energies)
     if tau < 0:
         unit = np.argmin(energies)
     else:
@@ -63,16 +65,11 @@ if __name__ == "__main__":
     global_minima.add(hash(global_1.data))
     global_minima.add(hash(global_2.data))
     activations = [np.array(map(int, seq)) for seq in itertools.product("01", repeat=16)]
-    """
-    activation = np.array([1,1,0,0,1,0,1,1,0,1,0,0,0,1,1,0])
-    for i in xrange(40):
-        activation = update(activation, weights)
-        print activation
-        """
     for activation in activations:
-        for i in xrange(100):
+        for i in xrange(1000):
             activation = update(activation, weights)
             activation_copy = activation.copy()
             activation_copy.flags.writeable = False
             if hash(activation_copy.data) in global_minima:
                 print i
+                break

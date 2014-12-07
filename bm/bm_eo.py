@@ -141,4 +141,8 @@ if __name__ == "__main__":
             print "weights now: ", weights
         else:
             pass
+    print "weights now: ", weights
+    parity_bits_2 = gen_bits() #without the answer
+    print parity_bits_2[0]
+    print sample_bm(config, weights, 5, clamp=parity_bits_2[0])
     #now try the performance by clamping and optimizing...

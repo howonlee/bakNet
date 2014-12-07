@@ -100,7 +100,7 @@ def sample_bm(config, weights, steps=100, disp=False, clamp=None):
     return best_s
 
 if __name__ == "__main__":
-    n = 5
+    n = 4
     config, weights = setup_bm(n=n)
     parity_bits = gen_paritybits()
     for i in xrange(15):

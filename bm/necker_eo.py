@@ -42,10 +42,7 @@ def noise(x):
 
 def update(activation, weights, tau=1.5):
     #get local energies
-    energies = np.zeros(16)
-    for i in xrange(16):
-        for j in xrange(16):
-            energies[i] += weights[i][j] * activation[j] * activation[i]
+    energies = np.dot(weights, activation) * activation
     if tau < 0:
         unit = np.argmin(energies)
     else:

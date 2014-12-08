@@ -31,7 +31,7 @@ def random_activation():
             act[x] = 1
     return act
 
-def update(activation, weights):
+def update(activation, weights, t):
     unit = random.randint(0,15)
     netinput = weights[unit].dot(activation)
     if (random.random() < sigmoid(netinput)):
@@ -49,6 +49,7 @@ if __name__ == "__main__":
     global_minima.add(hash(global_1.data))
     global_minima.add(hash(global_2.data))
     activations = [np.array(map(int, seq)) for seq in itertools.product("01", repeat=16)]
+    schedule = something something something
     for activation in activations:
         i = 0
         while True:

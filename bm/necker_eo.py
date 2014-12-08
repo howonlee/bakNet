@@ -2,6 +2,7 @@ import numpy as np
 import math
 import random
 import itertools
+import datetime
 
 weights = np.array([
     [0,2,0,2,2,0,0,0,-3,-3,0,0,0,0,0,0],
@@ -62,6 +63,9 @@ if __name__ == "__main__":
     global_minima.add(hash(global_1.data))
     global_minima.add(hash(global_2.data))
     activations = [np.array(map(int, seq)) for seq in itertools.product("01", repeat=16)]
+    c = datetime.datetime.now()
+    curr_time = c.second * 1000000 + c.microsecond
+    print curr_time
     for activation in activations:
         i = 0
         while True:
@@ -70,5 +74,7 @@ if __name__ == "__main__":
             activation_copy = activation.copy()
             activation_copy.flags.writeable = False
             if hash(activation_copy.data) in global_minima:
-                print i
+                c = datetime.datetime.now()
+                curr_time = c.second * 1000000 + c.microsecond
+                print curr_time
                 break

@@ -6,6 +6,7 @@ import operator
 if __name__ == "__main__":
     hist1 = collections.Counter()
     hist2 = collections.Counter()
+    hist3 = collections.Counter()
     with open("sa_res", "r") as f:
         for line in f:
             val = int(line)
@@ -14,13 +15,17 @@ if __name__ == "__main__":
         for line in f:
             val = int(line)
             hist2[val] += 1
+    with open("sched_res", "r") as f:
+        for line in f:
+            val = int(line)
+            hist3[val] += 1
     cts1 = hist1.most_common()
     cts2 = hist2.most_common()
-    print cts1
-    print "================"
-    print cts2
+    cts3 = hist3.most_common()
     plt.loglog(map(operator.itemgetter(0), cts1), map(operator.itemgetter(1), cts1), "r.")
     plt.loglog(map(operator.itemgetter(0), cts2), map(operator.itemgetter(1), cts2), "b.")
+    plt.loglog(map(operator.itemgetter(0), cts3), map(operator.itemgetter(1), cts3), "g.")
     plt.xlabel("number of iterations in trial")
     plt.ylabel("number of trials")
-    plt.show()
+    plt.legend(loc='upper center', bbox_to_anchor=(0.5, -0.10))
+    plt.savefig("iter_hist", bbox_inches="tight")

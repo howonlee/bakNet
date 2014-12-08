@@ -66,7 +66,9 @@ if __name__ == "__main__":
     global_minima.add(hash(global_2.data))
     activations = [np.array(map(int, seq)) for seq in itertools.product("01", repeat=16)]
     for activation in activations:
-        for i in xrange(1000):
+        i = 0
+        while True:
+            i += 1
             activation = update(activation, weights)
             activation_copy = activation.copy()
             activation_copy.flags.writeable = False

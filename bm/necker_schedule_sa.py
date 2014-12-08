@@ -34,7 +34,7 @@ def random_activation():
 def update(activation, weights, t):
     unit = random.randint(0,15)
     netinput = weights[unit].dot(activation)
-    if (random.random() < sigmoid(netinput)):
+    if (random.random() < sigmoid(netinput)): #t should come in here somehow
         activation[unit] = 1
     else:
         activation[unit] = 0
@@ -49,14 +49,17 @@ if __name__ == "__main__":
     global_minima.add(hash(global_1.data))
     global_minima.add(hash(global_2.data))
     activations = [np.array(map(int, seq)) for seq in itertools.product("01", repeat=16)]
-    schedule = something something something
+    schedule = np.linspace(2,0.5,num=20)
     for activation in activations:
         i = 0
         while True:
-            i += 1
-            activation = update(activation, weights)
+            curr_temp = 0.5
+            if i < schedule.size:
+                curr_temp = schedule[i]
+            activation = update(activation, weights, curr_temp)
             activation_copy = activation.copy()
             activation_copy.flags.writeable = False
+            i += 1
             if hash(activation_copy.data) in global_minima:
                 print i
                 break

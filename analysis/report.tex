@@ -10,8 +10,6 @@
 \author{Howon Lee}
 \maketitle
 
-%%%% to talk about
-
 %explain the bak net
   How can you use extremal dynamics to train some kind of neural net?
   Qualitative model of evolution: Bak-Sneppen model.
@@ -103,9 +101,16 @@
 
 %%%% organization
 
-\section{} %What is the issue or question you will be addressing?
+\section*{Issue Addressed} %What is the issue or question you will be addressing?
 
-\section{} %Why is it interesting, what has previously been done, and what remains to be done?
+We ask whether the boltzmann updating process can be sped up.
+
+\subsection*{Why is it interesting?}
+%%%%%%%%%%%
+\subsection*{What has previously been done?}
+%%%%%%%%%%% tsp and spin glasses. really quite interesting in specific, because of the close relation between ising spin glasses and bm
+\subsection*{What remains to be done?}
+%%%%%%%%%%%
 
 \section{Novel Approach}
 
@@ -132,8 +137,12 @@ EO is a global optimization technique, inspired by a model of evolution proposed
 \section{Results and Analysis}
 
 %%First present your primary findings that bear directly on the target phenomena.
+%%% it's faster
 
 %%A strong paper will, in addition, present an analysis of why the results came out the way they did, especially in cases where results did not come out as expected. 
+%%% why is it faster?
+%%% note the fasterness of SA compared to schedule SA is partly an artifact of the fact that we demand a global minima: the schedule tends to get stuck in local minima
+%%% but why is the tauEO faster? immediately after it makes a huge jump to escape local minima, the power law distribution of tau means that it will tend to explore the new local state space really fast, for basically the same reason that it's an online algorithm.
 
 %%It can be useful to discuss results you obtain with one of us to get suggestions as to how to fully understand your findings.
 
@@ -147,8 +156,13 @@ EO is a global optimization technique, inspired by a model of evolution proposed
 
 %Summarize your goals, your approach, and your main findings, and state a conclusion indicating how well, overall, your goals have been met.
 
+%%% goals: make a faster thing than SA for abstract csp
+%%% approach: tau-EO for cs net
+%%% findings: spiffy results
 %Then, discuss shortcomings or limitations of your effort and indicate how these might be overcome in future work.
-
+%%% limitations: limited net, not fully connected, not a real problem. doesn't scale up.
+%%% limitations: not thinking hard about neuronal connectivity. one thing that continues on the subject of criticality is modelling chialvo's work
+%%% broader implications: try to look carefully at the critical regions of abstract NP-complete problem
 %%Also, indicate broader implications and potential future applications of the ideas and approach.
 
 \section{Summary}

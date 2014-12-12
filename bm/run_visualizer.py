@@ -12,4 +12,6 @@ if __name__ == "__main__":
     plt.matshow(arr, cmap=plt.gray())
     plt.ylabel("time")
     plt.xlabel("activation in spot")
+    plt.axis([0,16,587,500])
+    plt.title("Fast run in SA")
     plt.show()

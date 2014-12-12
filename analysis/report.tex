@@ -129,8 +129,6 @@ Note that there is a longer tail in the histogram for the simulated annealing wi
 The majority of the time, $\tau$-extremal optimization is local search. Therefore, when it is possible to get to the global optimum by local search, it does so very quickly, as can be seen in \ref{fig:fast_progress}. An example of where $\tau$-extremal optimization goes wrong is in \ref{fig:slow_progress}, but this shows the capability that $\tau$-extremal optimization to move large distances in the activation space, by making a hugely unlikely step and then semi-locally searching from there. This is as opposed to what simulated annealing does when it degenerates, which is to get stuck in the local minima, just with the \emph{possibility} of getting out. Because at each step a move is made in $\tau$-extremal optimization, this cannot happen.
 
 \section{Summary and Discussion}
-We attempted to use $\tau$-extremal optimization in order to update a constraint satisfaction network, and compared it to the performance of simulated annealing on a Boltzmann machine on the same toy constraint satisfaction problem. As the histogram of iteration numbers shows, there was a significant gain.
-
 %%% cite Boettcher for the disequilibrium stuff
 %%% cite boettcher's heuristic about the number of iterations
 An important feature of the algorithm is that it works in disequilibrium. That is, it runs the same whether it's early in the search or late in the search. Unlike simulated annealing with an annealing schedule, which doesn't work as an online algorithm, or an algorithm which can be given its input piece by piece, that there is nothing preventing $\tau$-extremal optimization from being used online. This property is of a piece with the scale-free search mentioned above. One important drawback to this is that for real problems the number of iterations needs to be determined via heuristic.
@@ -142,6 +140,8 @@ Because this project attempted to completely explore an entire state space of a 
 
 %% cite the chialvo paper, small world net review, modelling review
 Another interesting direction would be to try to explore scale-freeness in the connectivity of the graph. Chialvo et al claim that the functional connectivity of the brain has a scale-free network character. The functional graph they create is a small world net, with a power law distribution of degree rank and a bevy of other features. This is exciting, since there is a literature on simulating, modelling and even fitting these graphs, and this might be of interest to connectionist modelling.
+
+To summarize, we attempted to use $\tau$-extremal optimization in order to update a constraint satisfaction network, and compared it to the performance of simulated annealing on a Boltzmann machine on the same toy constraint satisfaction problem. As the histogram of iteration numbers shows, there was a significant gain.
 
 \begin{thebibliography}[99]
     Citations:   use apa

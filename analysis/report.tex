@@ -21,15 +21,15 @@ An alternative optimization algorithm called $\tau$-extremal optimization($\tau$
 The update rule for Boltzmann machines in the general, non-restricted case is very powerful but not usable in practice. This is in part because of the enormous time needed to approach the network's equilibrium distribution. Therefore, other ways of avoiding local maxima and introducing nondeterminism in constraint satisfaction, besides simulated annealing of Boltzmann machines, might be of interest. Simulated annealing also has the disadvantage that it must be given an annealing schedule to work effectively, the proper tuning of which is extremely hard and problem-specific. Another source of interest is the possible exploration of the semantics of alternative ways to introduce nondeterminism into the constraint satisfaction framework in order to avoid the problem of local optima.
 
 \subsection*{Literature Review}
-%%% cite: extremal optimization, genetic algorithms
-Extremal optimization, in general, is inspired a specific model of co-evolution. This is as opposed to genetic algorithms and evolutionary algorithms, which are inspired by evolution at a lower level of abstraction(per gene, not per species).
+%%% cite: genetic algorithms
+Extremal optimization\cite{boettcher}, in general, is inspired a specific model of co-evolution. This is as opposed to genetic algorithms and evolutionary algorithms, which are inspired by evolution at a lower level of abstraction(per gene, not per species).
 
-%%% cite: bak-sneppen, gould
-To be specific, extremal optimization is inspired by a model of evolution called the Bak-Sneppen model, designed to bring about the time dynamics and other qualitative phenomena of evolution in the simplest method possible. It is a self-organized criticality model, which means that it has its attractor in a phase transition state. It is a one-dimensional lattice model which models nothing about each species except its fitness and the structure of its relations with other species. $N$ species are considered as nodes on a graph which is a one-dimensional lattice (a ring), and each species has a fitness, denoted by a single scalar $\lambda$. At each discrete time step, the least fit species is replaced, and both of its neighbors replaced with it, with new species identical to the old ones except for the fitnesses, which are random. Notably, this selection organizes a fitness threshold, below which species do not survive because they are always the least fit.
+%%% cite: gould
+To be specific, extremal optimization is inspired by a model of evolution called the Bak-Sneppen model\cite{baksneppen}, designed to bring about the time dynamics and other qualitative phenomena of evolution in the simplest method possible. It is a self-organized criticality model, which means that it has its attractor in a phase transition state. It is a one-dimensional lattice model which models nothing about each species except its fitness and the structure of its relations with other species. $N$ species are considered as nodes on a graph which is a one-dimensional lattice (a ring), and each species has a fitness, denoted by a single scalar $\lambda$. At each discrete time step, the least fit species is replaced, and both of its neighbors replaced with it, with new species identical to the old ones except for the fitnesses, which are random. Notably, this selection organizes a fitness threshold, below which species do not survive because they are always the least fit.
 
 \begin{figure}
   \includegraphics{bak_sneppen}
-  %%% let's have a nice caption telling us stuff, citing the stuff.
+  \caption{Progression of a Bak-Sneppen model: y axis is time, x axis is the lattice, color is fitness. Taken from \cite{baksneppen}.}
 \end{figure}
 
 %%% cite Bak and Chialvo
@@ -47,18 +47,15 @@ Bak and Chialvo note that it is very easy to make very deep nets with this archi
   %%% caption
 \end{figure}
 
-%%% cite Boetticher
-The model creates punctuated equilibrium because as the smallest fitness increases, it becomes more likely that the next smallest fitness is adjacent to the previous smallest fitness, and therefore the events become correlated, causing "avalanches". This behavior, if one considers the nodes in the graph to be variables in a problem instead of species, was noted to be desirable in optimization problems by Boettcher and Percus, and used as the basis of extremal optimization.
+The model creates punctuated equilibrium because as the smallest fitness increases, it becomes more likely that the next smallest fitness is adjacent to the previous smallest fitness, and therefore the events become correlated, causing "avalanches". This behavior, if one considers the nodes in the graph to be variables in a problem instead of species, was noted to be desirable in optimization problems by Boettcher and Percus\cite{boettcher}, and used as the basis of extremal optimization.
 
 Extremal optimization can be described succinctly as iteratively identifying the worst performing variable (according to the variable's fitness, which the implementer must define) in a given solution and replacing them with a new component or swapping them out with another component. Since this is trivially subject to local optima(in fact, it is just a local search), this paper will mainly deal with a variant, $\tau$-extremal optimization, which solves this problem. It does so by ordering the local fitnesses, high to low, and choosing the $k$-ranked one, where
 
 $$P(k) = Ck^{-\tau}$$
 
-%%% cite the analytic claim that there's an optimum value of tau.
-Where $C$ is a normalizing constant and $\tau$ is the one parameter. There is a claim by Boettcher et al that there is an analytically optimal value of $\tau$ for search time, which is $\tau = 1 + \frac{1}{\ln n}$, where $n$ is the number of variables.%%% by who??
+Where $C$ is a normalizing constant and $\tau$ is the one parameter. There is a claim by Boettcher et al that there is an analytically optimal value of $\tau$ for search time, which is $\tau = 1 + \frac{1}{\ln n}$, where $n$ is the number of variables\cite{boettcher2}.
 
-%% cite the well-defined mean shit
-The reason why the $P(k)$ is the way it is is because it gives an important advantage to the search pattern of $\tau$-extremal optimization: where other search algorithms are local or global, there is no well-defined scale to its search, because the $P(k)$ is a scale-free distribution, a power law which, because $\tau < 2$, does not have a well-defined mean or variance.
+The reason why the $P(k)$ is the way it is is because it gives an important advantage to the search pattern of $\tau$-extremal optimization: where other search algorithms are local or global, there is no well-defined scale to its search, because the $P(k)$ is a scale-free distribution, a power law which, because $\tau < 2$, does not have a well-defined mean or variance. \cite{mejnewman}
 
 %%% cite hamming cliff
 This solves an important problem called the \emph{Hamming cliff} in other evolution-inspired algorithms, where very many variables are coupled in a representation, such as in a conventional binary code, where the gap between 511 (0111111111) and 512 (1000000000) needs 10 coincident mutations. What would happen in the $\tau$-extremal optimization would be that the search would eventually perversely flip the first bit, and then proceed to quickly create an avalanche where it would flip all the other bits in the representation. Also because of this property, there does not need to be anything analogous to an annealing schedule for $\tau$-extremal optimization, where a more global search transforms into a more local search.
@@ -67,8 +64,8 @@ This solves an important problem called the \emph{Hamming cliff} in other evolut
 The previous applications of EO and $\tau$-EO include the travelling salesman problem, graph cuts and Ising model spin glass optimization. It is the last of these that seems most important for us, because of the close connection between the Hopfield net and the Ising model, and in turn the Hopfield net and the constraint satisfaction networks that exist, including the Boltzmann machine, which can be construed as a probabilistic Hopfield net.
 
 \begin{figure}
-  \includegraphics{eo_alg} %%%%% get a better pic
-  \caption{extremal optimization algorithm}
+  \includegraphics{eo_alg}
+  \caption{extremal optimization algorithm, from \cite{boettcher}}
 \end{figure}
 
 \section{Methods}
@@ -96,7 +93,6 @@ In addition, we had a preliminary investigation into trying to use the $\tau$-ex
 We used, for the RBM task, a digit dataset from scikit-learn, which has 1797 samples in 10 classes. We used this instead of the more standard MNIST because it has only 64 dimensions, and it was pre-whitened and normalized. 100 hidden units were used. As Hinton and Sejnowski recommend, I moved in the weight space by a constant (1), but in only one direction chosen by $\tau$-extremal optimization.
 
 \section{Results and Analysis}
-%%% this is thin
 First, the results on the RBM. We did not see the large scale-free jumps that we experienced in the Ising model and expected in the RBM. This is because the gradients with respect to the weights, which we were using as the fitness values, were local but didn't affect their neighbors in a strong way, unlike the energy calculations in the constraint satisfaction model. This ends up being essential to the punctuated-equilibrium behavior of the model.
 
 \begin{figure}
@@ -134,17 +130,31 @@ The majority of the time, $\tau$-extremal optimization is local search. Therefor
 An important feature of the algorithm is that it works in disequilibrium. That is, it runs the same whether it's early in the search or late in the search. Unlike simulated annealing with an annealing schedule, which doesn't work as an online algorithm, or an algorithm which can be given its input piece by piece, that there is nothing preventing $\tau$-extremal optimization from being used online. This property is of a piece with the scale-free search mentioned above. One important drawback to this is that for real problems the number of iterations needs to be determined via heuristic.
 
 %%% talk about bak's studies of scientific progress, the power law distribution of impact
-It was mentioned in the introduction that there is an interesting semantics to this co-evolutionary algorithm. Not only can it be construed as a co-evolutionary algorithm, the model has been used as a model of scientific progress, which also is a domain with punctuated equilibria and critical dynamics (power-law distributed impact, at least as measured via PageRank and other measures). This would fit in surprisingly well with the interpretation of a parallel constraint processing network as a set of hypotheses, which are punished or not punished by experiment.
+It was mentioned in the introduction that there is an interesting semantics to this co-evolutionary algorithm. Not only can it be construed as a co-evolutionary algorithm, the model has been used as a model of scientific progress\cite{bakscience}, which also is a domain with punctuated equilibria and critical dynamics (power-law distributed impact, at least as measured via citation\cite{citationpowerlaw}). This would fit in surprisingly well with the interpretation of a parallel constraint processing network as a set of hypotheses, which are punished or not punished by experiment.
 
 Because this project attempted to completely explore an entire state space of a problem, it was not feasible to explore a non-toy problem: that is, a problem where it's not possible to explore the entire state space, and therefore other measures of speed must be checked. It remains to be seen if this speed can be replicated in a larger problem domain with different local optima.
 
-%% cite the chialvo paper, small world net review, modelling review
-Another interesting direction would be to try to explore scale-freeness in the connectivity of the graph. Chialvo et al claim that the functional connectivity of the brain has a scale-free network character. The functional graph they create is a small world net, with a power law distribution of degree rank and a bevy of other features. This is exciting, since there is a literature on simulating, modelling and even fitting these graphs, and this might be of interest to connectionist modelling.
+%% cite the chialvo paper, small world netmodelling review
+Another interesting direction would be to try to explore scale-freeness in the connectivity of the graph. Chialvo et al claim that the functional connectivity of the brain has a scale-free network character. The functional graph they create is a small world net\cite{smallworldnet}, with a power law distribution of degree rank and a bevy of other features. This is exciting, since there is a literature on simulating, modelling and even fitting these graphs, and this might be of interest to connectionist modelling.
 
 To summarize, we attempted to use $\tau$-extremal optimization in order to update a constraint satisfaction network, and compared it to the performance of simulated annealing on a Boltzmann machine on the same toy constraint satisfaction problem. As the histogram of iteration numbers shows, there was a significant gain.
 
 \begin{thebibliography}[99]
-    Citations:   use apa
+  \bibitem{baksneppen}
+    Bak, P., \& Sneppen, K. (1993). Punctuated equilibrium and criticality in a simple model of evolution. Physical review letters, 71(24), 4083.
+  \bibitem{bakscience}
+    De Langhe, R. (2014). A comparison of two models of scientific progress. Studies in History and Philosophy of Science Part A, 46, 94-99.
+  \bibitem{citationpowerlaw}
+    Redner, S. (1998). How popular is your paper? An empirical study of the citation distribution. The European Physical Journal B-Condensed Matter and Complex Systems, 4(2), 131-134.
+  \bibitem{smallworldnet}
+    Watts, D. J., \& Strogatz, S. H. (1998). Collective dynamics of ‘small-world’networks. nature, 393(6684), 440-442.
+  \bibitem{boettcher}
+    Boettcher, S., \& Percus, A. G. (2002). Optimization with extremal dynamics. Complexity, 8(2), 57-62.
+  \bibitem{boettcher2}
+    Boettcher, S., \& Percus, A. (2000). Nature's way of optimizing. Artificial Intelligence, 119(1), 275-286.
+  \bibitem{mejnewman}
+    Newman, M. E. (2005). Power laws, Pareto distributions and Zipf's law. Contemporary physics, 46(5), 323-351.
+
 \end{thebibliography}
 
 \end{document}

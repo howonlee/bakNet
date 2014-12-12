@@ -9,86 +9,71 @@
 \title{Psych209 Final Project}
 \author{Howon Lee}
 \maketitle
-\section*{Issue Addressed} %What is the issue or question you will be addressing?
+\section*{Abstract}
+%%% let's have the abstract last
+\section*{Introduction}
+\subsection*{Issue Addressed}
 
 We wish to address the issue of using an alternative approach to introducing necessary non-determinism to the constraint satisfaction problem in a PDP system, as opposed to the Boltzmann machine with conventional simulated annealing.
 
-An alternative optimization algorithm called $\tau$-extremal optimization is used to update a constraint-satisfaction framework to escape local minima in short amounts of time. It is compared on a toy network (the Necker Cube task), but with every possible combination of initial input, to the Boltzmann machine updated with simulated annealing.
+An alternative optimization algorithm called $\tau$-extremal optimization($\tau$-EO) is used to update a constraint-satisfaction framework to escape local minima in short amounts of time. It, like simulated annealing, is inspired by condensed matter physics, but $\tau$-EO deals with nonequilibrium systems.
 
 \subsection*{Why is it interesting?}
 
-The update rule for Boltzmann machines in the general, non-restricted case is very powerful but not usable in practice, because of the enormous time needed to approach the network's equilibrium distribution and the noisy learning signal for the learning. Simulated annealing also has the disadvantage that it must be given an annealing schedule to work effectively, the proper tuning of which is extremely hard and problem-specific.
+The update rule for Boltzmann machines in the general, non-restricted case is very powerful but not usable in practice. This is in part because of the enormous time needed to approach the network's equilibrium distribution. Therefore, other ways of avoiding local maxima and introducing nondeterminism in constraint satisfaction, besides simulated annealing of Boltzmann machines, might be of interest. Simulated annealing also has the disadvantage that it must be given an annealing schedule to work effectively, the proper tuning of which is extremely hard and problem-specific. Another source of interest is the possible exploration of the semantics of alternative ways to introduce nondeterminism into the constraint satisfaction framework in order to avoid the problem of local optima.
 
-Another interesting statement is that the energy semantics of the Boltzmann machine seem very incompatible with the hypothesis semantics of the parallel network for solving constraint satisfaction problems.
-
-%%%%%%%%%%% blah blah blah csp, cognitive architectures
-%%%%%%%%%%% talk about it still being a probabilistic model, but the nondeterminism can rest in the evolution of the constraints, and still have softish constraints
 \subsection*{What has previously been done?}
-%%%% talk about bak net, why it's so useless
-  How can you use extremal dynamics to train some kind of neural net?
-  Qualitative model of evolution: Bak-Sneppen model.
-  \begin{figure}
-    \includegraphics{bak_sneppen}
-  \end{figure}
+%%% cite: extremal optimization, genetic algorithms
+Extremal optimization, in general, is inspired by models of co-evolution. This is as opposed to genetic algorithms and evolutionary algorithms, which are inspired by evolution in the abstract.
 
-  Rules of Bak-Sneppen model. How does it behave? Criticality. Self-organized criticality.
+%%% cite: bak-sneppen, gould
+To be specific, there exists a model of evolution called the Bak-Sneppen model, designed to bring about the time dynamics and other qualitative phenomena of evolution in the simplest method possible. It is a one-dimensional lattice model which models nothing about each species except its fitness and its relations with other species. $N$ species are considered as nodes on a graph which is a one-dimensional lattice (a ring), and each species has a fitness, denoted by a single scalar $\lambda$. At each discrete time step, the least fit species is replaced, and both of its neighbors replaced with it, with new species identical to the old ones except for the fitnesses, which are random. Notably, this selection organizes a fitness threshhold, below which species do not survive because they are always the least fit.
 
-  Caveats: CR Shalizi, W Tozier, "A Simple Model of the Evolution of Simple Models of Evolution"
-  
-  Bak and Chialvo's model
+\begin{figure}
+  \includegraphics{bak_sneppen}
+  %%% let's have a nice caption telling us stuff, citing the stuff.
+\end{figure}
 
-  More abstract: extremal optimization
-
-  Finally: Using $\tau$-EO on RBM, classification results
-  
-  How it works, from 20000 feet
+%%% cite Bak and Chialvo
+One unpromising avenue of exploration was the adaptive extremal dynamics architecture promulgated by Bak and Chialvo  %%%%%%%%%%%%%%%%%%%%%%%%% why?
+%Bak and Chialvo's model, terrible model
   \begin{figure}
     \includegraphics{bak_chialvo_net_topology}
   \end{figure}
-  
-  Problems: Conjunctive neurons
+%Problems: Conjunctive neurons
+%Comparison to simulated annealing
   \begin{figure}
     \includegraphics{bak_plot}
   \end{figure}
-  Comparison to simulated annealing
-  
-  How it works, from 20000 feet
 
-  Existing results, from Boetticher: TSP, Ising model
+%%% cite Boetticher
+The model creates punctuated equilibrium because as the smallest fitness increases, it becomes more likely that the next smallest fitness is adjacent to the previous smallest fitness, and therefore the events become correlated, causing "avalanches". This behavior, if one considers the nodes in the graph to be variables in a problem instead of species, was noted to be desirable in optimization problems by Boettcher and Percus, and used as the basis of extremal optimization.
 
-  $\tau$-EO
-  
+Extremal optimization can be described succinctly as iteratively identifying the worst performing variable (according to the variable's fitness, which the implementer must define) in a given solution and replacing them with a new component or swapping them out with another component. Since this is trivially subject to local optima, this paper will mainly deal with a variant, $\tau$-extremal optimization, which solves this problem. It does so by ordering the local fitnesses and choosing the $k$'th one, where
+
+$$P(k) \propto k^{-\tau}$$
+
+%%% cite the analytic claim that there's an optimum value of tau.
+Where $\tau$ is the one parameter. There is a claim by Boettcher et al that there is an analytically optimal value of $\tau$ for search time, which is $\tau = 1 + \frac{1}{\ln n}$, where $n$ is the number of variables.%%% by who??
+
+%Existing results, from Boetticher: TSP, Ising model, talk about ising and hopfield net connection
+%$\tau$-EO
   \begin{figure}
     \includegraphics{eo_alg}
   \end{figure}
-  
-  The hope:
+%The hope:
   \begin{figure}
     \includegraphics{boettcher}
   \end{figure}
   
-  Why not feedforward? BM vs. Ising Model
+\section{Novel Approach}
+  %Why not feedforward? BM vs. Ising Model
 
-  Locality: RBM
+  %Locality: RBM
 
   \begin{figure}
     \includegraphics{rbm_eq}
   \end{figure}
-%%%%%%%%%%% tsp and spin glasses. really quite interesting in specific, because of the close relation between ising spin glasses and bm
-\subsection*{What remains to be done?}
-%%%%%%%%%%%
-
-\section{Novel Approach}
-
-I will try to use the method by Boetticher et al on the problem of taking equilibrium-like statistics from a Boltzmann machine, to see if it helps the current intractable problem of non-restricted Boltzmann machine learning. The method, called Extremal Optimization (EO), has been used in Ising model systems before (spin glasses modelled by an Ising model system), but not to the updating of a Boltzmann machine, to my knowledge. %%%% cite Boetticher and the Ising model tau-EO paper.
-
-EO is a global optimization technique, inspired by a model of evolution proposed by Bak and Sneppen, and the qualitative results that result from that model. %%% bit of exegesis of Bak-Sneppen model; %%%% cite Bak-Sneppen paper
-
-%% now finally explain EO
-%% tau-EO
-
-%%%In order to explain what EO is, it is helpful to have a prior picture of simulated annealing(SA). Both of these optimization techniques are attempts to solve the problem of local optima that all hill-climbing optimization algorithms are subject to. SA, in order to maximize a criterion, considers a neighboring state and takes or rejects the neighboring state based upon the Metropolis-Hastings criterion. That Metropolis-Hastings criterion depends upon a temperature which is varied during the course of the algorithm: this is called the annealing schedule. A high temperature allows more thorough exploration of the solution space and a low temperature allows more bias towards an optimum solution. Together, they are a global optimization algorithm.
-%% compare and contrast EO, SA
 
 %What approach will you be taking to address it? (at a big picture level; novel and/or otherwise noteworthy aspects)
 
@@ -154,7 +139,11 @@ EO is a global optimization technique, inspired by a model of evolution proposed
 
 \section{Discussion}
 
-%%% theoretical thoughts: online algorithm
+It must be noted that, unlike simulated annealing with an annealing schedule, which doesn't work as an online algorithm, or an algorithm which can be given its input piece by piece, that there is nothing preventing $\tau$-extremal optimization from being used online.
+
+%%% cite Boettcher for the disequilibrium stuff
+The theoretical basis for the difference 
+
 %%% theoretincal thoughts: out of equilibrium
 %%% theoretical thoughts: black magic in determining the number of iterations, very associated with the fact of being an online algorithm
 
@@ -168,6 +157,12 @@ EO is a global optimization technique, inspired by a model of evolution proposed
 %%% limitations: not thinking hard about neuronal connectivity. one thing that continues on the subject of criticality is modelling chialvo's work
 %%% broader implications: try to look carefully at the critical regions of abstract NP-complete problem
 %%Also, indicate broader implications and potential future applications of the ideas and approach.
+
+\subsection*{What remains to be done?}
+Because this project attempted to completely explore an entire state space of a problem, it was not feasible to explore a non-toy problem: that is, a problem where it's not possible to explore the entire state space, and therefore other measures of speech must be checked. It remains to be seen if this speed can be replicated in a larger problem domain with different local optima.
+
+%%% cite chialvo
+%%% compare to Chialvo stuff
 
 \section{Summary}
 

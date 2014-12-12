@@ -24,10 +24,10 @@ The update rule for Boltzmann machines in the general, non-restricted case is ve
 
 \subsection*{What has previously been done?}
 %%% cite: extremal optimization, genetic algorithms
-Extremal optimization, in general, is inspired by models of co-evolution. This is as opposed to genetic algorithms and evolutionary algorithms, which are inspired by evolution in the abstract.
+Extremal optimization, in general, is inspired by models of co-evolution. This is as opposed to genetic algorithms and evolutionary algorithms, which are inspired by evolution at a lower level of abstraction(per gene, not per species).
 
 %%% cite: bak-sneppen, gould
-To be specific, there exists a model of evolution called the Bak-Sneppen model, designed to bring about the time dynamics and other qualitative phenomena of evolution in the simplest method possible. It is a one-dimensional lattice model which models nothing about each species except its fitness and its relations with other species. $N$ species are considered as nodes on a graph which is a one-dimensional lattice (a ring), and each species has a fitness, denoted by a single scalar $\lambda$. At each discrete time step, the least fit species is replaced, and both of its neighbors replaced with it, with new species identical to the old ones except for the fitnesses, which are random. Notably, this selection organizes a fitness threshhold, below which species do not survive because they are always the least fit.
+To be specific, there exists a model of evolution called the Bak-Sneppen model, designed to bring about the time dynamics and other qualitative phenomena of evolution in the simplest method possible. It is a one-dimensional lattice model which models nothing about each species except its fitness and the structure of its relations with other species. $N$ species are considered as nodes on a graph which is a one-dimensional lattice (a ring), and each species has a fitness, denoted by a single scalar $\lambda$. At each discrete time step, the least fit species is replaced, and both of its neighbors replaced with it, with new species identical to the old ones except for the fitnesses, which are random. Notably, this selection organizes a fitness threshhold, below which species do not survive because they are always the least fit.
 
 \begin{figure}
   \includegraphics{bak_sneppen}
@@ -56,18 +56,22 @@ $$P(k) \propto k^{-\tau}$$
 %%% cite the analytic claim that there's an optimum value of tau.
 Where $\tau$ is the one parameter. There is a claim by Boettcher et al that there is an analytically optimal value of $\tau$ for search time, which is $\tau = 1 + \frac{1}{\ln n}$, where $n$ is the number of variables.%%% by who??
 
-%Existing results, from Boetticher: TSP, Ising model, talk about ising and hopfield net connection
-%$\tau$-EO
-  \begin{figure}
-    \includegraphics{eo_alg}
-  \end{figure}
+%%% talk about behavior we wanted
+
+%%% cite TSP, graph cuts, ising models, hopfield net
+The previous applications of EO and $\tau$-EO include the travelling salesman problem, graph cuts and Ising model spin glass optimization. It is the last of these that seems most important for us, because of the close connection between the Hopfield net and the Ising model, and in turn the Hopfield net and the constraint satisfaction networks that exist, including the Boltzmann machine, which can be construed as a probabilistic Hopfield net.
+
+\begin{figure}
+  \includegraphics{eo_alg} %%%%% get a better pic
+  \caption{extremal optimization algorithm}
+\end{figure}
 %The hope:
   \begin{figure}
     \includegraphics{boettcher}
   \end{figure}
   
 \section{Novel Approach}
-  %Why not feedforward? BM vs. Ising Model
+Because of the problem of long simulation times of the Boltzmann machine and of the close relation of the Boltzmann machine to the Ising models which had already been simulated in the literature, a constraint satisfaction network was made which would have non-determinimism introduced to it by using the $\tau$-EO algorithm.
 
   %Locality: RBM
 

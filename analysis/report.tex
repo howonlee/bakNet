@@ -22,10 +22,10 @@ The update rule for Boltzmann machines in the general, non-restricted case is ve
 
 \subsection*{Literature Review}
 %%% cite: extremal optimization, genetic algorithms
-Extremal optimization, in general, is inspired by models of co-evolution. This is as opposed to genetic algorithms and evolutionary algorithms, which are inspired by evolution at a lower level of abstraction(per gene, not per species).
+Extremal optimization, in general, is inspired a specific model of co-evolution. This is as opposed to genetic algorithms and evolutionary algorithms, which are inspired by evolution at a lower level of abstraction(per gene, not per species).
 
 %%% cite: bak-sneppen, gould
-To be specific, there exists a model of evolution called the Bak-Sneppen model, designed to bring about the time dynamics and other qualitative phenomena of evolution in the simplest method possible. It is a self-organized criticality model, which means that it has its attractor in a phase transition state. It is a one-dimensional lattice model which models nothing about each species except its fitness and the structure of its relations with other species. $N$ species are considered as nodes on a graph which is a one-dimensional lattice (a ring), and each species has a fitness, denoted by a single scalar $\lambda$. At each discrete time step, the least fit species is replaced, and both of its neighbors replaced with it, with new species identical to the old ones except for the fitnesses, which are random. Notably, this selection organizes a fitness threshold, below which species do not survive because they are always the least fit.
+To be specific, extremal optimization is inspired by a model of evolution called the Bak-Sneppen model, designed to bring about the time dynamics and other qualitative phenomena of evolution in the simplest method possible. It is a self-organized criticality model, which means that it has its attractor in a phase transition state. It is a one-dimensional lattice model which models nothing about each species except its fitness and the structure of its relations with other species. $N$ species are considered as nodes on a graph which is a one-dimensional lattice (a ring), and each species has a fitness, denoted by a single scalar $\lambda$. At each discrete time step, the least fit species is replaced, and both of its neighbors replaced with it, with new species identical to the old ones except for the fitnesses, which are random. Notably, this selection organizes a fitness threshold, below which species do not survive because they are always the least fit.
 
 \begin{figure}
   \includegraphics{bak_sneppen}
@@ -33,7 +33,7 @@ To be specific, there exists a model of evolution called the Bak-Sneppen model, 
 \end{figure}
 
 %%% cite Bak and Chialvo
-One avenue of exploration was the adaptive extremal dynamics architecture promulgated by Bak and Chialvo as an alternative to conventional connectionist feedforward backpropagation neural nets. The topology of their alternative neural net looks much like a feedforward net, but instead of every unit forwarding its activation to the next layer, only the unit with the highest activation does so, except at the input-hidden layer.
+One avenue of exploration for the project was the adaptive extremal dynamics architecture promulgated by Bak and Chialvo as an alternative to conventional connectionist feedforward backpropagation neural nets. The topology of their alternative neural net looks much like a feedforward net, but instead of every unit forwarding its activation to the next layer, only the unit with the highest activation does so, except at the input-hidden layer.
 
 Learning is done extremally also, in that if a wrong prediction is made, every weight going back to the input layer which was activated is punished. If a correct prediction is made, nothing is done except that the weights involved are added to a "previously made a correct prediction" list, which means that those weights are punished much less if they make a wrong prediction afterwards.
 

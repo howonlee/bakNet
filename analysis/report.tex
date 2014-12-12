@@ -122,56 +122,49 @@ First, the results on the RBM. We did not see the large scale-free jumps that we
 %%% pontificate on the possible caues
   
 \begin{figure}
-    \includegraphics{eo_rbm_unzoomed}
-  \end{figure}
+  \includegraphics{eo_rbm_unzoomed}
+\end{figure}
 
-  The results on the $\tau$-EO necker cube task were, however, as expected. Figure \ref{fig:speed} is a histogram of the iteration numbers of each of the $2^16$ possible states before converging on a global optimum of the Necker cube task, with simulated annealing, simulated annealing with an annealing schedule, and the $\tau$-extremal optimization. Note the log-log scale.
+%%% talk about the greedyness, how we don't have the best one because we know there exists exactly two global minima
+
+The results on the $\tau$-EO necker cube task were, however, as expected. Figure \ref{fig:speed} is a histogram of the iteration numbers of each of the $2^16$ possible states before converging on a global optimum of the Necker cube task, with simulated annealing, simulated annealing with an annealing schedule, and the $\tau$-extremal optimization. Note the log-log scale.
 
 \begin{figure}
   \label{fig:speed}
   %%%%% spiffy speed figure
 \end{figure}
 
-Note that there is a longer tail on the simulated annealing with an annealing schedule. This is because in those cases, the simulated annealing is stuck in a local optima, and is also at a low temperature, meaning that they cannot escape this local optima.
+Note that there is a longer tail in the histogram for the simulated annealing with an annealing schedule. This is because in those cases, the simulated annealing is stuck in a local optima, and is also at a low temperature, meaning that they cannot escape this local optima.
 
-%%% note the virtue of making some progress or making some nonoptimal step, instead of haiving a well-defined tohught
+%%% note the virtue of making some progress or making some nonoptimal step, instead of having a well-defined thought
 
-%%A strong paper will, in addition, present an analysis of why the results came out the way they did, especially in cases where results did not come out as expected. 
-%%% note the fasterness of SA compared to schedule SA is partly an artifact of the fact that we demand a global minima: the schedule tends to get stuck in local minima
+%%% if presented with a favorable situation, the eo will not fuck it up: show the picture
+
 %%% but why is the tauEO faster? immediately after it makes a huge jump to escape local minima, the power law distribution of tau means that it will tend to explore the new local state space really fast, for basically the same reason that it's an online algorithm.
 
-%%It can be useful to discuss results you obtain with one of us to get suggestions as to how to fully understand your findings.
-
-%%Analysis not only of network outputs but also of the structure of the information present in the materials you use to train your network (when relevant) and / or the hidden unit activations, network weights, or learning trajectory can help illuminate why and how your network has performed the way it did.
+%%% pull out the pictures of training, note the semi-greedyness and cluelessness of the algorithm. "this is what the scale-free search looks like"
 
 \section{Discussion}
-
-It must be noted that, unlike simulated annealing with an annealing schedule, which doesn't work as an online algorithm, or an algorithm which can be given its input piece by piece, that there is nothing preventing $\tau$-extremal optimization from being used online.
-
-%%% cite Boettcher for the disequilibrium stuff
-The theoretical basis for the difference 
-
-%%% theoretincal thoughts: out of equilibrium
-%%% theoretical thoughts: black magic in determining the number of iterations, very associated with the fact of being an online algorithm
-
 %Summarize your goals, your approach, and your main findings, and state a conclusion indicating how well, overall, your goals have been met.
-
 %%% goals: make a faster thing than SA for abstract csp
 %%% approach: tau-EO for cs net
 %%% findings: spiffy results
+
+%%% cite Boettcher for the disequilibrium stuff
+%%% cite boettcher's heuristic about the number of iterations
+An important feature of the algorithm is that it works in disequilibrium. That is, since it runs the same whether it's early in the search or late in the search. Unlike simulated annealing with an annealing schedule, which doesn't work as an online algorithm, or an algorithm which can be given its input piece by piece, that there is nothing preventing $\tau$-extremal optimization from being used online. This property is of a piece with the scale-free search mentioned above. One important drawback to this is that for real problems the number of iterations needs to be determined via heuristic.
+
+Because this project attempted to completely explore an entire state space of a problem, it was not feasible to explore a non-toy problem: that is, a problem where it's not possible to explore the entire state space, and therefore other measures of speech must be checked. It remains to be seen if this speed can be replicated in a larger problem domain with different local optima.
 %Then, discuss shortcomings or limitations of your effort and indicate how these might be overcome in future work.
 %%% limitations: limited net, not fully connected, not a real problem. doesn't scale up.
 %%% limitations: not thinking hard about neuronal connectivity. one thing that continues on the subject of criticality is modelling chialvo's work
 %%% broader implications: try to look carefully at the critical regions of abstract NP-complete problem
-%%Also, indicate broader implications and potential future applications of the ideas and approach.
 
-Because this project attempted to completely explore an entire state space of a problem, it was not feasible to explore a non-toy problem: that is, a problem where it's not possible to explore the entire state space, and therefore other measures of speech must be checked. It remains to be seen if this speed can be replicated in a larger problem domain with different local optima.
+%%Also, indicate broader implications and potential future applications of the ideas and approach.
 
 %%% cite chialvo
 %%% compare to Chialvo stuff
 It cannot necessarily be the case that a power law is evidence for \emph{only} self-organized criticality, but %%begin and finish this
-
-%%% summary
 
 \begin{thebibliography}[99]
 

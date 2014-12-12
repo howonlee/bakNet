@@ -71,25 +71,27 @@ The previous applications of EO and $\tau$-EO include the travelling salesman pr
 
 
 %%%% talk about replications HERE
-%%%% talk about replications HERE
-%%%% talk about replications HERE
-%%%% talk about replications HERE
-  \frametitle{Ising Model}
-  \begin{figure}
-    \includegraphics{2000}
-  \end{figure}
-  \begin{figure}
-    \includegraphics{10000}
-  \end{figure}
-  \begin{figure}
-    \includegraphics{ising_energy_unzoomed}
-  \end{figure}
-  
-  \begin{figure}
-    \includegraphics{ising_energy_zoomed}
-  \end{figure}
-  
-  \section{Methods}
+%%% ising model, travelling salesman
+%%% bak net: talk about how we were going to do this, why not
+%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%
+\frametitle{Ising Model}
+\begin{figure}
+  \includegraphics{2000}
+\end{figure}
+\begin{figure}
+  \includegraphics{10000}
+\end{figure}
+\begin{figure}
+  \includegraphics{ising_energy_unzoomed}
+\end{figure}
+
+\begin{figure}
+  \includegraphics{ising_energy_zoomed}
+\end{figure}
+
+\section{Methods}
 
 %%%%% moar pictures, figures, shit like that
 
@@ -99,13 +101,13 @@ Because of the problem of long simulation times of the Boltzmann machine and of 
 %%% cite boettcher et al for the optimum of tau
 In order to do this, we needed to choose a $\tau$ and to determine the fitness function. Both are fairly obvious: we chose the claimed analytic optimum from Boetcher et al and we chose the already existing goodness function from the PDP version of the schema network.
 
-%%%%% necker cube necker cube necker cube
-%%%%% necker cube necker cube necker cube
-%%%%% necker cube necker cube necker cube
-%%%%% necker cube necker cube necker cube
-
 %%% cite the Boettcher thing with a heap
 We want a feasible measurement of speed, which would be somewhat comparable between algorithms. However, speed in computation is complicated to measure honestly and not really germane to what is the real problem here, which is local versus global search of the problem space. For example, Boettcher et al suggest maintaining a heap in order to draw the $k$th ranked member of the local fitnesses, which is probably a sensible suggestion in their apparatus, but a whole sort of a Numpy array is actually an order of magnitude faster than the heap popping and pushing operator in Python, because it's implemented as a Python native function. And vectorization in Numpy gives two or three order-of-magnitude differences in wall-clock execution time as well. Therefore, we decided that the proper measure of execution time should actually be number of iterations of the algorithm before converging to one of the global minima. % this is a mess
+
+%%% is there an inequality between the iterations? say that they have the same semantics? it's just a convenient place to look at...
+
+% did we cite frigging pdp yet? we should, really, this is a thing
+Therefore, noting those problems, we chose the simplest problem possible which could test whether the $\tau$-extremal optimization was better in some way than simulated annealing or not, which is the Necker Cube constraint satisfaction problem from the PDP book. Each vertext of the Necker Cube has two units each, which represent the two interpretations of the cube, with a local minimum at the state where four units making up one face are activated in one interpretation, and the other four units making up the other face on the other interpretation are activated. This, as the PDP book mentions, is one of the sipmlest possible constraint satisfaction problems with a local optimum, which can test the claim that the $\tau$-extremal optimization gets out of local optima well.
 
 %%% cite the Hard Parts paper
 Another consideration for the measurement of speed is that there are very many initial states of activation which are trivial to turn into a global optima, but there's no really good enumeration of initial states of activation which tend to turn into local optima. Indeed, if we had one, the constraint satisfaction problem would be a great deal easier! Therefore, an honest measurement of speed would explore \emph{the entire state space} of the initial activations, or at least a representative sample of it. Since we don't necessarily know how to get a representative sample, we explore the entire initial activation state space. This was a large part of the impetus to focus on a toy problem. This was borne out in the skewed distribution of top number of iterations before convergence to a global optima.
@@ -120,7 +122,7 @@ We used, for the RBM task, a digit dataset from scikit-learn, which has 1797 sam
 First, the results on the RBM. We did not see the large scale-free jumps that we experienced in the Ising model and expected in the RBM.
 
 %%% pontificate on the possible caues
-  
+
 \begin{figure}
   \includegraphics{eo_rbm_unzoomed}
 \end{figure}
@@ -136,7 +138,8 @@ The results on the $\tau$-EO necker cube task were, however, as expected. Figure
 
 Note that there is a longer tail in the histogram for the simulated annealing with an annealing schedule. This is because in those cases, the simulated annealing is stuck in a local optima, and is also at a low temperature, meaning that they cannot escape this local optima.
 
-%%% note the virtue of making some progress or making some nonoptimal step, instead of having a well-defined thought
+
+%%% note the virtue of making some progress or making some nonoptimal step, instead of what the SA does
 
 %%% if presented with a favorable situation, the eo will not fuck it up: show the picture
 
@@ -152,7 +155,7 @@ Note that there is a longer tail in the histogram for the simulated annealing wi
 
 %%% cite Boettcher for the disequilibrium stuff
 %%% cite boettcher's heuristic about the number of iterations
-An important feature of the algorithm is that it works in disequilibrium. That is, since it runs the same whether it's early in the search or late in the search. Unlike simulated annealing with an annealing schedule, which doesn't work as an online algorithm, or an algorithm which can be given its input piece by piece, that there is nothing preventing $\tau$-extremal optimization from being used online. This property is of a piece with the scale-free search mentioned above. One important drawback to this is that for real problems the number of iterations needs to be determined via heuristic.
+An important feature of the algorithm is that it works in disequilibrium. That is, it runs the same whether it's early in the search or late in the search. Unlike simulated annealing with an annealing schedule, which doesn't work as an online algorithm, or an algorithm which can be given its input piece by piece, that there is nothing preventing $\tau$-extremal optimization from being used online. This property is of a piece with the scale-free search mentioned above. One important drawback to this is that for real problems the number of iterations needs to be determined via heuristic.
 
 Because this project attempted to completely explore an entire state space of a problem, it was not feasible to explore a non-toy problem: that is, a problem where it's not possible to explore the entire state space, and therefore other measures of speech must be checked. It remains to be seen if this speed can be replicated in a larger problem domain with different local optima.
 %Then, discuss shortcomings or limitations of your effort and indicate how these might be overcome in future work.
@@ -168,7 +171,7 @@ It cannot necessarily be the case that a power law is evidence for \emph{only} s
 
 \begin{thebibliography}[99]
 
-Citations:   We will not be sticklers for details of citation styles but do provide citations to literature you draw on in your paper, using the following format
+    Citations:   We will not be sticklers for details of citation styles but do provide citations to literature you draw on in your paper, using the following format
 \end{thebibliography}
 
 \end{document}

@@ -90,7 +90,7 @@ class RBM:
                 #print worst
                 rand_idx = random.randrange(0, energies.shape[0])
                 #print "energy: ", energies.flat[worst]
-                self.weights.flat[worst] -= 5
+                self.weights.flat[worst] -= 1
                 #self.weights.flat[worst] -= np.random.rand()
                 error = np.sum((data - neg_visible_probs) ** 2)
                 #self.is_eo = False

@@ -95,12 +95,8 @@ Another consideration for the measurement of speed is that there are very many i
 % cite rbm
 In addition, we had a preliminary investigation into trying to use the $\tau$-extremal optimization in a \emph{learning} task. Because we were investigating learning only, we decided to use a more commonly used constraint satisfier, the restricted Boltzmann machine, and then to use the more commonly used contrastive divergence to estimate the equilibrium distribution. The \emph{gradients}, not the energies, in this case were treated as the fitnesses, making this algorithm a sort of adaptive line search.
 
-%cite the scikit-learn paper
-We used, for the RBM task, a digit dataset from scikit-learn, which has 1797 samples in 10 classes. We used this instead of the more standard MNIST because it has only 64 dimensions, and it was pre-whitened and normalized.
-%%% how many hiddens? what's the "learning rate"? other parameters used?
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%cite the scikit-learn paper, bm training paper
+We used, for the RBM task, a digit dataset from scikit-learn, which has 1797 samples in 10 classes. We used this instead of the more standard MNIST because it has only 64 dimensions, and it was pre-whitened and normalized. 100 hidden units were used. As Hinton and Sejnowski recommend, I moved in the weight space by a constant (1), but in only one direction chosen by $\tau$-extremal optimization.
 
 \section{Results and Analysis}
 %%% this is thin

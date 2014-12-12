@@ -12,8 +12,8 @@
 \section*{Abstract}
 We attempted to use $\tau$-extremal optimization in order to update a constraint satisfaction network, and compared it to the performance of simulated annealing on a Boltzmann machine on the same toy constraint satisfaction problem. As measured by number of iterations, there was a significant gain in speed.
 \section*{Introduction}
-\subsection*{Motivation}
 
+\subsection*{Motivation}
 We wish to use an alternative approach to add non-determinism to the constraint satisfaction problem in a PDP system, which would not be a Boltzmann machine with conventional simulated annealing.
 
 An alternative optimization algorithm called $\tau$-extremal optimization($\tau$-EO) is used to update a constraint-satisfaction framework to escape local minima in short amounts of time. It, like simulated annealing, is inspired by condensed matter physics, but in this case, by a condensed matter model of evolution.
@@ -25,10 +25,7 @@ The update rule for Boltzmann machines in the general, non-restricted case is ve
 Extremal optimization, in general, is inspired by models of co-evolution. This is as opposed to genetic algorithms and evolutionary algorithms, which are inspired by evolution at a lower level of abstraction(per gene, not per species).
 
 %%% cite: bak-sneppen, gould
-To be specific, there exists a model of evolution called the Bak-Sneppen model, designed to bring about the time dynamics and other qualitative phenomena of evolution in the simplest method possible. It is a self-organized criticality model, which means that it has its attractor in a phase transition state. It is a one-dimensional lattice model which models nothing about each species except its fitness and the structure of its relations with other species. $N$ species are considered as nodes on a graph which is a one-dimensional lattice (a ring), and each species has a fitness, denoted by a single scalar $\lambda$. At each discrete time step, the least fit species is replaced, and both of its neighbors replaced with it, with new species identical to the old ones except for the fitnesses, which are random. Notably, this selection organizes a fitness threshhold, below which species do not survive because they are always the least fit.
-
-%cite shalizi
-It should be noted as important that there is not necessarily any biological reality to the model, and that it should be considered as a physical condensed-matter model.
+To be specific, there exists a model of evolution called the Bak-Sneppen model, designed to bring about the time dynamics and other qualitative phenomena of evolution in the simplest method possible. It is a self-organized criticality model, which means that it has its attractor in a phase transition state. It is a one-dimensional lattice model which models nothing about each species except its fitness and the structure of its relations with other species. $N$ species are considered as nodes on a graph which is a one-dimensional lattice (a ring), and each species has a fitness, denoted by a single scalar $\lambda$. At each discrete time step, the least fit species is replaced, and both of its neighbors replaced with it, with new species identical to the old ones except for the fitnesses, which are random. Notably, this selection organizes a fitness threshold, below which species do not survive because they are always the least fit.
 
 \begin{figure}
   \includegraphics{bak_sneppen}
@@ -77,7 +74,7 @@ The previous applications of EO and $\tau$-EO include the travelling salesman pr
 \section{Methods}
 
 %%% cite schema network
-Because of the problem of long simulation times of the Boltzmann machine and of the close relation of the Boltzmann machine to the Ising models which had already been simulated in the literature, a constraint satisfaction network was made which would have non-determinimism introduced to it by using the $\tau$-EO algorithm, just as a Boltzmann machine can be construed as a schema network with non-determinism introduced into it in another way.
+Because of the problem of long simulation times of the Boltzmann machine and of the close relation of the Boltzmann machine to the Ising models which had already been simulated in the literature, a constraint satisfaction network was made which would have non-determinism introduced to it by using the $\tau$-EO algorithm, just as a Boltzmann machine can be construed as a schema network with non-determinism introduced into it in another way.
 
 %%% cite boettcher et al for the optimum of tau
 In order to do this, we needed to choose a $\tau$ and to determine the fitness function. Both are fairly obvious: we chose the claimed analytic optimum from Boetcher et al and we chose the already existing goodness function from the PDP version of the schema network.
@@ -87,7 +84,7 @@ We want a feasible measurement of speed, which would be somewhat comparable betw
 
 %%% picture of the necker cube
 % did we cite frigging pdp yet? we should, really, this is a thing
-Therefore, noting those problems, we chose the simplest problem possible which could test whether the $\tau$-extremal optimization was better in some way than simulated annealing or not, which is the Necker Cube constraint satisfaction problem from the PDP book. Each vertext of the Necker Cube has two units each, which represent the two interpretations of the cube, with a local minimum at the state where four units making up one face are activated in one interpretation, and the other four units making up the other face on the other interpretation are activated. This, as the PDP book mentions, is one of the sipmlest possible constraint satisfaction problems with a local optimum, which can test the claim that the $\tau$-extremal optimization gets out of local optima well.
+Therefore, noting those problems, we chose the simplest problem possible which could test whether the $\tau$-extremal optimization was better in some way than simulated annealing or not, which is the Necker Cube constraint satisfaction problem from the PDP book. Each vertex of the Necker Cube has two units each, which represent the two interpretations of the cube, with a local minimum at the state where four units making up one face are activated in one interpretation, and the other four units making up the other face on the other interpretation are activated. This, as the PDP book mentions, is one of the simplest possible constraint satisfaction problems with a local optimum, which can test the claim that the $\tau$-extremal optimization gets out of local optima well.
 
 %%% cite the Hard Parts paper
 Another consideration for the measurement of speed is that there are very many initial states of activation which are trivial to turn into a global optima, but there's no really good enumeration of initial states of activation which tend to turn into local optima. Indeed, if we had one, the constraint satisfaction problem would be a great deal easier! Therefore, an honest measurement of speed would explore \emph{the entire state space} of the initial activations, or at least a representative sample of it. Since we don't necessarily know how to get a representative sample, we explore the entire initial activation state space. This was a large part of the impetus to focus on a toy problem. This was borne out in the skewed distribution of top number of iterations before convergence to a global optima.
@@ -139,10 +136,13 @@ We attempted to use $\tau$-extremal optimization in order to update a constraint
 %%% cite boettcher's heuristic about the number of iterations
 An important feature of the algorithm is that it works in disequilibrium. That is, it runs the same whether it's early in the search or late in the search. Unlike simulated annealing with an annealing schedule, which doesn't work as an online algorithm, or an algorithm which can be given its input piece by piece, that there is nothing preventing $\tau$-extremal optimization from being used online. This property is of a piece with the scale-free search mentioned above. One important drawback to this is that for real problems the number of iterations needs to be determined via heuristic.
 
-Because this project attempted to completely explore an entire state space of a problem, it was not feasible to explore a non-toy problem: that is, a problem where it's not possible to explore the entire state space, and therefore other measures of speech must be checked. It remains to be seen if this speed can be replicated in a larger problem domain with different local optima.
+%%% talk about bak's studies of scientific progress, the power law distribution of impact
+It was mentioned in the introduction that there is an interesting semantics to this co-evolutionary algorithm. Not only can it be construed as a co-evolutionary algorithm, the model has been used as a model of scientific progress, which also is a domain with punctuated equilibria and critical dynamics (power-law distributed impact, at least as measured via PageRank and other measures). This would fit in surprisingly well with the interpretation of a parallel constraint processing network as a set of hypotheses, which are punished or not punished by experiment.
+
+Because this project attempted to completely explore an entire state space of a problem, it was not feasible to explore a non-toy problem: that is, a problem where it's not possible to explore the entire state space, and therefore other measures of speed must be checked. It remains to be seen if this speed can be replicated in a larger problem domain with different local optima.
 
 %% cite the chialvo paper, small world net review, modelling review
-Another interesting direction would be to try to explore scale-freeness in the connectivity of the graph. Chialvo et al claim that the functional connectivity of the brain has a scale-free network character. The functional graph they create is a small world net, with a power law distribution of degree rank and a bevy of other features. This is exciting, since there is a vast literature on simulating, modelling and even fitting these graphs, and this might be of interest to connectionist modelling.
+Another interesting direction would be to try to explore scale-freeness in the connectivity of the graph. Chialvo et al claim that the functional connectivity of the brain has a scale-free network character. The functional graph they create is a small world net, with a power law distribution of degree rank and a bevy of other features. This is exciting, since there is a literature on simulating, modelling and even fitting these graphs, and this might be of interest to connectionist modelling.
 
 \begin{thebibliography}[99]
     Citations:   use apa

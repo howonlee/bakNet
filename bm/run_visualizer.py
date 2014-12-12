@@ -10,4 +10,6 @@ if __name__ == "__main__":
             ls.append(map(int, line.split()))
     arr = np.array(ls)
     plt.matshow(arr, cmap=plt.gray())
+    plt.ylabel("time")
+    plt.xlabel("activation in spot")
     plt.show()

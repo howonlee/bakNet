@@ -103,9 +103,11 @@
 
 \section*{Issue Addressed} %What is the issue or question you will be addressing?
 
-We ask whether the boltzmann updating process can be sped up.
+An alternative optimization algorithm called $\tau$-extremal optimization is used to update a constraint-satisfaction framework to escape local minima in short amounts of time. It is compared on a toy task (the Necker Cube task), but with every possible combination of initial input, and shown to do very well in comparison to a simulated-annealing Boltzmann machine with and without an annealing schedule.
 
 \subsection*{Why is it interesting?}
+
+The update rule for Boltzmann machines in the general, non-restricted case is very powerful but not usable in practice, because of the enormous time needed to approach the network's equilibrium distribution and the noisy learning signal for the learning.
 %%%%%%%%%%%
 \subsection*{What has previously been done?}
 %%%%%%%%%%% tsp and spin glasses. really quite interesting in specific, because of the close relation between ising spin glasses and bm

@@ -35,28 +35,29 @@ To be specific, there exists a model of evolution called the Bak-Sneppen model, 
 \end{figure}
 
 %%% cite Bak and Chialvo
-One unpromising avenue of exploration was the adaptive extremal dynamics architecture promulgated by Bak and Chialvo  %%%%%%%%%%%%%%%%%%%%%%%%% why?
-%Bak and Chialvo's model, terrible model
-  \begin{figure}
-    \includegraphics{bak_chialvo_net_topology}
-  \end{figure}
-%Problems: Conjunctive neurons
-%Comparison to simulated annealing
-  \begin{figure}
-    \includegraphics{bak_plot}
-  \end{figure}
+One avenue of exploration was the adaptive extremal dynamics architecture promulgated by Bak and Chialvo as an alternative to conventional connectionist feedforward backpropagation neural nets. %%% what is it (what's the topology)? how does it work? explain why conjunctive neurons make it terribad, compare it to simulated annealing
+\begin{figure}
+  \includegraphics{bak_chialvo_net_topology}
+\end{figure}
+\begin{figure}
+  \includegraphics{bak_plot}
+\end{figure}
 
 %%% cite Boetticher
 The model creates punctuated equilibrium because as the smallest fitness increases, it becomes more likely that the next smallest fitness is adjacent to the previous smallest fitness, and therefore the events become correlated, causing "avalanches". This behavior, if one considers the nodes in the graph to be variables in a problem instead of species, was noted to be desirable in optimization problems by Boettcher and Percus, and used as the basis of extremal optimization.
 
-Extremal optimization can be described succinctly as iteratively identifying the worst performing variable (according to the variable's fitness, which the implementer must define) in a given solution and replacing them with a new component or swapping them out with another component. Since this is trivially subject to local optima, this paper will mainly deal with a variant, $\tau$-extremal optimization, which solves this problem. It does so by ordering the local fitnesses and choosing the $k$'th one, where
+Extremal optimization can be described succinctly as iteratively identifying the worst performing variable (according to the variable's fitness, which the implementer must define) in a given solution and replacing them with a new component or swapping them out with another component. Since this is trivially subject to local optima(in fact, it is just a local search), this paper will mainly deal with a variant, $\tau$-extremal optimization, which solves this problem. It does so by ordering the local fitnesses, high to low, and choosing the $k$-ranked one, where
 
-$$P(k) \propto k^{-\tau}$$
+$$P(k) = Ck^{-\tau}$$
 
 %%% cite the analytic claim that there's an optimum value of tau.
-Where $\tau$ is the one parameter. There is a claim by Boettcher et al that there is an analytically optimal value of $\tau$ for search time, which is $\tau = 1 + \frac{1}{\ln n}$, where $n$ is the number of variables.%%% by who??
+Where $C$ is a normalizing constant and $\tau$ is the one parameter. There is a claim by Boettcher et al that there is an analytically optimal value of $\tau$ for search time, which is $\tau = 1 + \frac{1}{\ln n}$, where $n$ is the number of variables.%%% by who??
 
-%%% talk about behavior we wanted
+%% cite the well-defined mean shit
+The reason why the $P(k)$ is the way it is is because it gives an important advantage to the search pattern of $\tau$-extremal optimization: where other search algorithms are local or global, there is no well-defined scale to its search, because the $P(k)$ is a scale-free distribution, a power law which, because $\tau < 2$, does not have a well-defined mean or variance.
+
+%%% cite hamming cliff
+This solves an important problem called the \emph{Hamming cliff} in other evolution-inspired algorithms, where very many variables are coupled in a representation, such as in a conventional binary code, where the gap between 511 (0111111111) and 512 (1000000000) needs 10 coincident mutations. What would happen in the $\tau$-extremal optimization would be that the search would eventually perversely flip the first bit, and then proceed to quickly create an avalanche where it would flip all the other bits in the representation. Also because of this property, there does not need to be anything analogous to an annealing schedule for $\tau$-extremal optimization, where a more global search transforms into a more local search.
 
 %%% cite TSP, graph cuts, ising models, hopfield net
 The previous applications of EO and $\tau$-EO include the travelling salesman problem, graph cuts and Ising model spin glass optimization. It is the last of these that seems most important for us, because of the close connection between the Hopfield net and the Ising model, and in turn the Hopfield net and the constraint satisfaction networks that exist, including the Boltzmann machine, which can be construed as a probabilistic Hopfield net.
@@ -65,32 +66,12 @@ The previous applications of EO and $\tau$-EO include the travelling salesman pr
   \includegraphics{eo_alg} %%%%% get a better pic
   \caption{extremal optimization algorithm}
 \end{figure}
-%The hope:
-  \begin{figure}
-    \includegraphics{boettcher}
-  \end{figure}
-  
-\section{Novel Approach}
-Because of the problem of long simulation times of the Boltzmann machine and of the close relation of the Boltzmann machine to the Ising models which had already been simulated in the literature, a constraint satisfaction network was made which would have non-determinimism introduced to it by using the $\tau$-EO algorithm.
 
-  %Locality: RBM
 
-  \begin{figure}
-    \includegraphics{rbm_eq}
-  \end{figure}
-
-%What approach will you be taking to address it? (at a big picture level; novel and/or otherwise noteworthy aspects)
-
-\section{Details of Approach}
-
-%Specific target phenomenon or phenomena you will be addressing: e.g., pattern of data you intend to try to fit. Model network task setting, architecture, processing and learning algorithm, training environment (corpus used for training, knowledge base built in to network),
-
-%%% note the bak net try
-%%% note the rbm try
-%%% going to note the fact that I did bm normally now
-
-\section{Results and Analysis}
-  
+%%%% talk about replications HERE
+%%%% talk about replications HERE
+%%%% talk about replications HERE
+%%%% talk about replications HERE
   \frametitle{Ising Model}
   \begin{figure}
     \includegraphics{2000}
@@ -98,8 +79,6 @@ Because of the problem of long simulation times of the Boltzmann machine and of 
   \begin{figure}
     \includegraphics{10000}
   \end{figure}
-  
-  \frametitle{Ising Model}
   \begin{figure}
     \includegraphics{ising_energy_unzoomed}
   \end{figure}
@@ -107,35 +86,49 @@ Because of the problem of long simulation times of the Boltzmann machine and of 
   \begin{figure}
     \includegraphics{ising_energy_zoomed}
   \end{figure}
-
-  See performance in RBM learning, as simple as possible
-
-  Bit string: metaphor of Hamming cliff in GA
-
-  Actually, this is just a weird coordinate descent
   
-  \begin{figure}
-    \includegraphics{eo_rbm_unzoomed}
-  \end{figure}
- 
-  \begin{figure}
-    \includegraphics{eo_rbm_zoomed}
-  \end{figure}
+\section{Novel Approach}
 
-  Make an algorithm that actually differs from CDiv
+%%%%% moar pictures, figures, shit like that
 
-  Try non-restricted RBM, and learn with regular gradient
+%%% cite schema network
+Because of the problem of long simulation times of the Boltzmann machine and of the close relation of the Boltzmann machine to the Ising models which had already been simulated in the literature, a constraint satisfaction network was made which would have non-determinimism introduced to it by using the $\tau$-EO algorithm, just as a Boltzmann machine can be construed as a schema network with non-determinism introduced into it in another way.
 
-  (using EO in place of SA)
+%%% cite boettcher et al for the optimum of tau
+In order to do this, we needed to choose a $\tau$ and to determine the fitness function. Both are fairly obvious: we chose the claimed analytic optimum from Boetcher et al and we chose the already existing goodness function from the PDP version of the schema network.
+
+% cite rbm
+In addition, we had a preliminary investigation into trying to use the $\tau$-extremal optimization into learning. Because we were investigating learning only, we decided to use a more commonly used constraint satisfier, the restricted Boltzmann machine, and then to use the more commonly used contrastive divergence to estimate the equilibrium distribution. The \emph{gradients} in this case were treated as the fitnesses, making this algorithm a sort of adaptive line search.
+
+\section{Details of Approach}
+
+%%% rbm try learning mechanism, a sort of gradient descent. still try contrastive divergence in order to get the gradient in the first place. note the differentiation between the fitness as the _gradient_, which applies here, and the fitness as the _energy_, which applies to our one successful experiment.
+
+%%% going to note the fact that I did bm normally now
+% for the csp:
+%We want to do speed.
+% we also have a feeling that there's going to be a skewed distribution of speeds: that is, there's going to be a lot of cases where we're perilously close to a local optima
+% therefore, we actually want to explore the entire possible initial activation space of a problem. that's not going to happen with a 'real' problem like MNIST, so we did the Necker cube problem from PDP
+% simulation of the report only, since in this case the learning algorithm would actually be almost the same: note the failure of the extremal algrithm to produce extremal behavior in the learning case
+% will graph time
+
+%Specific target phenomenon or phenomena you will be addressing: e.g., pattern of data you intend to try to fit. Model network task setting, architecture, processing and learning algorithm, training environment (corpus used for training, knowledge base built in to network),
 
 
+\section{Results and Analysis}
 %%First present your primary findings that bear directly on the target phenomena.
 %%% it's faster
+  
+\begin{figure}
+    \includegraphics{eo_rbm_unzoomed}
+  \end{figure}
+  %%%%% spiffy speed figure
 
 %%A strong paper will, in addition, present an analysis of why the results came out the way they did, especially in cases where results did not come out as expected. 
 %%% why is it faster?
 %%% note the fasterness of SA compared to schedule SA is partly an artifact of the fact that we demand a global minima: the schedule tends to get stuck in local minima
 %%% but why is the tauEO faster? immediately after it makes a huge jump to escape local minima, the power law distribution of tau means that it will tend to explore the new local state space really fast, for basically the same reason that it's an online algorithm.
+%% work an example of the local maxima escape, audacious courage, extremistan
 
 %%It can be useful to discuss results you obtain with one of us to get suggestions as to how to fully understand your findings.
 
@@ -167,6 +160,7 @@ Because this project attempted to completely explore an entire state space of a 
 
 %%% cite chialvo
 %%% compare to Chialvo stuff
+It cannot necessarily be the case that a power law is evidence for \emph{only} self-organized criticality, but %%begin and finish this
 
 \section{Summary}
 

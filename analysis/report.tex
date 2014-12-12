@@ -14,9 +14,9 @@
 \section*{Introduction}
 \subsection*{Issue Addressed}
 
-We wish to address the issue of using an alternative approach to introducing necessary non-determinism to the constraint satisfaction problem in a PDP system, as opposed to the Boltzmann machine with conventional simulated annealing.
+We wish to use an alternative approach to add non-determinism to the constraint satisfaction problem in a PDP system, which would not be a Boltzmann machine with conventional simulated annealing.
 
-An alternative optimization algorithm called $\tau$-extremal optimization($\tau$-EO) is used to update a constraint-satisfaction framework to escape local minima in short amounts of time. It, like simulated annealing, is inspired by condensed matter physics, but $\tau$-EO deals with nonequilibrium systems.
+An alternative optimization algorithm called $\tau$-extremal optimization($\tau$-EO) is used to update a constraint-satisfaction framework to escape local minima in short amounts of time. It, like simulated annealing, is inspired by condensed matter physics, but in this case, by a condensed matter model of evolution.
 
 \subsection*{Why is it interesting?}
 
@@ -27,7 +27,10 @@ The update rule for Boltzmann machines in the general, non-restricted case is ve
 Extremal optimization, in general, is inspired by models of co-evolution. This is as opposed to genetic algorithms and evolutionary algorithms, which are inspired by evolution at a lower level of abstraction(per gene, not per species).
 
 %%% cite: bak-sneppen, gould
-To be specific, there exists a model of evolution called the Bak-Sneppen model, designed to bring about the time dynamics and other qualitative phenomena of evolution in the simplest method possible. It is a one-dimensional lattice model which models nothing about each species except its fitness and the structure of its relations with other species. $N$ species are considered as nodes on a graph which is a one-dimensional lattice (a ring), and each species has a fitness, denoted by a single scalar $\lambda$. At each discrete time step, the least fit species is replaced, and both of its neighbors replaced with it, with new species identical to the old ones except for the fitnesses, which are random. Notably, this selection organizes a fitness threshhold, below which species do not survive because they are always the least fit.
+To be specific, there exists a model of evolution called the Bak-Sneppen model, designed to bring about the time dynamics and other qualitative phenomena of evolution in the simplest method possible. It is a self-organized criticality model, which means that it has its attractor in a phase transition state. It is a one-dimensional lattice model which models nothing about each species except its fitness and the structure of its relations with other species. $N$ species are considered as nodes on a graph which is a one-dimensional lattice (a ring), and each species has a fitness, denoted by a single scalar $\lambda$. At each discrete time step, the least fit species is replaced, and both of its neighbors replaced with it, with new species identical to the old ones except for the fitnesses, which are random. Notably, this selection organizes a fitness threshhold, below which species do not survive because they are always the least fit.
+
+%cite shalizi
+It should be noted as important that there is not necessarily any biological reality to the model, and that it should be considered as a physical condensed-matter model.
 
 \begin{figure}
   \includegraphics{bak_sneppen}
@@ -35,7 +38,15 @@ To be specific, there exists a model of evolution called the Bak-Sneppen model, 
 \end{figure}
 
 %%% cite Bak and Chialvo
-One avenue of exploration was the adaptive extremal dynamics architecture promulgated by Bak and Chialvo as an alternative to conventional connectionist feedforward backpropagation neural nets. %%% what is it (what's the topology)? how does it work? explain why conjunctive neurons make it terribad, compare it to simulated annealing
+One avenue of exploration was the adaptive extremal dynamics architecture promulgated by Bak and Chialvo as an alternative to conventional connectionist feedforward backpropagation neural nets. The topology of their alternative neural net looks much like a feedforward net, but instead of every unit forwarding its activation to the next layer, only the unit with the highest activation does so, except at the input-hidden layer. Learning is done extremally also, in that if a wrong prediction is made, every weight going back to the input layer which was activated is punished. If a correct prediction is made, nothing is done.
+
+Bak and Chialvo note that it is very easy to make very deep nets with this architecture, since there no problem with vanishing gradients or large computations, since there are no gradients. However, this is not as useful as one might think.
+
+%%% what is it (what's the topology)? how does it work? explain why conjunctive neurons make it terribad, compare it to simulated annealing
+%%% bak net: talk about how we were going to do this, why not
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}
   \includegraphics{bak_chialvo_net_topology}
 \end{figure}
@@ -53,8 +64,6 @@ $$P(k) = Ck^{-\tau}$$
 %%% cite the analytic claim that there's an optimum value of tau.
 Where $C$ is a normalizing constant and $\tau$ is the one parameter. There is a claim by Boettcher et al that there is an analytically optimal value of $\tau$ for search time, which is $\tau = 1 + \frac{1}{\ln n}$, where $n$ is the number of variables.%%% by who??
 
-%%%% mention the caching business
-
 %% cite the well-defined mean shit
 The reason why the $P(k)$ is the way it is is because it gives an important advantage to the search pattern of $\tau$-extremal optimization: where other search algorithms are local or global, there is no well-defined scale to its search, because the $P(k)$ is a scale-free distribution, a power law which, because $\tau < 2$, does not have a well-defined mean or variance.
 
@@ -69,31 +78,13 @@ The previous applications of EO and $\tau$-EO include the travelling salesman pr
   \caption{extremal optimization algorithm}
 \end{figure}
 
-
-%%%% talk about replications HERE
-%%% ising model, travelling salesman
-%%% bak net: talk about how we were going to do this, why not
-%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%
-\frametitle{Ising Model}
-\begin{figure}
-  \includegraphics{2000}
-\end{figure}
-\begin{figure}
-  \includegraphics{10000}
-\end{figure}
-\begin{figure}
-  \includegraphics{ising_energy_unzoomed}
-\end{figure}
-
-\begin{figure}
-  \includegraphics{ising_energy_zoomed}
-\end{figure}
-
 \section{Methods}
 
 %%%%% moar pictures, figures, shit like that
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%% cite schema network
 Because of the problem of long simulation times of the Boltzmann machine and of the close relation of the Boltzmann machine to the Ising models which had already been simulated in the literature, a constraint satisfaction network was made which would have non-determinimism introduced to it by using the $\tau$-EO algorithm, just as a Boltzmann machine can be construed as a schema network with non-determinism introduced into it in another way.
@@ -102,9 +93,7 @@ Because of the problem of long simulation times of the Boltzmann machine and of 
 In order to do this, we needed to choose a $\tau$ and to determine the fitness function. Both are fairly obvious: we chose the claimed analytic optimum from Boetcher et al and we chose the already existing goodness function from the PDP version of the schema network.
 
 %%% cite the Boettcher thing with a heap
-We want a feasible measurement of speed, which would be somewhat comparable between algorithms. However, speed in computation is complicated to measure honestly and not really germane to what is the real problem here, which is local versus global search of the problem space. For example, Boettcher et al suggest maintaining a heap in order to draw the $k$th ranked member of the local fitnesses, which is probably a sensible suggestion in their apparatus, but a whole sort of a Numpy array is actually an order of magnitude faster than the heap popping and pushing operator in Python, because it's implemented as a Python native function. And vectorization in Numpy gives two or three order-of-magnitude differences in wall-clock execution time as well. Therefore, we decided that the proper measure of execution time should actually be number of iterations of the algorithm before converging to one of the global minima. % this is a mess
-
-%%% is there an inequality between the iterations? say that they have the same semantics? it's just a convenient place to look at...
+We want a feasible measurement of speed, which would be somewhat comparable between algorithms. However, speed in computation is complicated to measure honestly and not really germane to what is the real problem here, which is local versus global search of the problem space. For example, Boettcher et al suggest maintaining a heap in order to draw the $k$th ranked member of the local fitnesses, which is probably a sensible suggestion in their apparatus, but a whole sort of a Numpy array is actually an order of magnitude faster than the heap popping and pushing operator in Python, because it's implemented as a Python native function. And vectorization in Numpy gives two or three order-of-magnitude differences in wall-clock execution time as well. Therefore, we decided that the proper measure of execution time should actually be the number of iterations of the algorithm before converging to one of the global minima, not wall-clock time or clock-cycle time.
 
 % did we cite frigging pdp yet? we should, really, this is a thing
 Therefore, noting those problems, we chose the simplest problem possible which could test whether the $\tau$-extremal optimization was better in some way than simulated annealing or not, which is the Necker Cube constraint satisfaction problem from the PDP book. Each vertext of the Necker Cube has two units each, which represent the two interpretations of the cube, with a local minimum at the state where four units making up one face are activated in one interpretation, and the other four units making up the other face on the other interpretation are activated. This, as the PDP book mentions, is one of the sipmlest possible constraint satisfaction problems with a local optimum, which can test the claim that the $\tau$-extremal optimization gets out of local optima well.
@@ -122,12 +111,14 @@ We used, for the RBM task, a digit dataset from scikit-learn, which has 1797 sam
 First, the results on the RBM. We did not see the large scale-free jumps that we experienced in the Ising model and expected in the RBM.
 
 %%% pontificate on the possible caues
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{figure}
   \includegraphics{eo_rbm_unzoomed}
 \end{figure}
 
-%%% talk about the greedyness, how we don't have the best one because we know there exists exactly two global minima
 
 The results on the $\tau$-EO necker cube task were, however, as expected. Figure \ref{fig:speed} is a histogram of the iteration numbers of each of the $2^16$ possible states before converging on a global optimum of the Necker cube task, with simulated annealing, simulated annealing with an annealing schedule, and the $\tau$-extremal optimization. Note the log-log scale.
 
@@ -146,28 +137,38 @@ Note that there is a longer tail in the histogram for the simulated annealing wi
 %%% but why is the tauEO faster? immediately after it makes a huge jump to escape local minima, the power law distribution of tau means that it will tend to explore the new local state space really fast, for basically the same reason that it's an online algorithm.
 
 %%% pull out the pictures of training, note the semi-greedyness and cluelessness of the algorithm. "this is what the scale-free search looks like"
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Discussion}
 %Summarize your goals, your approach, and your main findings, and state a conclusion indicating how well, overall, your goals have been met.
 %%% goals: make a faster thing than SA for abstract csp
 %%% approach: tau-EO for cs net
 %%% findings: spiffy results
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%% cite Boettcher for the disequilibrium stuff
 %%% cite boettcher's heuristic about the number of iterations
 An important feature of the algorithm is that it works in disequilibrium. That is, it runs the same whether it's early in the search or late in the search. Unlike simulated annealing with an annealing schedule, which doesn't work as an online algorithm, or an algorithm which can be given its input piece by piece, that there is nothing preventing $\tau$-extremal optimization from being used online. This property is of a piece with the scale-free search mentioned above. One important drawback to this is that for real problems the number of iterations needs to be determined via heuristic.
 
 Because this project attempted to completely explore an entire state space of a problem, it was not feasible to explore a non-toy problem: that is, a problem where it's not possible to explore the entire state space, and therefore other measures of speech must be checked. It remains to be seen if this speed can be replicated in a larger problem domain with different local optima.
-%Then, discuss shortcomings or limitations of your effort and indicate how these might be overcome in future work.
-%%% limitations: limited net, not fully connected, not a real problem. doesn't scale up.
-%%% limitations: not thinking hard about neuronal connectivity. one thing that continues on the subject of criticality is modelling chialvo's work
-%%% broader implications: try to look carefully at the critical regions of abstract NP-complete problem
 
-%%Also, indicate broader implications and potential future applications of the ideas and approach.
-
-%%% cite chialvo
-%%% compare to Chialvo stuff
-It cannot necessarily be the case that a power law is evidence for \emph{only} self-organized criticality, but %%begin and finish this
+%% cite the chialvo paper, small world net review, modelling review
+Another interesting direction would be to try to explore scale-freeness in the connectivity of the graph. Chialvo et al claim that the functional connectivity of the brain has a scale-free network character. The functional graph they create is a small world net, with a power law distribution of degree rank and a bevy of other features. This is exciting, since there is a vast literature on simulating, modelling and even fitting these graphs, and this might be of interest to connectionist modelling.
 
 \begin{thebibliography}[99]
 

@@ -23,13 +23,13 @@ def conf_energy(config):
     for x in xrange(0, dims[0]):
         for y in xrange(0, dims[1]):
             if (x+1 < dims[0]):
-                local_energy[x, y] += config[x,y] * config[x+1,y]
+                local_energy[x, y] -= config[x,y] * config[x+1,y]
             if (x-1 > 0):
-                local_energy[x, y] += config[x-1,y] * config[x,y]
+                local_energy[x, y] -= config[x-1,y] * config[x,y]
             if (y+1 < dims[1]):
-                local_energy[x, y] += config[x,y] * config[x,y+1]
+                local_energy[x, y] -= config[x,y] * config[x,y+1]
             if (y-1 > 0):
-                local_energy[x, y] += config[x,y-1] * config[x,y]
+                local_energy[x, y] -= config[x,y-1] * config[x,y]
     hamiltonian = local_energy.sum()
     return (hamiltonian, local_energy)
 
@@ -68,7 +68,3 @@ if __name__ == "__main__":
         plt.matshow(opt_config)
         plt.title("Ising model, 2000 steps tEO")
         plt.savefig("2000.png")
-        opt_config, score = optimize_spinglass(config, steps=8000, disp=True)
-        plt.matshow(opt_config)
-        plt.title("Ising model, 10000 steps tEO")
-        plt.savefig("10000.png")

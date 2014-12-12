@@ -9,8 +9,22 @@
 \title{Psych209 Final Project}
 \author{Howon Lee}
 \maketitle
+\section*{Issue Addressed} %What is the issue or question you will be addressing?
 
-%explain the bak net
+We wish to address the issue of using an alternative approach to introducing necessary non-determinism to the constraint satisfaction problem in a PDP system, as opposed to the Boltzmann machine with conventional simulated annealing.
+
+An alternative optimization algorithm called $\tau$-extremal optimization is used to update a constraint-satisfaction framework to escape local minima in short amounts of time. It is compared on a toy network (the Necker Cube task), but with every possible combination of initial input, to the Boltzmann machine updated with simulated annealing.
+
+\subsection*{Why is it interesting?}
+
+The update rule for Boltzmann machines in the general, non-restricted case is very powerful but not usable in practice, because of the enormous time needed to approach the network's equilibrium distribution and the noisy learning signal for the learning. Simulated annealing also has the disadvantage that it must be given an annealing schedule to work effectively, the proper tuning of which is extremely hard and problem-specific.
+
+Another interesting statement is that the energy semantics of the Boltzmann machine seem very incompatible with the hypothesis semantics of the parallel network for solving constraint satisfaction problems.
+
+%%%%%%%%%%% blah blah blah csp, cognitive architectures
+%%%%%%%%%%% talk about it still being a probabilistic model, but the nondeterminism can rest in the evolution of the constraints, and still have softish constraints
+\subsection*{What has previously been done?}
+%%%% talk about bak net, why it's so useless
   How can you use extremal dynamics to train some kind of neural net?
   Qualitative model of evolution: Bak-Sneppen model.
   \begin{figure}
@@ -36,7 +50,6 @@
   \begin{figure}
     \includegraphics{bak_plot}
   \end{figure}
-
   Comparison to simulated annealing
   
   How it works, from 20000 feet
@@ -61,6 +74,33 @@
   \begin{figure}
     \includegraphics{rbm_eq}
   \end{figure}
+%%%%%%%%%%% tsp and spin glasses. really quite interesting in specific, because of the close relation between ising spin glasses and bm
+\subsection*{What remains to be done?}
+%%%%%%%%%%%
+
+\section{Novel Approach}
+
+I will try to use the method by Boetticher et al on the problem of taking equilibrium-like statistics from a Boltzmann machine, to see if it helps the current intractable problem of non-restricted Boltzmann machine learning. The method, called Extremal Optimization (EO), has been used in Ising model systems before (spin glasses modelled by an Ising model system), but not to the updating of a Boltzmann machine, to my knowledge. %%%% cite Boetticher and the Ising model tau-EO paper.
+
+EO is a global optimization technique, inspired by a model of evolution proposed by Bak and Sneppen, and the qualitative results that result from that model. %%% bit of exegesis of Bak-Sneppen model; %%%% cite Bak-Sneppen paper
+
+%% now finally explain EO
+%% tau-EO
+
+%%%In order to explain what EO is, it is helpful to have a prior picture of simulated annealing(SA). Both of these optimization techniques are attempts to solve the problem of local optima that all hill-climbing optimization algorithms are subject to. SA, in order to maximize a criterion, considers a neighboring state and takes or rejects the neighboring state based upon the Metropolis-Hastings criterion. That Metropolis-Hastings criterion depends upon a temperature which is varied during the course of the algorithm: this is called the annealing schedule. A high temperature allows more thorough exploration of the solution space and a low temperature allows more bias towards an optimum solution. Together, they are a global optimization algorithm.
+%% compare and contrast EO, SA
+
+%What approach will you be taking to address it? (at a big picture level; novel and/or otherwise noteworthy aspects)
+
+\section{Details of Approach}
+
+%Specific target phenomenon or phenomena you will be addressing: e.g., pattern of data you intend to try to fit. Model network task setting, architecture, processing and learning algorithm, training environment (corpus used for training, knowledge base built in to network),
+
+%%% note the bak net try
+%%% note the rbm try
+%%% going to note the fact that I did bm normally now
+
+\section{Results and Analysis}
   
   \frametitle{Ising Model}
   \begin{figure}
@@ -99,44 +139,6 @@
 
   (using EO in place of SA)
 
-%%%% organization
-
-\section*{Issue Addressed} %What is the issue or question you will be addressing?
-
-An alternative optimization algorithm called $\tau$-extremal optimization is used to update a constraint-satisfaction framework to escape local minima in short amounts of time. It is compared on a toy task (the Necker Cube task), but with every possible combination of initial input, and shown to do very well in comparison to a simulated-annealing Boltzmann machine with and without an annealing schedule.
-
-\subsection*{Why is it interesting?}
-
-The update rule for Boltzmann machines in the general, non-restricted case is very powerful but not usable in practice, because of the enormous time needed to approach the network's equilibrium distribution and the noisy learning signal for the learning.
-%%%%%%%%%%%
-\subsection*{What has previously been done?}
-%%%%%%%%%%% tsp and spin glasses. really quite interesting in specific, because of the close relation between ising spin glasses and bm
-\subsection*{What remains to be done?}
-%%%%%%%%%%%
-
-\section{Novel Approach}
-
-I will try to use the method by Boetticher et al on the problem of taking equilibrium-like statistics from a Boltzmann machine, to see if it helps the current intractable problem of non-restricted Boltzmann machine learning. The method, called Extremal Optimization (EO), has been used in Ising model systems before (spin glasses modelled by an Ising model system), but not to the updating of a Boltzmann machine, to my knowledge. %%%% cite Boetticher and the Ising model tau-EO paper.
-
-EO is a global optimization technique, inspired by a model of evolution proposed by Bak and Sneppen, and the qualitative results that result from that model. %%% bit of exegesis of Bak-Sneppen model; %%%% cite Bak-Sneppen paper
-
-%% now finally explain EO
-%% tau-EO
-
-%%%In order to explain what EO is, it is helpful to have a prior picture of simulated annealing(SA). Both of these optimization techniques are attempts to solve the problem of local optima that all hill-climbing optimization algorithms are subject to. SA, in order to maximize a criterion, considers a neighboring state and takes or rejects the neighboring state based upon the Metropolis-Hastings criterion. That Metropolis-Hastings criterion depends upon a temperature which is varied during the course of the algorithm: this is called the annealing schedule. A high temperature allows more thorough exploration of the solution space and a low temperature allows more bias towards an optimum solution. Together, they are a global optimization algorithm.
-%% compare and contrast EO, SA
-
-%What approach will you be taking to address it? (at a big picture level; novel and/or otherwise noteworthy aspects)
-
-\section{Details of Approach}
-
-%Specific target phenomenon or phenomena you will be addressing: e.g., pattern of data you intend to try to fit. Model network task setting, architecture, processing and learning algorithm, training environment (corpus used for training, knowledge base built in to network),
-
-%%% note the bak net try
-%%% note the rbm try
-%%% going to note the fact that I did bm normally now
-
-\section{Results and Analysis}
 
 %%First present your primary findings that bear directly on the target phenomena.
 %%% it's faster

@@ -8,6 +8,10 @@ import math
 from numba import jit #requires anaconda
 import matplotlib.pyplot as plt
 
+"""
+NON-WORKING, SEE NECKER-SA
+"""
+
 def setup_bm(n=100):
     #n lattice point bm
     #hidden nodes are implicit

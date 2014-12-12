@@ -9,7 +9,7 @@ from numba import jit #requires anaconda
 import matplotlib.pyplot as plt
 
 """
-We need to be as sure about everything here as possible before we also implement the simulated annealing
+NON-WORKING, SEE NECKER_EO
 """
 
 def rand_vec(n=100):

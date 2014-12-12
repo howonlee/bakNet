@@ -26,7 +26,7 @@ Extremal optimization\cite{boettcher}, in general, is inspired a specific model 
 To be specific, extremal optimization is inspired by a model of evolution called the Bak-Sneppen model\cite{baksneppen}, designed to bring about the time dynamics and other qualitative phenomena of evolution (punctuated equilibrium)\cite{gould} in the simplest method possible. It is a self-organized criticality model, which means that it has its attractor in a phase transition state. It is a one-dimensional lattice model which models nothing about each species except its fitness and the structure of its relations with other species. $N$ species are considered as nodes on a graph which is a one-dimensional lattice (a ring), and each species has a fitness, denoted by a single scalar $\lambda$. At each discrete time step, the least fit species is replaced, and both of its neighbors replaced with it, with new species identical to the old ones except for the fitnesses, which are random. Notably, this selection organizes a fitness threshold, below which species do not survive because they are always the least fit.
 
 \begin{figure}
-  \includegraphics{bak_sneppen}
+  \includegraphics[width=2.5in]{bak_sneppen}
   \caption{Progression of a Bak-Sneppen model: y axis is time, x axis is the lattice, color is fitness. Taken from \cite{baksneppen}.}
 \end{figure}
 
@@ -37,8 +37,8 @@ Learning is done extremally also, in that if a wrong prediction is made, every w
 Bak and Chialvo note that it is very easy to make very deep nets with this architecture, since there no problem with vanishing gradients or large computations, since there are no gradients. However, this is not as useful as one might think. This is because the units end up becoming conjunctive units, bound together loosely by the effect of the "made a correct prediction list" (similar to the opposite of the Tabu list in Tabu search\cite{tabu}). This means that many thousands of units are needed to do a simple parity task, and the classification ability on naturalistic tasks like MNIST are not comparable to even linear predictors, as shown on figure \ref{fig:baknet_res}.
 
 \begin{figure}
-  \includegraphics{bak_chialvo_net_topology}
-  \includegraphics{bak_plot}
+  \includegraphics[width=3in]{bak_chialvo_net_topology}
+  \includegraphics[width=3in]{bak_plot}
   \label{fig:baknet_res}
   \caption{Adaptive extremal dynamics net topology, and results on MNIST for adaptive extremal dynamics net. Topology is taken from \cite{bakchialvo}}
 \end{figure}
@@ -56,7 +56,7 @@ The reason why the $P(k)$ is the way it is is because it gives an important adva
 The previous applications of EO and $\tau$-EO include the travelling salesman problem, graph cuts and Ising model spin glass optimization\cite{boettcher2}. It is the last of these that seems most important for us, because of the close connection between the Hopfield net and the Ising model\cite{hopfield}, and in turn the Hopfield net and the constraint satisfaction networks that exist, including the Boltzmann machine, which can be construed as a probabilistic Hopfield net.
 
 \begin{figure}
-  \includegraphics{eo_alg}
+  \includegraphics[width=4in]{eo_alg}
   \caption{extremal optimization algorithm, from \cite{boettcher}}
 \end{figure}
 
@@ -80,27 +80,29 @@ We used, for the RBM task, a digit dataset from scikit-learn\cite{scikitlearn}, 
 First, the results on the RBM. We did not see the large scale-free jumps that we experienced in the Ising model and expected in the RBM. This is because the gradients with respect to the weights, which we were using as the fitness values, were local but didn't affect their neighbors in a strong way, unlike the energy calculations in the constraint satisfaction model. This ends up being essential to the punctuated-equilibrium behavior of the model.
 
 \begin{figure}
-  \includegraphics{eo_rbm_unzoomed}
-  \includegraphics{eo_rbm_zoomed}
+  \includegraphics[width=3in]{eo_rbm_unzoomed}
+  \includegraphics[width=3in]{eo_rbm_zoomed}
+  \caption{Learning dynamics for extremal optimization learning. If we were really exploring local optima and escaping them, there would be more variance in the red plot than in the blue}
 \end{figure}
 
 The results on the $\tau$-EO necker cube task were, however, as expected. Figure \ref{fig:speed} is a histogram of the iteration numbers of each of the $2^16$ possible states before converging on a global optimum of the Necker cube task, with simulated annealing, simulated annealing with an annealing schedule, and the $\tau$-extremal optimization. Note the log-log scale.
 
 \begin{figure}
   \label{fig:speed}
-  \includegraphics{iter_hist}
+  \includegraphics[width=4in]{iter_hist}
+  \caption{Number of iterations to get a global optimum for the Necker cube task. Note the log log scale.}
 \end{figure}
 
 \begin{figure}
   \label{fig:slow_progess}
-  \includegraphics{eo_slow}
-  \includegraphics{sa_slow}
+  \includegraphics[width=3in]{eo_slow}
+  \includegraphics[width=3in]{sa_slow}
   \caption{Slow progress: white is positive activation}
 \end{figure}
 \begin{figure}
   \label{fig:fast_progess}
-  \includegraphics{eo_fast}
-  \includegraphics{sa_fast}
+  \includegraphics[width=3in]{eo_fast}
+  \includegraphics[width=3in]{sa_fast}
   \caption{Fast progress: white is positive activation}
 \end{figure}
 

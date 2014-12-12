@@ -9,5 +9,5 @@ if __name__ == "__main__":
         for line in runfile:
             ls.append(map(int, line.split()))
     arr = np.array(ls)
-    plt.matshow(arr, cmap=plt.cm.Greys_r)
+    plt.matshow(arr, cmap=plt.gray())
     plt.show()

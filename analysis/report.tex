@@ -108,17 +108,16 @@ In addition, we had a preliminary investigation into trying to use the $\tau$-ex
 We used, for the RBM task, a digit dataset from scikit-learn, which has 1797 samples in 10 classes. We used this instead of the more standard MNIST because it has only 64 dimensions, and it was pre-whitened and normalized. %%% how many hiddens? what's the "learning rate"?
 
 \section{Results and Analysis}
-First, the results on the RBM. We did not see the large scale-free jumps that we experienced in the Ising model and expected in the RBM.
-
-%%% pontificate on the possible caues
+First, the results on the RBM. We did not see the large scale-free jumps that we experienced in the Ising model and expected in the RBM. This is because the gradients with respect to the weights, which we were using as the fitness values, were local but didn't affect their neighbors in the proper self-organized criticality way, meaning that the co-evolutionary selection which we were implementing wasn't acting in a co-evolutionary way.
+%%% it should be something which has a locality that's not weight-based, or which affects its neighbors. the critical dynamics depends upon that feature, which the gradient doesn't have.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{figure}
   \includegraphics{eo_rbm_unzoomed}
+  \includegraphics{eo_rbm_zoomed}
 \end{figure}
-
 
 The results on the $\tau$-EO necker cube task were, however, as expected. Figure \ref{fig:speed} is a histogram of the iteration numbers of each of the $2^16$ possible states before converging on a global optimum of the Necker cube task, with simulated annealing, simulated annealing with an annealing schedule, and the $\tau$-extremal optimization. Note the log-log scale.
 
@@ -127,8 +126,9 @@ The results on the $\tau$-EO necker cube task were, however, as expected. Figure
   %%%%% spiffy speed figure
 \end{figure}
 
-Note that there is a longer tail in the histogram for the simulated annealing with an annealing schedule. This is because in those cases, the simulated annealing is stuck in a local optima, and is also at a low temperature, meaning that they cannot escape this local optima.
+Note that there is a longer tail in the histogram for the simulated annealing with an annealing schedule. This is because in those cases, the simulated annealing is stuck in a local optima, and is also at a low temperature, meaning that they cannot escape this local optima. This also happens in a lesser way in the simulated annealing with constant temperature.
 
+Because of the fact that the majority of the time, $\tau$-extremal optimization is just local search, when it it possible to get to the global optimum by local search, it does so very quickly.
 
 %%% note the virtue of making some progress or making some nonoptimal step, instead of what the SA does
 

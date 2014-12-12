@@ -63,7 +63,7 @@ if __name__ == "__main__":
     global_2.flags.writeable = False
     global_minima.add(hash(global_1.data))
     global_minima.add(hash(global_2.data))
-    activations = [np.array(map(int, seq)) for seq in itertools.product("01", repeat=16)]
+    activations = reversed([np.array(map(int, seq)) for seq in itertools.product("01", repeat=16)])
     c = datetime.datetime.now()
     curr_time = c.second * 1000000 + c.microsecond
     print curr_time
@@ -77,7 +77,7 @@ if __name__ == "__main__":
             activation_store.append(activation_copy)
             activation_copy.flags.writeable = False
             if hash(activation_copy.data) in global_minima:
-                if i < 30:
+                if i > 100:
                     for line in activation_store:
                         print line
                     sys.exit(0)
